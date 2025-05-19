@@ -23,7 +23,7 @@ const Input: React.FC<FloatingLabelInputProps> = ({
       placeholder={placeholder}
       value={value}
       onChange={onChange}
-      className={`block w-[${width}px] h-[${height}px] px-3 py-2 bg-transparent border-2 border-main-gray rounded-[10px] text-gray-900 appearance-none focus:outline-none focus:ring-0 focus:border-blue-500 peer`}
+      className={`w-[${width}px] h-[${height}px] p-main bg-transparent border border-main-light-gray rounded-[10px] focus:border-main-blue`}
     />
   );
 };

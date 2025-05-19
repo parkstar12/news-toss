@@ -1,7 +1,7 @@
 import Sidebar from "@/components/ui/Sidebar";
 import React from "react";
-import Link from "next/link";
-import Header from "@/components/ui/share/Header";
+import Header from "@/components/ui/shared/Header";
+import Footer from "@/components/ui/shared/Footer";
 
 export default function MainLayout({
   children,
@@ -9,19 +9,15 @@ export default function MainLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="size-full flex">
-      <main className="flex-1 size-full py-[10px] pl-[10px]">
-        <div className="size-full bg-white rounded-[10px] relative overflow-y-scroll">
+    <div className="w-screen h-screen flex">
+      <main className="flex-1 flex flex-col overflow-hidden py-main pl-main">
+        <div className="flex-1 bg-white rounded-main relative flex flex-col overflow-hidden">
           <Header />
-          {/* <div className="w-[10px] h-[1000px]"></div> */}
-          {/* <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Link href="/">123</Link>
-              </div>
-            </div>
-          </header> */}
-          <div className="size-full pt-[80px]">{children}</div>
+
+          <div className="flex-1 overflow-x-auto overflow-y-scroll pt-[100px] flex flex-col justify-between">
+            <div className="min-w-main-max w-full px-[100px]">{children}</div>
+            <Footer />
+          </div>
         </div>
       </main>
       <Sidebar />

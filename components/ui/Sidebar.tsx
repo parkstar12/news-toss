@@ -3,6 +3,7 @@
 import { ChartNoAxesColumn, ChevronsLeft, Eye, Heart } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useSidebarStore } from "@/store/sidebarStore";
+import clsx from "clsx";
 
 type Category = "내 투자" | "관심" | "최근 본" | null;
 
@@ -16,97 +17,95 @@ const Sidebar = () => {
     }
   }, [isOpen]);
 
+  const handleToggle = () => {
+    toggle();
+    if (!category) setCategory("내 투자");
+  };
+
+  const handleCategoryChange = (newCategory: Category) => {
+    setCategory(newCategory);
+    open();
+  };
+
   return (
     <aside className="bg-transparent flex py-5">
       <div
-        className={`flex-1 duration-200  ${
+        className={clsx(
+          "duration-200 shrink-0 transition-all overflow-hidden",
           isOpen ? "w-[250px] px-[20px]" : "w-0 opacity-0 px-0"
-        }`}
+        )}
       >
         {category}
       </div>
-      <div className="flex flex-col gap-7 items-center px-[10px]">
+
+      <div className="flex flex-col gap-7 shrink-0 items-center px-[10px]">
         <button
-          className="flex flex-col items-center justify-center cursor-pointer"
-          onClick={() => {
-            toggle();
-            if (!category) {
-              setCategory("내 투자");
-            }
-          }}
+          className="flex flex-col items-center cursor-pointer"
+          onClick={handleToggle}
         >
           <ChevronsLeft
             size={25}
-            className={`duration-200 ${isOpen ? "rotate-180" : ""}`}
+            className={clsx("duration-200", isOpen && "rotate-180")}
           />
         </button>
         <div className="flex flex-col gap-5">
-          <button
-            className="flex flex-col items-center justify-center gap-1"
-            onClick={() => {
-              setCategory("내 투자");
-              open();
-            }}
-          >
-            <ChartNoAxesColumn
-              size={20}
-              className={`rounded-sm p-1 box-content ${
-                category === "내 투자" ? "text-black bg-sub/40" : "text-sub"
-              }`}
-            />
-            <span
-              className={`${
-                category === "내 투자" ? "text-black" : "text-sub"
-              } text-xs`}
-            >
-              내 투자
-            </span>
-          </button>
-          <button
-            className="flex flex-col items-center justify-center gap-1"
-            onClick={() => {
-              setCategory("관심");
-              open();
-            }}
-          >
-            <Heart
-              size={20}
-              className={`rounded-sm p-1 box-content ${
-                category === "관심" ? "text-black bg-sub/40" : "text-sub"
-              }`}
-            />
-            <span
-              className={`${
-                category === "관심" ? "text-black" : "text-sub"
-              } text-xs`}
-            >
-              관심
-            </span>
-          </button>
-          <button
-            className="flex flex-col items-center justify-center gap-1"
-            onClick={() => {
-              setCategory("최근 본");
-              open();
-            }}
-          >
-            <Eye
-              size={20}
-              className={`rounded-sm p-1 box-content ${
-                category === "최근 본" ? "text-black bg-sub/40" : "text-sub"
-              }`}
-            />
-            <span
-              className={`${
-                category === "최근 본" ? "text-black" : "text-sub"
-              } text-xs`}
-            >
-              최근 본
-            </span>
-          </button>
+          <SidebarButton
+            icon={<ChartNoAxesColumn size={20} />}
+            label="내 투자"
+            active={category === "내 투자"}
+            onClick={() => handleCategoryChange("내 투자")}
+          />
+          <SidebarButton
+            icon={<Heart size={20} />}
+            label="관심"
+            active={category === "관심"}
+            onClick={() => handleCategoryChange("관심")}
+          />
+          <SidebarButton
+            icon={<Eye size={20} />}
+            label="최근 본"
+            active={category === "최근 본"}
+            onClick={() => handleCategoryChange("최근 본")}
+          />
         </div>
       </div>
     </aside>
+  );
+};
+
+const SidebarButton = ({
+  icon,
+  label,
+  active,
+  onClick,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  active: boolean;
+  onClick: () => void;
+}) => {
+  return (
+    <button
+      className="flex flex-col items-center justify-center gap-1 cursor-pointer"
+      onClick={onClick}
+    >
+      <div
+        className={clsx(
+          "rounded-sm p-1 box-content transition-colors",
+          active ? "text-black bg-sub/40" : "text-sub"
+        )}
+      >
+        {icon}
+      </div>
+      <span
+        className={clsx(
+          "text-xs transition-colors",
+          active ? "text-black" : "text-sub"
+        )}
+      >
+        {label}
+      </span>
+    </button>
   );
 };
 
