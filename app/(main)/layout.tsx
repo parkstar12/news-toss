@@ -14,7 +14,10 @@ export default function MainLayout({
         <div className="flex-1 bg-white rounded-main relative flex flex-col overflow-hidden">
           <Header />
 
-          <div className="flex-1 overflow-x-auto overflow-y-scroll pt-[100px] flex flex-col justify-between">
+          <div
+            id="main-layout"
+            className="flex-1 overflow-x-auto overflow-y-scroll pt-[100px] flex flex-col justify-between"
+          >
             <div className="min-w-main-max w-full px-[100px]">{children}</div>
             <Footer />
           </div>
