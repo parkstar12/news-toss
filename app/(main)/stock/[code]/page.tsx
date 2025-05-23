@@ -1,8 +1,13 @@
 import React from "react";
 import CandleChartViewer from "./CandleChartViewer";
 
-const StockDetailPage = ({ params }: { params: { code: string } }) => {
-  const { code } = params;
+const StockDetailPage = async ({
+  params,
+}: {
+  params: Promise<{ code: string }>;
+}) => {
+  const { code } = await params;
+
   return (
     <div className="flex flex-col gap-[20px]">
       <div>StockDetailPage {code}</div>

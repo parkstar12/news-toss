@@ -68,7 +68,7 @@ const Header = () => {
           <Link
             href="/portfolio/my"
             className={clsx(
-              pathname.startsWith("/portfolio/my")
+              pathname.startsWith("/portfolio")
                 ? "text-black font-semibold"
                 : "text-sub"
             )}
@@ -164,7 +164,7 @@ const Header = () => {
                 캘린더
               </Link>
               <Link
-                href="/portfolio"
+                href="/portfolio/my"
                 className={clsx(
                   pathname.startsWith("/portfolio")
                     ? "text-black font-semibold"

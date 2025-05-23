@@ -13,8 +13,22 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "과거 뉴스 기반 주가 경향성 예측 서비스",
-  description: "주식 투자에 설명력을 더해주는 AI 애널리스트",
+  title: {
+    template: "NewsToss | %s",
+    default: "NewsToss",
+  },
+  description:
+    "주식 투자에 설명력을 더해주는 AI 애널리스트. 과거 유사 사건 뉴스 및 증권사 리포트 기반 주식 투자 판단 보조 시스템",
+  keywords: ["주식", "투자", "뉴스", "증권", "리포트"],
+  // openGraph: {
+  //   title: "NewsToss",
+  //   description:
+  //     "주식 투자에 설명력을 더해주는 AI 애널리스트. 과거 유사 사건 뉴스 및 증권사 리포트 기반 주식 투자 판단 보조 시스템",
+  //   images: ["/og-image.png"],
+  // },
+  icons: {
+    icon: "/favicon.ico",
+  },
 };
 
 export default function RootLayout({
