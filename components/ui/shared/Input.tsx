@@ -1,13 +1,9 @@
 import React from "react";
 import clsx from "clsx";
 
-interface FloatingLabelInputProps {
+interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   width?: number | string;
   height?: number | string;
-  type?: string;
-  placeholder?: string;
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 function getWidthStyle(width?: number | string) {
@@ -24,25 +20,21 @@ function getHeightStyle(height?: number | string) {
   return "";
 }
 
-const Input: React.FC<FloatingLabelInputProps> = ({
+const Input: React.FC<InputProps> = ({
   width = 200,
   height = 40,
-  type = "text",
-  placeholder = "",
-  value,
-  onChange,
+  className,
+  ...rest
 }) => {
   return (
     <input
-      type={type}
-      placeholder={placeholder}
-      value={value}
-      onChange={onChange}
       className={clsx(
         getWidthStyle(width),
         getHeightStyle(height),
-        "p-main bg-transparent border border-main-light-gray rounded-[10px] focus:border-main-blue"
+        "p-main bg-transparent border border-main-light-gray rounded-[10px] focus:border-main-blue",
+        className
       )}
+      {...rest}
     />
   );
 };

@@ -7,7 +7,7 @@ const PortfolioLayout = ({ children }: { children: React.ReactNode }) => {
       <aside className="flex flex-col gap-main">
         <SideMenus />
       </aside>
-      <div className="flex-1 mx-auto">{children}</div>
+      <div className="flex-1">{children}</div>
     </div>
   );
 };
