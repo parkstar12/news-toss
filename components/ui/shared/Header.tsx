@@ -7,6 +7,8 @@ import LoginForm from "./LoginForm";
 import useOutsideClick from "@/hooks/useOutsideClick";
 import { Menu, X } from "lucide-react";
 import clsx from "clsx";
+import Image from "next/image";
+import newsTossLogo from "@/public/news-toss-logo.png";
 
 const Header = () => {
   const [isOpenLoginForm, setIsOpenLoginForm] = useState(false);
@@ -32,7 +34,22 @@ const Header = () => {
   return (
     <header className="absolute w-full py-main px-[20px] z-50 backdrop-blur-sm bg-white/50">
       <div className="w-full flex relative gap-5 justify-between items-center">
-        <div className="font-bold text-lg">로고 및 프젝명</div>
+        <div className="font-bold text-lg flex items-center gap-2">
+          <div className="size-[40px] relative">
+            <Image
+              src={newsTossLogo}
+              alt="news-toss-logo"
+              fill
+              className="rounded-main"
+            />
+          </div>
+          <div className="flex flex-col">
+            <span className="font-bold text-lg">NewsToss</span>
+            <span className="text-sm text-main-dark-gray">
+              실시간 주식 투자 AI 애널리스트
+            </span>
+          </div>
+        </div>
         {/* 데스크탑 네비게이션 */}
         <nav className="hidden md:flex gap-5">
           <Link
