@@ -1,21 +1,11 @@
-"use client";
-
-import React, { useEffect } from "react";
+import React from "react";
 import { Monitor } from "lucide-react";
 // import Image from "next/image";
 // import newsTossLogo from "@/public/news-toss-logo.png";
 
 export default function OnlyDesktopPage() {
-  useEffect(() => {
-    const original = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = original;
-    };
-  }, []);
-
   return (
-    <div className="flex flex-col items-center justify-center w-screen h-dvh overflow-hidden">
+    <div className="w-full h-screen overflow-hidden flex flex-col items-center justify-center">
       <Monitor size={64} className="mb-6 text-main-blue" />
       <h1 className="text-2xl font-bold text-main-dark-gray mb-2">
         데스크탑에서 접속해 주세요

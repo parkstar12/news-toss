@@ -25,7 +25,7 @@ import SubNewsCard from "./SubNewsCard";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-export const data = {
+const data = {
   labels: ["반도체", "전기", "코로나19", "자동차", "IT"],
   datasets: [
     {
