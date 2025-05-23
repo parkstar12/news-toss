@@ -3,7 +3,7 @@
 import Modal from "@/components/ui/Modal";
 import clsx from "clsx";
 import { ChevronDown, Hash } from "lucide-react";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 
 interface NewsModalProps {
   isOpen: boolean;
@@ -13,16 +13,16 @@ interface NewsModalProps {
 
 const NewsModal = ({ isOpen, onClose, children }: NewsModalProps) => {
   const [isOpenNewsDetail, setIsOpenNewsDetail] = useState(false);
+  const newsDetailRef = useRef<HTMLDivElement>(null);
+
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
-      <div className="flex flex-col gap-[40px]">
+      <div className="flex flex-col gap-[40px] py-[20px] px-[30px]">
         <div className="flex flex-col gap-main">
           <h2 className="text-2xl font-bold">
             "포스트 반도체 찾는다"... '사업 디각화' 집중하는 삼성전자 "포스트
             반도체 찾는다"... '사업 디각화' 집중하는 삼성전자 "포스트 반도체
-            찾는다"... '사업 디각화' 집중하는 삼성전자 "포스트 반도체 찾는다"...
-            '사업 디각화' 집중하는 삼성전자 "포스트 반도체 찾는다"... '사업
-            디각화' 집중하는 삼성전자
+            찾는다"...
           </h2>
           <p className="text-sm text-main-dark-gray">
             2025년 05월 10일 09:00 · 이투데이
@@ -30,19 +30,19 @@ const NewsModal = ({ isOpen, onClose, children }: NewsModalProps) => {
         </div>
 
         <div className="flex gap-main">
-          <div className="w-full h-[400px] bg-main-dark-gray rounded-main" />
-          <div className="flex flex-col gap-main p-[20px] shadow-color rounded-main">
+          <div className="w-[400px] h-[250px] bg-main-dark-gray rounded-main shrink-0" />
+          <div className="w-full flex flex-col gap-main p-[20px] shadow-color rounded-main">
             <span>🤖 AI 요약</span>
             <h2 className="text-2xl font-bold">
               이 기사를 <strong className="text-main-red">호재</strong>로
               분석했어요
             </h2>
 
-            <pre>{`오디오 사업 강화: 자회사 하만이 미국 마시모의 오디오 사업 인수, 하이엔드 오디오 브랜드 확보.
+            {/* <pre>{`오디오 사업 강화: 자회사 하만이 미국 마시모의 오디오 사업 인수, 하이엔드 오디오 브랜드 확보.
 
 로봇 사업 진출: 레인보우로보틱스 지분 확대(14.7% → 35%), 로봇 기술 개발 및 AI 접목 계획.
 
-냉난방공조(HVAC) 사업 확대: 미국 레녹스와 합작법인 설립, 탄소중립 및 데이터센터 냉각 수요 대응.`}</pre>
+냉난방공조(HVAC) 사업 확대: 미국 레녹스와 합작법인 설립, 탄소중립 및 데이터센터 냉각 수요 대응.`}</pre> */}
           </div>
         </div>
 
@@ -53,8 +53,9 @@ const NewsModal = ({ isOpen, onClose, children }: NewsModalProps) => {
               ? "max-h-[2000px] opacity-100"
               : "max-h-0 opacity-0 hidden"
           )}
+          ref={newsDetailRef}
         >
-          <pre className="whitespace-pre-wrap">{`삼성전자, "반도체 넘어선다"... 신사업 투자 '올인'
+          <pre className="whitespace-pre-wrap truncate">{`삼성전자, "반도체 넘어선다"... 신사업 투자 '올인'
 
 [이투데이 김기자 기자] 삼성전자가 반도체를 넘어선 새로운 성장동력 확보에 총력을 기울이고 있다. 최근 오디오·로봇·냉난방공조(HVAC) 등 신사업 분야에서 대규모 투자와 인수를 단행하며 사업 다각화에 속도를 내고 있다.
 
@@ -71,7 +72,14 @@ KB증권 박철우 연구원은 "삼성전자가 기존 반도체·가전 중심
 
         <button
           className="w-full bg-main-blue text-white rounded-main py-[10px] flex items-center justify-center gap-2"
-          onClick={() => setIsOpenNewsDetail(!isOpenNewsDetail)}
+          onClick={() => {
+            setIsOpenNewsDetail(!isOpenNewsDetail);
+            !isOpenNewsDetail &&
+              newsDetailRef.current?.scrollIntoView({
+                behavior: "smooth",
+                block: "start",
+              });
+          }}
         >
           <span className="font-semibold">뉴스 상세보기</span>
           <ChevronDown
@@ -80,7 +88,7 @@ KB증권 박철우 연구원은 "삼성전자가 기존 반도체·가전 중심
           />
         </button>
 
-        <div className="grid grid-cols-2">
+        <div className="grid grid-cols-2 gap-main">
           <div className="flex flex-col gap-main">
             <h2 className="text-2xl font-bold">키워드</h2>
             <div className="w-full flex-wrap gap-main flex">
@@ -96,9 +104,9 @@ KB증권 박철우 연구원은 "삼성전자가 기존 반도체·가전 중심
               ].map((keyword, index) => (
                 <div
                   key={index}
-                  className="bg-main-light-gray rounded-full px-[20px] py-main w-fit flex items-center gap-2"
+                  className="bg-main-blue/20 rounded-full px-main py-1 w-fit flex items-center gap-2 text-main-blue text-sm"
                 >
-                  <Hash size={20} /> {keyword}
+                  <Hash size={15} /> {keyword}
                 </div>
               ))}
             </div>

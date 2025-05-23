@@ -3,11 +3,11 @@ import SideMenus from "./SideMenus";
 
 const PortfolioLayout = ({ children }: { children: React.ReactNode }) => {
   return (
-    <div className="px-[30px] flex gap-main">
+    <div className="px-[30px] flex gap-[40px]">
       <aside className="flex flex-col gap-main">
         <SideMenus />
       </aside>
-      <div className="flex-1">{children}</div>
+      <div className="flex-1 mx-auto">{children}</div>
     </div>
   );
 };

@@ -16,7 +16,7 @@ const SideMenus = () => {
   ];
 
   return (
-    <nav className="flex flex-col gap-main w-full">
+    <nav className="flex flex-col gap-main w-full sticky top-0">
       {navLinks.map((link) => (
         <Link
           key={link.href}
@@ -24,7 +24,7 @@ const SideMenus = () => {
           className={clsx(
             "px-[20px] py-2 rounded-main transition-colors",
             pathname === link.href
-              ? "bg-main-light-gray text-main-dark-gray"
+              ? "bg-main-light-gray text-black"
               : "hover:bg-main-light-gray text-main-dark-gray"
           )}
         >
