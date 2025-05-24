@@ -51,7 +51,7 @@ const Holidings = () => {
             <table className="w-full min-w-[700px] bg-white shadow-color border-separate border-spacing-0">
               <thead>
                 <tr>
-                  <th className="px-4 py-2 text-center bg-main-light-gray text-main-dark-gray font-semibold rounded-l-xl">
+                  <th className="px-4 py-2 text-center bg-main-light-gray text-main-dark-gray font-semibold rounded-l-main">
                     종목명
                   </th>
                   <th className="px-4 py-2 text-center bg-main-light-gray text-main-dark-gray font-semibold">
@@ -66,7 +66,7 @@ const Holidings = () => {
                   <th className="px-4 py-2 text-center bg-main-light-gray text-main-dark-gray font-semibold">
                     수익률
                   </th>
-                  <th className="px-4 py-2 text-center bg-main-light-gray text-main-dark-gray font-semibold rounded-r-xl"></th>
+                  <th className="px-4 py-2 text-center bg-main-light-gray text-main-dark-gray font-semibold rounded-r-main"></th>
                 </tr>
               </thead>
               <tbody>
@@ -75,7 +75,7 @@ const Holidings = () => {
                     key={h.code}
                     className="border-b hover:bg-main-blue/10 transition"
                   >
-                    <td className="px-4 py-2 font-medium">
+                    <td className="px-4 py-2 font-medium rounded-l-main ">
                       {h.name}{" "}
                       <span className="text-xs text-main-dark-gray">
                         {h.code}
@@ -101,7 +101,7 @@ const Holidings = () => {
                     >
                       {h.profitRate}%
                     </td>
-                    <td className="px-4 py-2 text-center">
+                    <td className="px-4 py-2 text-center rounded-r-main">
                       <button
                         className="bg-main-blue/20 text-main-blue px-4 py-2 rounded-main text-sm"
                         onClick={() => openSettlementModal(h)}

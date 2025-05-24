@@ -12,7 +12,7 @@ const PortfolioAnalysisLayout = ({
 }: {
   children: React.ReactNode;
 }) => {
-  return <>{children}</>;
+  return <div className="max-w-[900px] mx-auto">{children}</div>;
 };
 
 export default PortfolioAnalysisLayout;
