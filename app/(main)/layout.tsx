@@ -18,7 +18,8 @@ export default function MainLayout({
             id="main-layout"
             className="flex-1 overflow-x-auto overflow-y-scroll pt-[100px] flex flex-col justify-between"
           >
-            <div className="min-w-main-max w-full">{children}</div>
+            {/* <div className="min-w-main-max w-full">{children}</div> */}
+            <div className="w-full">{children}</div>
             <Footer />
           </div>
         </div>

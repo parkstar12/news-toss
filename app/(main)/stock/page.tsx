@@ -28,7 +28,7 @@ const StockPage = () => {
   };
 
   return (
-    <div className="flex flex-col gap-[40px]">
+    <div className="flex flex-col gap-[40px] max-w-[1200px] mx-auto">
       <div className="w-full shadow-color rounded-main relative">
         <Input
           value={stockSearch}

@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 };
 
 const StockLayout = ({ children }: { children: React.ReactNode }) => {
-  return <div className="px-[100px]">{children}</div>;
+  return <>{children}</>;
 };
 
 export default StockLayout;
