@@ -20,20 +20,26 @@ const Modal = ({
   isClickOutsideClose = true,
 }: ModalProps) => {
   const [visible, setVisible] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     if (isOpen) {
       setVisible(true);
-      document.body.style.overflow = "hidden";
+      if (mounted) document.body.style.overflow = "hidden";
     } else {
       setVisible(false);
-      document.body.style.overflow = "";
+      if (mounted) document.body.style.overflow = "";
     }
     return () => {
-      document.body.style.overflow = "";
+      if (mounted) document.body.style.overflow = "";
     };
-  }, [isOpen]);
+  }, [isOpen, mounted]);
 
+  if (!mounted) return null;
   if (!isOpen) return null;
 
   return createPortal(
@@ -48,7 +54,7 @@ const Modal = ({
       />
       <div className="relative">
         <div
-          className={`z-40 bg-white rounded-main p-[20px] max-w-[50vw] max-h-[90vh] shadow-color transition-opacity duration-500 overflow-y-scroll ${
+          className={`z-40 bg-white rounded-main p-[20px] min-w-[400px] max-w-[50vw] max-h-[90vh] shadow-color transition-opacity duration-500 overflow-y-scroll ${
             visible ? "opacity-100" : "opacity-0"
           }`}
         >
