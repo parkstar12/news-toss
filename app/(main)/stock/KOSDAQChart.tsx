@@ -14,6 +14,7 @@ import {
   ScriptableContext,
 } from "chart.js";
 import { faker } from "@faker-js/faker";
+import DownPrice from "@/components/ui/shared/DownPrice";
 
 ChartJS.register(
   LineElement,
@@ -85,19 +86,12 @@ const options = {
 
 const KOSDAQChart = () => {
   return (
-    <div className="flex flex-col gap-main bg-white rounded-main shadow-color p-main">
-      <div className="flex justify-between items-center p-main">
-        <h2 className="text-xl font-bold text-gray-800">코스닥 지수</h2>
+    <div className="flex flex-col gap-main bg-white py-[20px] px-main">
+      <div className="flex gap-1 items-end p-main">
+        <h2 className="font-bold text-gray-800">KOSDAQ</h2>
         <div className="flex items-center">
           <span className="text-2xl font-bold mr-2">842.15</span>
-          <span className="text-main-blue font-medium flex items-center gap-1">
-            <Triangle
-              fill="rgb(52, 133, 250)"
-              className="text-main-blue rotate-180"
-              size={12}
-            />{" "}
-            5.32 (0.63%)
-          </span>
+          <DownPrice change={5.32} changeRate={0.63} />
         </div>
       </div>
       <div className="w-full">

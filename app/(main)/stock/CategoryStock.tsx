@@ -15,10 +15,10 @@ const TestStock = () => {
   };
 
   return (
-    <div className="shadow-color rounded-main p-[20px] flex flex-col gap-main">
+    <div className="p-main flex flex-col gap-main">
       <h2 className="text-xl font-bold">카테고리</h2>
       <div className="grid grid-cols-3 gap-main">
-        <div className="col-span-1">
+        {/* <div className="col-span-1">
           <div className="flex flex-wrap gap-main">
             {categoryList.map((item) => (
               <button
@@ -35,12 +35,12 @@ const TestStock = () => {
               </button>
             ))}
           </div>
-        </div>
-        <div className="col-span-2 rounded-main size-full relative overflow-y-auto">
+        </div> */}
+        <div className="col-span-3 rounded-main size-full relative overflow-y-auto">
           <table className="w-full">
             <thead className="bg-main-light-gray sticky top-0">
               <tr>
-                <th className="py-main rounded-l-main text-start px-main">
+                <th className="py-main rounded-l-main text-center px-main">
                   종목명
                 </th>
                 {/* <th>차트</th> */}
@@ -52,7 +52,7 @@ const TestStock = () => {
               </tr>
             </thead>
             <tbody className="text-center">
-              {Array.from({ length: 10 }).map((_, index) => (
+              {Array.from({ length: 8 }).map((_, index) => (
                 <tr
                   key={index}
                   // onClick={() => handleClickStock("123456")}

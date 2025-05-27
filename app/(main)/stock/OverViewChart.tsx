@@ -16,6 +16,7 @@ import {
   Filler,
   Legend,
   ScriptableContext,
+  ChartOptions,
 } from "chart.js";
 import { faker } from "@faker-js/faker";
 
@@ -30,13 +31,14 @@ ChartJS.register(
   Legend
 );
 
-export const options = {
+export const options: ChartOptions<"line"> = {
   responsive: true,
   plugins: {
     legend: { display: false },
     title: { display: false },
     tooltip: { enabled: true },
   },
+  maintainAspectRatio: false,
 };
 
 const labels = Array.from({ length: 30 }, (_, i) => i);
@@ -126,7 +128,9 @@ const OverViewChart = () => {
         </button>
       </div>
 
-      <Line options={options} data={data} />
+      <div className="">
+        <Line options={options} data={data} />
+      </div>
 
       <table>
         <tbody>
@@ -138,7 +142,9 @@ const OverViewChart = () => {
                 onClick={() => setSelectedItem(item)}
                 className={clsx(selectedItem === item && "bg-main-light-gray")}
               >
-                <td className="p-main cursor-pointer rounded-l-main">{item}</td>
+                <td className="p-main cursor-pointer rounded-l-main truncate">
+                  {item}
+                </td>
                 <td className="p-main cursor-pointer">{data.value}</td>
                 <td
                   className={clsx(
