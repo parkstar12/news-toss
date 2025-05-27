@@ -38,14 +38,17 @@ const Sidebar = () => {
         {category}
       </div>
 
-      <div className="flex flex-col gap-7 shrink-0 items-center px-[10px]">
+      <div className="flex flex-col gap-[20px] shrink-0 items-center px-[10px]">
         <button
           className="flex flex-col items-center cursor-pointer"
           onClick={handleToggle}
         >
           <ChevronsLeft
             size={25}
-            className={clsx("duration-200", isOpen && "rotate-180")}
+            className={clsx(
+              "duration-200 hover:bg-sub/40 rounded-sm p-1 box-content",
+              isOpen && "rotate-180"
+            )}
           />
         </button>
         <div className="flex flex-col gap-5">
@@ -91,7 +94,7 @@ const SidebarButton = ({
     >
       <div
         className={clsx(
-          "rounded-sm p-1 box-content transition-colors",
+          "rounded-sm p-1 box-content transition-colors hover:bg-sub/40",
           active ? "text-black bg-sub/40" : "text-sub"
         )}
       >
