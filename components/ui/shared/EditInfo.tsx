@@ -4,10 +4,13 @@ import Modal from "@/components/ui/Modal";
 import Input from "@/components/ui/shared/Input";
 import { Edit } from "lucide-react";
 import React, { useState } from "react";
+import AddressModal from "./AddressModal";
+import { UserInfo } from "@/type/userInfo";
 
 const EditInfo = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [info, setInfo] = useState({
+  const [isOpenAddressModal, setIsOpenAddressModal] = useState(false);
+  const [info, setInfo] = useState<UserInfo>({
     name: "",
     phone: "",
     email: "",
@@ -21,6 +24,7 @@ const EditInfo = () => {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log(info);
+    // 유저데이터 수정 로직
   };
 
   return (
@@ -41,6 +45,8 @@ const EditInfo = () => {
             <label htmlFor="name">이름</label>
             <Input
               type="text"
+              placeholder="이름"
+              disabled
               value={info.name}
               onChange={(e) => setInfo({ ...info, name: e.target.value })}
             />
@@ -49,6 +55,7 @@ const EditInfo = () => {
             <label htmlFor="phone">휴대폰번호</label>
             <Input
               type="text"
+              placeholder="휴대폰번호"
               value={info.phone}
               onChange={(e) => setInfo({ ...info, phone: e.target.value })}
             />
@@ -57,6 +64,8 @@ const EditInfo = () => {
             <label htmlFor="email">이메일</label>
             <Input
               type="email"
+              disabled
+              placeholder="이메일"
               value={info.email}
               onChange={(e) => setInfo({ ...info, email: e.target.value })}
             />
@@ -66,6 +75,8 @@ const EditInfo = () => {
             <div className="flex gap-main">
               <Input
                 type="text"
+                placeholder="우편번호"
+                disabled
                 value={info.address.zipcode}
                 onChange={(e) =>
                   setInfo({
@@ -74,12 +85,17 @@ const EditInfo = () => {
                   })
                 }
               />
-              <button className="w-full bg-main-blue text-white rounded-main px-[20px] py-main">
+              <button
+                className="w-full bg-main-blue text-white rounded-main px-[20px] py-main"
+                onClick={() => setIsOpenAddressModal(true)}
+              >
                 주소 찾기
               </button>
             </div>
             <Input
               type="text"
+              placeholder="주소"
+              disabled
               value={info.address.address}
               onChange={(e) =>
                 setInfo({
@@ -90,6 +106,7 @@ const EditInfo = () => {
             />
             <Input
               type="text"
+              placeholder="상세주소"
               value={info.address.detail}
               onChange={(e) =>
                 setInfo({
@@ -108,6 +125,22 @@ const EditInfo = () => {
           </button>
         </form>
       </Modal>
+
+      <AddressModal
+        isOpen={isOpenAddressModal}
+        onClose={() => setIsOpenAddressModal(false)}
+        handleAddress={(data) => {
+          setInfo({
+            ...info,
+            address: {
+              zipcode: data.zonecode,
+              address: data.address,
+              detail: "",
+            },
+          });
+          setIsOpenAddressModal(false);
+        }}
+      />
     </>
   );
 };

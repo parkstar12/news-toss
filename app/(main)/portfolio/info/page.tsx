@@ -1,6 +1,6 @@
 import React from "react";
 import Withdraw from "./Withdraw";
-import EditInfo from "./EditInfo";
+import EditInfo from "../../../../components/ui/shared/EditInfo";
 
 const InfoPortfolioPage = () => {
   return (

@@ -1,41 +1,42 @@
-import React from "react";
+"use client";
+
+import React, { useState } from "react";
 import clsx from "clsx";
+import { Eye, EyeOff } from "lucide-react";
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  width?: number | string;
-  height?: number | string;
+  hasShowButton?: boolean;
 }
 
-function getWidthStyle(width?: number | string) {
-  if (typeof width === "number") return `w-[${width}px]`;
-  if (width === "full") return "w-full";
-  if (typeof width === "string") return width;
-  return "";
-}
+const Input = ({ className, hasShowButton = false, ...rest }: InputProps) => {
+  const [isShowPassword, setIsShowPassword] = useState(false);
 
-function getHeightStyle(height?: number | string) {
-  if (typeof height === "number") return `h-[${height}px]`;
-  if (height === "full") return "h-full";
-  if (typeof height === "string") return height;
-  return "";
-}
+  const handleShowPassword = () => {
+    setIsShowPassword(!isShowPassword);
+  };
 
-const Input: React.FC<InputProps> = ({
-  width = 200,
-  height = 40,
-  className,
-  ...rest
-}) => {
   return (
-    <input
-      className={clsx(
-        getWidthStyle(width),
-        getHeightStyle(height),
-        "p-main bg-transparent border border-main-light-gray rounded-[10px] focus:border-main-blue",
-        className
+    <div className="relative w-full">
+      {hasShowButton && (
+        <button
+          className="absolute right-main top-1/2 -translate-y-1/2 text-gray-200"
+          onClick={handleShowPassword}
+        >
+          {isShowPassword ? <Eye /> : <EyeOff />}
+        </button>
       )}
-      {...rest}
-    />
+      <input
+        {...rest}
+        type={
+          hasShowButton ? (isShowPassword ? "text" : "password") : rest.type
+        }
+        className={clsx(
+          "w-full p-main bg-transparent border border-main-light-gray rounded-main focus:border-main-blue/50 outline-none",
+          // "focus:shadow-[0_0_0_4px_rgba(52,133,250,0.3)]",
+          className
+        )}
+      />
+    </div>
   );
 };
 

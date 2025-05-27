@@ -15,21 +15,35 @@ const LoginForm = () => {
 
   return (
     <form
-      className="bg-white rounded-[10px] shadow-color p-[20px] flex flex-col gap-2 items-center"
+      className="w-[300px] bg-white rounded-main shadow-color p-[20px] flex flex-col gap-main items-center"
       onSubmit={handleSubmit}
     >
-      <Input
-        type="text"
-        placeholder="계정"
-        value={account}
-        onChange={(e) => setAccount(e.target.value)}
-      />
-      <Input
-        type="password"
-        placeholder="비밀번호"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
+      <div className="w-full">
+        {/* <label htmlFor="account" className="text-sm">
+          아이디
+        </label> */}
+        <Input
+          id="account"
+          type="text"
+          placeholder="아이디"
+          value={account}
+          onChange={(e) => setAccount(e.target.value)}
+        />
+      </div>
+
+      <div className="w-full">
+        {/* <label htmlFor="password" className="text-sm">
+          비밀번호
+        </label> */}
+        <Input
+          id="password"
+          type="password"
+          placeholder="비밀번호"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          hasShowButton={true}
+        />
+      </div>
       <button
         type="submit"
         className="w-full bg-main-blue text-white px-4 rounded-[10px] py-[5px]"

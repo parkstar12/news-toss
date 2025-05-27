@@ -8,17 +8,18 @@ import useOutsideClick from "@/hooks/useOutsideClick";
 import clsx from "clsx";
 import Image from "next/image";
 import newsTossLogo from "@/public/news-toss-logo.png";
+import UserInfo from "./UserInfo";
 
 const Header = () => {
-  const [isOpenLoginForm, setIsOpenLoginForm] = useState(false);
+  const [isOpenForm, setIsOpenForm] = useState(false);
+
+  const isLogin = false;
 
   const pathname = usePathname();
   const loginFormRef = useRef<HTMLDivElement | null>(null);
-  const mobileMenuRef = useRef<HTMLDivElement | null>(null);
-  const mobileLoginFormRef = useRef<HTMLDivElement | null>(null);
 
   useOutsideClick(loginFormRef, () => {
-    setIsOpenLoginForm(false);
+    setIsOpenForm(false);
   });
 
   return (
@@ -84,24 +85,33 @@ const Header = () => {
           </Link>
         </nav>
 
-        <div className="relative size-fit hidden md:block">
-          <button
-            onClick={() => {
-              setIsOpenLoginForm(!isOpenLoginForm);
-            }}
-            className="bg-main-blue text-white px-4 rounded-[10px] py-[5px]"
-          >
-            로그인
-          </button>
+        <div className="relative size-fit">
+          {isLogin ? (
+            <button
+              className="text-main-dark-gray"
+              onClick={() => setIsOpenForm(!isOpenForm)}
+            >
+              <b className="underline">{"홍길동"}</b> 님
+            </button>
+          ) : (
+            <button
+              onClick={() => {
+                setIsOpenForm(!isOpenForm);
+              }}
+              className="bg-main-blue text-white px-4 rounded-[10px] py-[5px]"
+            >
+              로그인
+            </button>
+          )}
 
           <div
             ref={loginFormRef}
             className={clsx(
               "absolute right-0 pt-2 duration-200 z-50",
-              isOpenLoginForm ? "block" : "hidden"
+              isOpenForm ? "block" : "hidden"
             )}
           >
-            <LoginForm />
+            {isLogin ? <UserInfo /> : <LoginForm />}
           </div>
         </div>
       </div>
