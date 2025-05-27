@@ -100,8 +100,8 @@ export default function RealTimeNews() {
   }, [remainSec]);
 
   return (
-    <div className="row-span-2 flex flex-col justify-between gap-main shadow-color p-main rounded-main">
-      <div className="flex items-end justify-between">
+    <div className="row-span-2 flex flex-col justify-between gap-main shadow-color rounded-main">
+      <div className="flex items-center justify-between p-main">
         <h2 className="text-xl font-bold">⚡️ 실시간 뉴스</h2>
         <div className="flex items-center gap-[5px]">
           <RefreshCw size={12} />
@@ -112,14 +112,14 @@ export default function RealTimeNews() {
       </div>
       <div
         key={animationKey}
-        className="flex flex-col gap-main overflow-y-scroll h-[510px]"
+        className="flex flex-col gap-main overflow-y-scroll h-[510px] p-main"
       >
         {news.map((item, index) => (
           <div
             key={`real-time-news-${index}`}
             className={clsx(
               styles.newsListItem,
-              "w-full px-main py-[5px] rounded-main shadow-sm border-l-4 border-main-blue"
+              "w-full px-main py-[5px] rounded-main shadow-sm border-l-4 border-main-blue hover:scale-103 transition-all duration-400 ease-in-out z-5"
             )}
             style={{
               animationDelay: `${index * 0.07}s`,
@@ -140,7 +140,7 @@ export default function RealTimeNews() {
           </div>
         ))}
       </div>
-      <div className="pt-main border-t border-gray-200 text-center">
+      <div className="pt-main border-t border-gray-200 text-center p-main">
         <p className="text-sm text-gray-500">
           매 1분마다 뉴스가 업데이트됩니다.
         </p>

@@ -1,7 +1,7 @@
 "use client";
 
 import { ChevronLeft, ChevronRight, Clock } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import clsx from "clsx";
 import bentoStyle from "./bento.module.css";
 import RealTimeNews from "./RealTimeNews";
@@ -77,26 +77,25 @@ const news = [
 const MainNews = () => {
   const [currentNews, setCurrentNews] = useState(news[0]);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isFading, setIsFading] = useState(false);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      handleNext();
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [currentIndex]);
 
   const handlePrev = () => {
-    setIsFading(true);
-    setTimeout(() => {
-      const prevIndex = (currentIndex - 1 + news.length) % news.length;
-      setCurrentIndex(prevIndex);
-      setCurrentNews(news[prevIndex]);
-      setIsFading(false);
-    }, 300);
+    const prevIndex = (currentIndex - 1 + news.length) % news.length;
+    setCurrentIndex(prevIndex);
+    setCurrentNews(news[prevIndex]);
   };
 
   const handleNext = () => {
-    setIsFading(true);
-    setTimeout(() => {
-      const nextIndex = (currentIndex + 1) % news.length;
-      setCurrentIndex(nextIndex);
-      setCurrentNews(news[nextIndex]);
-      setIsFading(false);
-    }, 300);
+    const nextIndex = (currentIndex + 1) % news.length;
+    setCurrentIndex(nextIndex);
+    setCurrentNews(news[nextIndex]);
   };
 
   return (
@@ -107,15 +106,14 @@ const MainNews = () => {
           alt="bento"
           className={clsx(
             bentoStyle["inverted-radius"],
-            "object-cover h-full transition-opacity duration-400 ease-in-out",
-            isFading ? "opacity-0" : "opacity-100"
+            "object-cover h-full transition-opacity duration-200 ease-in-out",
+            "transition-transform hover:scale-102"
           )}
         />
 
         <div
           className={clsx(
-            "absolute bottom-[20px] left-[20px] max-w-[400px] transition-opacity duration-400 ease-in-out",
-            isFading ? "opacity-0" : "opacity-100"
+            "absolute bottom-[20px] left-[20px] max-w-[400px] transition-opacity duration-200 ease-in-out"
           )}
         >
           <div className="flex flex-col gap-main">
@@ -150,13 +148,12 @@ const MainNews = () => {
 
       <div
         className={clsx(
-          "col-span-2 grid grid-cols-2 grid-rows-2 gap-main transition-opacity duration-400 ease-in-out",
-          isFading ? "opacity-0" : "opacity-100"
+          "col-span-2 grid grid-cols-2 grid-rows-2 gap-main transition-opacity duration-200 ease-in-out"
         )}
       >
         {currentNews.relatedNews.map((relatedNews) => (
           <div
-            className="flex gap-main hover:scale-102 transition-all duration-400 ease-in-out ease-in-out"
+            className="flex gap-main hover:scale-102 transition-all duration-400 ease-in-out"
             key={`main-news-related-${relatedNews.id}`}
           >
             <div className="bg-black size-[90px] rounded-main shrink-0" />
