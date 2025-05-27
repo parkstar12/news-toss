@@ -1,5 +1,6 @@
 import React from "react";
 import CandleChartViewer from "./CandleChartViewer";
+import StockHeader from "./StockHeader";
 
 const StockDetailPage = async ({
   params,
@@ -10,7 +11,7 @@ const StockDetailPage = async ({
 
   return (
     <div className="flex flex-col gap-[20px]">
-      <div>StockDetailPage {code}</div>
+      <StockHeader code={code} />
       <div className="grid grid-cols-6 gap-[20px] w-full">
         <div className="col-span-4 h-[500px] rounded-main shadow-color p-[20px]">
           <CandleChartViewer />
