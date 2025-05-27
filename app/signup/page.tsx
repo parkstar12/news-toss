@@ -8,25 +8,7 @@ import newsTossLogo from "@/public/news-toss-logo.png";
 import RegisterStep1 from "./RegisterStep1";
 import RegisterStep2 from "./RegisterStep2";
 import clsx from "clsx";
-
-export interface UserInfo {
-  name: string;
-  address: {
-    zipCode: string;
-    address: string;
-    addressDetail: string;
-  };
-  phone: {
-    countryCode: string;
-    phoneNumber1: string;
-    phoneNumber2: string;
-  };
-  email: string;
-  id: string;
-  password: string;
-  passwordConfirm: string;
-  agree: boolean;
-}
+import { UserInfo } from "@/type/userInfo";
 
 const SignUpPage = () => {
   const [isOpen, setIsOpen] = useState(true);
@@ -35,9 +17,9 @@ const SignUpPage = () => {
   const [userInfo, setUserInfo] = useState<UserInfo>({
     name: "",
     address: {
-      zipCode: "",
+      zipcode: "",
       address: "",
-      addressDetail: "",
+      detail: "",
     },
     phone: {
       countryCode: "",
@@ -62,8 +44,8 @@ const SignUpPage = () => {
         isClickOutsideClose={false}
         // hasCloseButton={false}
       >
-        <div className="flex items-center w-full gap-[40px]">
-          <div className="flex flex-col gap-[40px] items-center">
+        <div className="grid grid-cols-[auto_1fr] gap-[40px]">
+          <div className="flex flex-col gap-[40px] items-center justify-center px-[40px]">
             <div className="relative size-[200px]">
               <Image
                 src={newsTossLogo}
@@ -76,9 +58,9 @@ const SignUpPage = () => {
               <p className="text-lg font-bold text-main-dark-gray">
                 실시간 주식 투자 AI 애널리스트
               </p>
-              <p className="text-sm text-main-dark-gray break-keep">
-                과거 유사 사건 뉴스 및 증권사 리포트 기반 주식 투자 판단 보조
-                시스템
+              <p className="text-sm text-main-dark-gray break-keep flex flex-col">
+                <span>과거 유사 사건 뉴스 및 증권사 리포트 기반</span>
+                <span>주식 투자 판단 보조시스템</span>
               </p>
             </div>
           </div>
@@ -86,10 +68,10 @@ const SignUpPage = () => {
             <h2 className="text-lg font-bold text-main-dark-gray">
               회원가입 {step}/2
             </h2>
-            <div className="relative w-[500px] h-[500px] overflow-hidden">
+            <div className="relative min-w-[400px] min-h-[500px]">
               <div
                 className={clsx(
-                  "absolute top-0 left-0 w-full h-full transition-transform duration-500 p-main",
+                  "absolute top-0 left-0 w-full h-full transition-transform duration-500",
                   step === 1 ? "translate-x-0" : "-translate-x-full"
                 )}
                 style={{ zIndex: step === 1 ? 2 : 1 }}

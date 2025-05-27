@@ -12,7 +12,11 @@ const EditInfo = () => {
   const [isOpenAddressModal, setIsOpenAddressModal] = useState(false);
   const [info, setInfo] = useState<UserInfo>({
     name: "",
-    phone: "",
+    phone: {
+      countryCode: "",
+      phoneNumber1: "",
+      phoneNumber2: "",
+    },
     email: "",
     address: {
       zipcode: "",
@@ -56,8 +60,21 @@ const EditInfo = () => {
             <Input
               type="text"
               placeholder="휴대폰번호"
-              value={info.phone}
-              onChange={(e) => setInfo({ ...info, phone: e.target.value })}
+              value={
+                info.phone.countryCode +
+                info.phone.phoneNumber1 +
+                info.phone.phoneNumber2
+              }
+              onChange={(e) =>
+                setInfo({
+                  ...info,
+                  phone: {
+                    countryCode: e.target.value.slice(0, 3),
+                    phoneNumber1: e.target.value.slice(3, 7),
+                    phoneNumber2: e.target.value.slice(7, 11),
+                  },
+                })
+              }
             />
           </div>
           <div className="flex flex-col gap-[5px]">

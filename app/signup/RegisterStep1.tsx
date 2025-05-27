@@ -1,12 +1,9 @@
 "use client";
 
 import Input from "@/components/ui/shared/Input";
-import React, { useState } from "react";
-import { UserInfo } from "./page";
-import DaumPostcode from "react-daum-postcode";
-import Modal from "@/components/ui/Modal";
-
-const AddressModal = Modal;
+import React, { useState, useRef } from "react";
+import AddressModal from "@/components/ui/shared/AddressModal";
+import { UserInfo } from "@/type/userInfo";
 
 interface RegisterStep1Props {
   setStep: (step: number) => void;
@@ -14,42 +11,16 @@ interface RegisterStep1Props {
   setUserInfo: (userInfo: UserInfo) => void;
 }
 
-const themeObj = {
-  bgColor: "", // 바탕 배경색
-  searchBgColor: "", // 검색창 배경색
-  contentBgColor: "", // 본문 배경색(검색결과,결과없음,첫화면,검색서제스트)
-  pageBgColor: "", // 페이지 배경색
-  textColor: "", // 기본 글자색
-  queryTextColor: "", // 검색창 글자색
-  postcodeTextColor: "#3485fa", // 우편번호 글자색
-  emphTextColor: "#3485fa", // 강조 글자색
-  outlineColor: "", // 테두리
-};
-
 const RegisterStep1 = ({
   setStep,
   userInfo,
   setUserInfo,
 }: RegisterStep1Props) => {
   const [isOpenAddressModal, setIsOpenAddressModal] = useState(false);
-
-  const handleAddressComplete = (data: {
-    zipCode: string;
-    address: string;
-  }) => {
-    setIsOpenAddressModal(false);
-    setUserInfo({
-      ...userInfo,
-      address: {
-        zipCode: data.zipCode,
-        address: data.address,
-        addressDetail: "",
-      },
-    });
-  };
+  const phone2Ref = useRef<HTMLInputElement>(null);
 
   return (
-    <>
+    <div className="flex flex-col gap-main size-full justify-between">
       <div className="flex flex-col gap-[5px]">
         <label htmlFor="name">이름</label>
         <Input
@@ -61,11 +32,11 @@ const RegisterStep1 = ({
       </div>
       <div className="flex flex-col gap-[5px]">
         <label htmlFor="address">주소</label>
-        <div className="flex gap-main">
+        <div className="flex gap-[5px]">
           <Input
             placeholder="우편번호"
             disabled
-            value={userInfo.address.zipCode}
+            value={userInfo.address.zipcode}
           />
           <button
             className="bg-main-blue text-white px-4 py-2 rounded-main text-sm w-full"
@@ -77,11 +48,11 @@ const RegisterStep1 = ({
         <Input placeholder="주소" disabled value={userInfo.address.address} />
         <Input
           placeholder="상세 주소"
-          value={userInfo.address.addressDetail}
+          value={userInfo.address.detail}
           onChange={(e) =>
             setUserInfo({
               ...userInfo,
-              address: { ...userInfo.address, addressDetail: e.target.value },
+              address: { ...userInfo.address, detail: e.target.value },
             })
           }
         />
@@ -89,7 +60,7 @@ const RegisterStep1 = ({
       <div className="flex flex-col gap-[5px]">
         <label htmlFor="phone">전화번호</label>
         <div className="flex gap-main items-center">
-          <select>
+          <select className="border border-main-light-gray rounded-main p-main">
             <option value="1">010</option>
             <option value="2">011</option>
             <option value="3">016</option>
@@ -97,69 +68,84 @@ const RegisterStep1 = ({
             <option value="5">018</option>
             <option value="6">019</option>
           </select>
-          <span>-</span>
+
           <Input
             value={userInfo.phone.phoneNumber1}
-            onChange={(e) =>
+            type="text"
+            inputMode="numeric"
+            pattern="[0-9]*"
+            maxLength={4}
+            onChange={(e) => {
+              const onlyNums = e.target.value.replace(/[^0-9]/g, "");
+              const limited = onlyNums.slice(0, 4);
               setUserInfo({
                 ...userInfo,
-                phone: { ...userInfo.phone, phoneNumber1: e.target.value },
-              })
-            }
+                phone: { ...userInfo.phone, phoneNumber1: limited },
+              });
+              if (limited.length === 4) {
+                phone2Ref.current?.focus();
+              }
+            }}
           />
           <span>-</span>
           <Input
+            ref={phone2Ref}
             value={userInfo.phone.phoneNumber2}
-            onChange={(e) =>
+            type="text"
+            inputMode="numeric"
+            pattern="[0-9]*"
+            maxLength={4}
+            onChange={(e) => {
+              const onlyNums = e.target.value.replace(/[^0-9]/g, "");
+              const limited = onlyNums.slice(0, 4);
               setUserInfo({
                 ...userInfo,
-                phone: { ...userInfo.phone, phoneNumber2: e.target.value },
-              })
-            }
+                phone: { ...userInfo.phone, phoneNumber2: limited },
+              });
+            }}
           />
         </div>
       </div>
       <div className="flex flex-col gap-[5px]">
         <label htmlFor="email">이메일</label>
         <Input
+          type="email"
           placeholder="이메일"
           value={userInfo.email}
           onChange={(e) => setUserInfo({ ...userInfo, email: e.target.value })}
         />
       </div>
       <button
-        className="bg-main-blue text-white px-4 py-2 rounded-main text-sm"
+        className="bg-main-blue text-white px-4 py-2 rounded-main text-sm justify-self-end self-end w-fit"
         onClick={() => setStep(2)}
+        disabled={
+          !userInfo.name ||
+          !userInfo.address.zipcode ||
+          !userInfo.address.address ||
+          !userInfo.phone.phoneNumber1 ||
+          !userInfo.phone.phoneNumber2 ||
+          !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(userInfo.email)
+        }
       >
         다음
       </button>
 
       <AddressModal
         isOpen={isOpenAddressModal}
-        onClose={() => {
-          setIsOpenAddressModal(false);
-          // handleAddressComplete();
-        }}
-        hasCloseButton={false}
-      >
-        <DaumPostcode
-          onComplete={(data) =>
-            handleAddressComplete({
-              zipCode: data.zonecode,
+        onClose={() => setIsOpenAddressModal(false)}
+        handleAddress={(data) => {
+          setUserInfo({
+            ...userInfo,
+            address: {
+              zipcode: data.zonecode,
               address: data.address,
-            })
-          }
-          style={{ width: "400px", height: "500px" }}
-          theme={themeObj}
-        />
-        {/* <button
-          className="w-full bg-main-blue text-white px-4 py-2 rounded-main text-sm"
-          onClick={() => setIsOpenAddressModal(false)}
-        >
-          주소 선택
-        </button> */}
-      </AddressModal>
-    </>
+              detail: "",
+            },
+          });
+          setIsOpenAddressModal(false);
+        }}
+      />
+    </div>
   );
 };
 
