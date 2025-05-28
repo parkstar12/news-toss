@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@hello-pangea/dnd": "^18.0.1",
     "chart.js": "^4.4.9",
     "clsx": "^2.1.1",
     "lightweight-charts": "^5.0.7",

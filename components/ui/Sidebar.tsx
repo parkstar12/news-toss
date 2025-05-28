@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 import { useSidebarStore } from "@/store/sidebarStore";
 import clsx from "clsx";
 import RecentView from "./RecentView";
+import InterestStock from "./InterestStock";
 
 type Category = "내 투자" | "관심" | "최근 본" | null;
 
@@ -37,6 +38,7 @@ const Sidebar = () => {
         )}
       >
         {category === "최근 본" && <RecentView />}
+        {category === "관심" && <InterestStock />}
       </div>
 
       <div className="flex flex-col gap-[20px] shrink-0 items-center px-[10px]">
