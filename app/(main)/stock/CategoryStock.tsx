@@ -1,107 +1,307 @@
 "use client";
 
 import clsx from "clsx";
-import { ChevronLeft, ChevronRight, Heart } from "lucide-react";
-import React, { useState } from "react";
-import categoryList from "./category";
+import {
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  ChevronUp,
+  Heart,
+} from "lucide-react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Scrab from "@/components/ui/shared/Scrab";
 
-const TestStock = () => {
-  const [selectedCategory, setSelectedCategory] = useState<string>("식품");
+interface CategoryStockProps {
+  categoryData: string[];
+}
+
+const CATEGORY_GROUPS = {
+  제조업: [
+    "건설",
+    "금속",
+    "제조",
+    "기계·장비",
+    "의료·정밀기기",
+    "화학",
+    "비금속",
+    "기타제조",
+    "종이·목재",
+    "전기·전자",
+    "출판·매체복제",
+  ],
+  서비스업: [
+    "일반서비스",
+    "IT 서비스",
+    "오락·문화",
+    "리츠",
+    "부동산",
+    "외국증권",
+  ],
+  금융업: ["금융", "보험", "증권"],
+  "유통 및 소비재": ["유통", "음식료·담배", "섬유·의류"],
+  "에너지·인프라": [
+    "전기·가스",
+    "인프라투용",
+    "운송·창고",
+    "운송장비·부품",
+    "통신",
+  ],
+  "바이오·제약": ["제약"],
+  기타: ["기타"],
+};
+
+const CategoryStock = ({ categoryData }: CategoryStockProps) => {
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [categoryStocks, setCategoryStocks] = useState<{
+    totalPages: number;
+    stocks: { stockName: string; stockCode: string }[];
+  }>({ totalPages: 0, stocks: [] });
+  const [page, setPage] = useState(1);
+  const totalPage = categoryStocks?.totalPages || 1;
   const router = useRouter();
+  const [openGroup, setOpenGroup] = useState<string | null>(null);
 
-  const handleClickStock = (code: string) => {
-    router.push(`/stock/${code}`);
+  useEffect(() => {
+    if (categoryData.length > 0) {
+      setSelectedCategory(categoryData[0]);
+    }
+  }, [categoryData]);
+
+  useEffect(() => {
+    if (selectedCategory) {
+      const fetchStocks = async () => {
+        try {
+          const response = await fetch(
+            `/api/v1/stocks/categories/${selectedCategory}?page=${page}`
+          );
+          const data = await response.json();
+          setCategoryStocks(data.data);
+        } catch (error) {
+          console.error("Error fetching stocks:", error);
+        }
+      };
+      fetchStocks();
+    }
+  }, [selectedCategory, page]);
+
+  // 페이지 변경 핸들러
+  const handlePageChange = (newPage: number) => {
+    if (newPage < 1 || newPage > totalPage) return;
+    setPage(newPage);
   };
+
+  // 카테고리 변경 시 page 초기화
+  const handleCategoryClick = (category: string) => {
+    setSelectedCategory(category);
+    setPage(1);
+  };
+
+  // 페이지네이션 버튼 생성 함수
+  function getPagination(current: number, total: number) {
+    const delta = 1;
+    const range = [];
+    const rangeWithDots = [];
+    let l: number | undefined = undefined;
+
+    for (let i = 1; i <= total; i++) {
+      if (
+        i === 1 ||
+        i === total ||
+        (i >= current - delta && i <= current + delta)
+      ) {
+        range.push(i);
+      }
+    }
+
+    for (let i of range) {
+      if (l !== undefined) {
+        if (i - l !== 1) {
+          rangeWithDots.push("...");
+        }
+      }
+      rangeWithDots.push(i);
+      l = i;
+    }
+
+    return rangeWithDots;
+  }
+
+  // categoryData를 그룹별로 분류
+  function getGroupedCategories(categoryData: string[]) {
+    const grouped: Record<string, string[]> = {};
+    const used = new Set<string>();
+
+    Object.entries(CATEGORY_GROUPS).forEach(([group, cats]) => {
+      grouped[group] = cats.filter((cat) => categoryData.includes(cat));
+      cats.forEach((cat) => used.add(cat));
+    });
+
+    // 그룹에 속하지 않은 카테고리 처리 (옵션)
+    const etc = categoryData.filter((cat) => !used.has(cat));
+    if (etc.length > 0) {
+      grouped["기타"] = etc;
+    }
+
+    return grouped;
+  }
+
+  const handleGroupClick = (group: string) => {
+    setOpenGroup((prev) => (prev === group ? null : group));
+  };
+
+  function getCategoryGroup(category: string | null) {
+    if (!category) return "";
+    return (
+      Object.entries(CATEGORY_GROUPS).find(([group, cats]) =>
+        cats.includes(category)
+      )?.[0] || ""
+    );
+  }
 
   return (
     <div className="p-main flex flex-col gap-main">
       <h2 className="text-xl font-bold">카테고리</h2>
       <div className="grid grid-cols-3 gap-main">
-        {/* <div className="col-span-1">
-          <div className="flex flex-wrap gap-main">
-            {categoryList.map((item) => (
-              <button
-                key={item}
-                className={clsx(
-                  "text-main-blue rounded-main p-main flex items-center h-fit",
-                  selectedCategory.includes(item)
-                    ? "bg-main-blue text-white hover:bg-main-blue/90"
-                    : "bg-main-blue/20 text-main-blue hover:bg-main-blue/30"
-                )}
-                onClick={() => setSelectedCategory(item)}
-              >
-                <span className="px-main">{item}</span>
-              </button>
-            ))}
-          </div>
-        </div> */}
-        <div className="col-span-3 rounded-main size-full relative overflow-y-auto">
-          <table className="w-full">
-            <thead className="bg-main-light-gray sticky top-0">
-              <tr>
-                <th className="py-main rounded-l-main text-center px-main">
-                  종목명
-                </th>
-                {/* <th>차트</th> */}
-                <th>현재가</th>
-                <th>전일대비</th>
-                <th>등락률</th>
-                <th>거래량</th>
-                <th className="rounded-r-main">시가총액</th>
-              </tr>
-            </thead>
-            <tbody className="text-center">
-              {Array.from({ length: 8 }).map((_, index) => (
-                <tr
-                  key={index}
-                  // onClick={() => handleClickStock("123456")}
-                  className="cursor-pointer"
-                  onClick={() => handleClickStock("123456")}
+        <div className="col-span-1">
+          <div className="flex flex-col gap-2">
+            {Object.entries(getGroupedCategories(categoryData)).map(
+              ([group, cats]) => (
+                <div
+                  key={group}
+                  className={clsx(
+                    "px-main hover:bg-main-blue/10 rounded-main",
+                    openGroup === group && "bg-main-blue/10"
+                  )}
                 >
-                  <td className="p-main flex items-center gap-main">
-                    <Heart size={18} className="text-main-light-gray" />
-                    <span>SK하이닉스</span>
-                    <span className="text-main-dark-gray text-sm">00660</span>
-                    <span className="text-white bg-main-blue px-main py-1 rounded-sm font-bold text-sm">
-                      KOSPI
+                  <button
+                    className="w-full flex justify-between items-center font-semibold py-main group relative"
+                    onClick={() => handleGroupClick(group)}
+                    type="button"
+                  >
+                    <span
+                      className={clsx(
+                        openGroup === group
+                          ? "text-main-blue"
+                          : "text-main-dark-gray"
+                      )}
+                    >
+                      {group}
                     </span>
-                  </td>
-                  {/* <td>
-                <div className="w-full flex justify-center">
-                  <div className="w-[150px] h-[30px]">
-                    <LineChart color="red" />
+                    <span className="absolute top-1/2 -translate-y-1/2 right-0">
+                      <ChevronDown
+                        className={clsx(
+                          openGroup === group
+                            ? "rotate-180 text-main-blue"
+                            : "text-main-dark-gray"
+                        )}
+                        size={20}
+                      />
+                    </span>
+                  </button>
+                  <div
+                    className={clsx(
+                      "transition-all duration-300 overflow-hidden",
+                      openGroup === group
+                        ? "max-h-40 opacity-100"
+                        : "max-h-0 opacity-0"
+                    )}
+                  >
+                    <div className="flex flex-wrap gap-main pb-2">
+                      {cats.map((category) => (
+                        <button
+                          key={category}
+                          className={clsx(
+                            "text-main-blue rounded-main p-main flex items-center h-fit",
+                            selectedCategory === category
+                              ? "bg-main-blue text-white hover:bg-main-blue/90"
+                              : "bg-main-blue/20 text-main-blue hover:bg-main-blue/30"
+                          )}
+                          onClick={() => handleCategoryClick(category)}
+                        >
+                          <span className="px-main">{category}</span>
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 </div>
-              </td> */}
-                  <td className="text-main-red">121,401 </td>
-                  <td>130,401</td>
-                  <td>+5.5(0.3%)</td>
-                  <td>12.5M</td>
-                  <td>428조</td>
-                </tr>
+              )
+            )}
+          </div>
+        </div>
+        <div className="col-span-2 pl-main rounded-main size-full relative flex flex-col gap-main">
+          <div className="text-main-dark-gray flex items-center gap-1 px-main py-2 border-b border-main-light-gray">
+            <span>{getCategoryGroup(selectedCategory)}</span>
+            <ChevronRight size={14} />
+            <span>{selectedCategory}</span>
+          </div>
+
+          <div className="grid grid-cols-2 grid-rows-3">
+            {categoryStocks &&
+              categoryStocks.stocks.map((stock) => (
+                <div
+                  className="w-full flex flex-col justify-around hover:bg-main-blue/10 hover:scale-102 rounded-main transition-all duration-200 ease-in-out p-main gap-[5px] relative group"
+                  key={selectedCategory + stock.stockCode}
+                  onClick={() => router.push(`/stock/${stock.stockCode}`)}
+                >
+                  <div className="flex items-center gap-2 w-full">
+                    <div className="relative">
+                      <Scrab
+                        className="absolute bottom-0 right-[-4px]"
+                        stockCode={stock.stockCode}
+                      />
+                      <div className="bg-black/10 rounded-full size-[40px] shrink-0" />
+                    </div>
+                    <div className="flex flex-col flex-1 truncate text-sm">
+                      <span className="font-bold text-gray-800 truncate w-full">
+                        {stock.stockName}
+                      </span>
+                      <span className="text-main-dark-gray">
+                        {stock.stockCode}
+                      </span>
+                    </div>
+                  </div>
+                  <ChevronRight
+                    className="hidden group-hover:block text-main-blue absolute top-1/2 -translate-y-1/2 right-main"
+                    size={20}
+                  />
+                </div>
               ))}
-            </tbody>
-          </table>
+          </div>
+
           <div className="flex justify-center items-center gap-2 mt-4">
-            <button className="size-[30px] flex items-center justify-center rounded bg-main-light-gray text-main-dark-gray hover:bg-main-blue/10">
-              <ChevronLeft />
+            <button
+              className="size-[30px] rounded-full flex items-center justify-center bg-gray-200 text-gray-700 disabled:opacity-50"
+              onClick={() => handlePageChange(page - 1)}
+              disabled={page === 1}
+            >
+              <ChevronLeft size={20} />
             </button>
-            <button className="size-[30px] flex items-center justify-center rounded bg-main-blue text-white font-bold">
-              1
-            </button>
-            <button className="size-[30px] flex items-center justify-center rounded bg-main-light-gray text-main-dark-gray hover:bg-main-blue/10">
-              2
-            </button>
-            <button className="size-[30px] flex items-center justify-center rounded bg-main-light-gray text-main-dark-gray hover:bg-main-blue/10">
-              3
-            </button>
-            <span className="mx-2 text-main-dark-gray">...</span>
-            <button className="size-[30px] flex items-center justify-center rounded bg-main-light-gray text-main-dark-gray hover:bg-main-blue/10">
-              10
-            </button>
-            <button className="size-[30px] flex items-center justify-center rounded bg-main-light-gray text-main-dark-gray hover:bg-main-blue/10">
-              <ChevronRight />
+            {getPagination(page, totalPage).map((item, idx) =>
+              item === "..." ? (
+                <span key={`ellipsis-${idx}`} className="px-2 text-gray-400">
+                  ...
+                </span>
+              ) : (
+                <button
+                  key={`page-${item}`}
+                  className={`size-[30px] rounded-full flex items-center justify-center ${
+                    page === item
+                      ? "bg-main-blue text-white"
+                      : "bg-gray-100 text-gray-700"
+                  }`}
+                  onClick={() => handlePageChange(Number(item))}
+                >
+                  {item}
+                </button>
+              )
+            )}
+            <button
+              className="size-[30px] rounded-full flex items-center justify-center bg-gray-200 text-gray-700 disabled:opacity-50"
+              onClick={() => handlePageChange(page + 1)}
+              disabled={page === totalPage}
+            >
+              <ChevronRight size={20} />
             </button>
           </div>
         </div>
@@ -110,4 +310,4 @@ const TestStock = () => {
   );
 };
 
-export default TestStock;
+export default CategoryStock;

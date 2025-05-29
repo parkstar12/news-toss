@@ -5,13 +5,13 @@ const UpPrice = ({
   change,
   changeRate,
 }: {
-  change?: number;
+  change: number | string;
   changeRate?: number;
 }) => {
   return (
     <span className="text-main-red font-medium flex items-center gap-1">
-      <Triangle fill="#f04251" className="text-main-red" size={12} /> {change}{" "}
-      {changeRate && `(${changeRate}%)`}
+      <Triangle fill="#f04251" className="text-main-red" size={12} />
+      {change} {changeRate && `(${changeRate}%)`}
     </span>
   );
 };

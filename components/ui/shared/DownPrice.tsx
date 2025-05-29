@@ -5,7 +5,7 @@ const DownPrice = ({
   change,
   changeRate,
 }: {
-  change?: number;
+  change?: number | string;
   changeRate?: number;
 }) => {
   return (
