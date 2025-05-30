@@ -7,7 +7,6 @@ import { toast } from "react-toastify";
 import Input from "../Input";
 import Link from "next/link";
 import useOutsideClick from "@/hooks/useOutsideClick";
-import { JwtToken } from "@/type/jwt";
 
 const LoginForm = () => {
   const [isOpenForm, setIsOpenForm] = useState(false);

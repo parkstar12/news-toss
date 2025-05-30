@@ -9,6 +9,7 @@ import UserInfo from "./UserInfo";
 import { revalidatePath } from "next/cache";
 import LogoutForm from "./LogoutForm";
 import Navigation from "./Navigation";
+import WithdrawalForm from "./WithdrawalForm";
 
 const Header = async () => {
   const token = await getJwtToken();
@@ -18,7 +19,6 @@ const Header = async () => {
 
     const cookieStore = await cookies();
     cookieStore.delete("accessToken");
-    revalidatePath("/home");
   };
 
   return (
@@ -50,6 +50,7 @@ const Header = async () => {
         {token && (
           <UserInfo token={token}>
             <LogoutForm action={handleLogout} />
+            <WithdrawalForm action={handleLogout} token={token} />
           </UserInfo>
         )}
       </div>

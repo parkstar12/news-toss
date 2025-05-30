@@ -122,8 +122,24 @@ const RegisterStep2 = ({
     });
 
     if (res.ok) {
-      toast.success("회원가입이 완료되었습니다", { delay: 500 });
-      router.push("/home");
+      const res = await fetch(`/api/auth/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          credentials: "include",
+        },
+        body: JSON.stringify({
+          account: userInfo.id,
+          password: userInfo.password,
+        }),
+      });
+
+      if (res.ok) {
+        toast.success("회원가입이 완료되었습니다", { delay: 500 });
+        router.push("/home");
+      } else {
+        toast.error("로그인에 실패했습니다");
+      }
     } else {
       toast.error("회원가입에 실패했습니다");
     }
