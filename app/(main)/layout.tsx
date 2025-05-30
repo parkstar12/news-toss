@@ -1,7 +1,7 @@
 import Sidebar from "@/components/ui/Sidebar";
 import React from "react";
-import Header from "@/components/ui/shared/Header";
 import Footer from "@/components/ui/shared/Footer";
+import Header from "@/components/ui/shared/header/Header";
 
 export default function MainLayout({
   children,
@@ -18,7 +18,6 @@ export default function MainLayout({
             id="main-layout"
             className="flex-1 overflow-x-auto overflow-y-scroll pt-[100px] flex flex-col justify-between"
           >
-            {/* <div className="min-w-main-max w-full">{children}</div> */}
             <div className="w-full">{children}</div>
             <Footer />
           </div>

@@ -11,18 +11,16 @@ import {
   ArrowRight,
 } from "lucide-react";
 import Image from "next/image";
-import { Button } from "./components/ui/button";
-import { Badge } from "./components/ui/badge";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "./components/ui/card";
-import Header from "@/components/ui/shared/Header";
+// import {
+//   Card,
+//   CardContent,
+//   CardDescription,
+//   CardFooter,
+//   CardHeader,
+//   CardTitle,
+// } from "./components/ui/card";
 import Footer from "@/components/ui/shared/Footer";
+// import Header from "@/components/ui/shared/header/Header";
 
 export default function LandingPage() {
   // 4개 섹션 기준, 필요시 개수 조정
@@ -50,9 +48,7 @@ export default function LandingPage() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <div className="sticky top-0 z-50 w-full">
-        <Header />
-      </div>
+      <div className="sticky top-0 z-50 w-full">{/* <Header /> */}</div>
 
       <main className="flex-1">
         {/* Hero Section */}
@@ -99,7 +95,7 @@ export default function LandingPage() {
           <div className="container px-4 md:px-6">
             <div className="flex flex-col items-center justify-center space-y-4 text-center">
               <div className="space-y-2">
-                <Badge className="bg-gray-200 text-gray-700">Features</Badge>
+                {/* <Badge className="bg-gray-200 text-gray-700">Features</Badge> */}
                 <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">
                   Everything you need to succeed
                 </h2>
@@ -183,9 +179,9 @@ export default function LandingPage() {
           <div className="container px-4 md:px-6">
             <div className="flex flex-col items-center justify-center space-y-4 text-center">
               <div className="space-y-2">
-                <Badge className="bg-gray-200 text-gray-700">
+                {/* <Badge className="bg-gray-200 text-gray-700">
                   Testimonials
-                </Badge>
+                </Badge> */}
                 <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">
                   Loved by teams worldwide
                 </h2>
@@ -195,7 +191,7 @@ export default function LandingPage() {
                 </p>
               </div>
             </div>
-            <div className="mx-auto grid max-w-5xl items-center gap-6 py-12 lg:grid-cols-3">
+            {/* <div className="mx-auto grid max-w-5xl items-center gap-6 py-12 lg:grid-cols-3">
               <Card>
                 <CardHeader>
                   <div className="flex items-center space-x-1">
@@ -293,7 +289,7 @@ export default function LandingPage() {
                   </div>
                 </CardFooter>
               </Card>
-            </div>
+            </div> */}
           </div>
         </section>
 
@@ -307,7 +303,7 @@ export default function LandingPage() {
           <div className="container px-4 md:px-6">
             <div className="flex flex-col items-center justify-center space-y-4 text-center">
               <div className="space-y-2">
-                <Badge className="bg-gray-200 text-gray-700">Pricing</Badge>
+                {/* <Badge className="bg-gray-200 text-gray-700">Pricing</Badge> */}
                 <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">
                   Simple, transparent pricing
                 </h2>
@@ -317,7 +313,7 @@ export default function LandingPage() {
                 </p>
               </div>
             </div>
-            <div className="mx-auto grid max-w-5xl items-center gap-6 py-12 lg:grid-cols-3">
+            {/* <div className="mx-auto grid max-w-5xl items-center gap-6 py-12 lg:grid-cols-3">
               <Card>
                 <CardHeader>
                   <CardTitle>Starter</CardTitle>
@@ -447,7 +443,7 @@ export default function LandingPage() {
                   </Button>
                 </CardFooter>
               </Card>
-            </div>
+            </div> */}
           </div>
         </section>
 
@@ -465,13 +461,13 @@ export default function LandingPage() {
                 </p>
               </div>
               <div className="flex flex-col gap-2 min-[400px]:flex-row">
-                <Button className="h-12 px-8 text-white bg-blue-600 hover:bg-blue-700 rounded">
+                {/* <Button className="h-12 px-8 text-white bg-blue-600 hover:bg-blue-700 rounded">
                   Start Free Trial
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
                 <Button className="h-12 px-8 border border-gray-300 rounded bg-white text-gray-700 hover:bg-gray-100">
                   Schedule Demo
-                </Button>
+                </Button> */}
               </div>
               <div className="flex items-center space-x-4 text-sm text-muted-foreground">
                 <div className="flex items-center space-x-1">

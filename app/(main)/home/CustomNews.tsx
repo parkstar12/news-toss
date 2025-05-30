@@ -1,11 +1,14 @@
 import React from "react";
 import { Clock } from "lucide-react";
+import { JwtToken } from "@/type/jwt";
 
-const CustomNews = () => {
+const CustomNews = ({ token }: { token: JwtToken | null }) => {
+  if (!token) return null;
+
   return (
     <div className="flex flex-col gap-main">
       <h2 className="text-2xl font-bold">
-        <b className="text-main-blue">{"한예은"}</b>님을 위한 맞춤 뉴스
+        <b className="text-main-blue">{token.memberName}</b>님을 위한 맞춤 뉴스
       </h2>
       <div className="grid grid-cols-2 gap-x-main">
         <div className="col-span-2 grid grid-cols-4 gap-main mb-[20px]">

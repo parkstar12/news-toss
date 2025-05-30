@@ -1,23 +1,13 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import localFont from "next/font/local";
+import "./globals.css";
+import { ToastContainer } from "react-toastify";
 
 const pretendard = localFont({
   src: "../public/fonts/PretendardVariable.woff2",
   display: "swap",
   weight: "45 920",
   variable: "--font-pretendard",
-});
-import "./globals.css";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
@@ -46,7 +36,16 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="kr">
-      <body className={`${pretendard.variable} antialiased`}>{children}</body>
+      <body className={`${pretendard.variable} antialiased`}>
+        <ToastContainer
+          position="top-center"
+          autoClose={8000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+        />
+        {children}
+      </body>
     </html>
   );
 }

@@ -4,6 +4,7 @@ import Input from "@/components/ui/shared/Input";
 import React, { useState, useRef } from "react";
 import AddressModal from "@/components/ui/shared/AddressModal";
 import { UserInfo } from "@/type/userInfo";
+import { toast } from "react-toastify";
 
 interface RegisterStep1Props {
   setStep: (step: number) => void;
@@ -18,6 +19,35 @@ const RegisterStep1 = ({
 }: RegisterStep1Props) => {
   const [isOpenAddressModal, setIsOpenAddressModal] = useState(false);
   const phone2Ref = useRef<HTMLInputElement>(null);
+
+  const handlePhoneContryCode = (code: string) => {
+    setUserInfo({
+      ...userInfo,
+      phone: { ...userInfo.phone, countryCode: code },
+    });
+  };
+
+  const handleNext = () => {
+    if (
+      !userInfo.name ||
+      !userInfo.address.zipcode ||
+      !userInfo.address.address ||
+      !userInfo.phone.phoneNumber1 ||
+      !userInfo.phone.phoneNumber2 ||
+      !userInfo.email
+    ) {
+      toast.error("입력되지 않은 항목이 있습니다");
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(userInfo.email)) {
+      toast.error("이메일 형식이 올바르지 않습니다");
+      return;
+    }
+
+    setStep(2);
+
+    console.log(userInfo);
+  };
 
   return (
     <div className="flex flex-col gap-main size-full justify-between">
@@ -61,12 +91,24 @@ const RegisterStep1 = ({
         <label htmlFor="phone">전화번호</label>
         <div className="flex gap-main items-center">
           <select className="border border-main-light-gray rounded-main p-main">
-            <option value="1">010</option>
-            <option value="2">011</option>
-            <option value="3">016</option>
-            <option value="4">017</option>
-            <option value="5">018</option>
-            <option value="6">019</option>
+            <option value="1" onClick={() => handlePhoneContryCode("010")}>
+              010
+            </option>
+            <option value="2" onClick={() => handlePhoneContryCode("011")}>
+              011
+            </option>
+            <option value="3" onClick={() => handlePhoneContryCode("016")}>
+              016
+            </option>
+            <option value="4" onClick={() => handlePhoneContryCode("017")}>
+              017
+            </option>
+            <option value="5" onClick={() => handlePhoneContryCode("018")}>
+              018
+            </option>
+            <option value="6" onClick={() => handlePhoneContryCode("019")}>
+              019
+            </option>
           </select>
 
           <Input
@@ -117,15 +159,7 @@ const RegisterStep1 = ({
       </div>
       <button
         className="bg-main-blue text-white px-4 py-2 rounded-main text-sm justify-self-end self-end w-fit"
-        onClick={() => setStep(2)}
-        disabled={
-          !userInfo.name ||
-          !userInfo.address.zipcode ||
-          !userInfo.address.address ||
-          !userInfo.phone.phoneNumber1 ||
-          !userInfo.phone.phoneNumber2 ||
-          !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(userInfo.email)
-        }
+        onClick={handleNext}
       >
         다음
       </button>

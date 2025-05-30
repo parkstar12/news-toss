@@ -22,7 +22,7 @@ const SignUpPage = () => {
       detail: "",
     },
     phone: {
-      countryCode: "",
+      countryCode: "010",
       phoneNumber1: "",
       phoneNumber2: "",
     },

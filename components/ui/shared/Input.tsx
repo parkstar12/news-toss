@@ -35,6 +35,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
             "w-full p-main bg-transparent border border-main-light-gray rounded-main focus:border-main-blue/50 outline-none",
             className
           )}
+          tabIndex={1}
         />
       </div>
     );

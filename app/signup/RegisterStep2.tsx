@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 import clsx from "clsx";
 import { UserInfo } from "@/type/userInfo";
 import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
 
 interface RegisterStep2Props {
   setStep: (step: number) => void;
@@ -19,6 +20,7 @@ const RegisterStep2 = ({
 }: RegisterStep2Props) => {
   const [passwordStrength, setPasswordStrength] = useState(0);
   const [passwordStrengthText, setPasswordStrengthText] = useState("매우약함");
+  const [isIdAvailable, setIsIdAvailable] = useState<boolean | null>(null);
 
   const router = useRouter();
 
@@ -53,6 +55,80 @@ const RegisterStep2 = ({
     }
   }, [userInfo.password]);
 
+  useEffect(() => {
+    setIsIdAvailable(null);
+  }, [userInfo.id]);
+
+  const checkUserId = async () => {
+    const res = await fetch(`/api/auth/duplicate`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ account: userInfo.id }),
+    });
+
+    if (res.ok) {
+      setIsIdAvailable(true);
+    } else {
+      setIsIdAvailable(false);
+    }
+  };
+
+  const handleSignup = async () => {
+    if (isIdAvailable === null) {
+      toast.error("아이디 중복확인을 해주세요");
+      return;
+    }
+
+    if (!userInfo.agree) {
+      toast.error("필수 약관에 동의해주세요");
+      return;
+    }
+
+    if (userInfo.password !== userInfo.passwordConfirm) {
+      toast.error("비밀번호가 일치하지 않습니다");
+      return;
+    }
+
+    if (passwordStrength < 4) {
+      toast.error("더 강력한 비밀번호로 설정해주세요");
+      return;
+    }
+
+    if (!userInfo.id || !userInfo.password || !userInfo.passwordConfirm) {
+      toast.error("입력되지 않은 항목이 있습니다");
+      return;
+    }
+
+    const res = await fetch(`/api/auth/register`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        account: userInfo.id,
+        password: userInfo.password,
+        name: userInfo.name,
+        phoneNumber: `${userInfo.phone.countryCode}-${userInfo.phone.phoneNumber1}-${userInfo.phone.phoneNumber2}`,
+        email: userInfo.email,
+        fgOffset: "",
+        address: {
+          zipcode: userInfo.address.zipcode,
+          address: userInfo.address.address,
+          addressDetail: userInfo.address.detail,
+        },
+      }),
+    });
+
+    if (res.ok) {
+      toast.success("회원가입이 완료되었습니다", { delay: 500 });
+      router.push("/home");
+    } else {
+      toast.error("회원가입에 실패했습니다");
+    }
+  };
+
   return (
     <div className="flex flex-col gap-main size-full justify-between">
       <div className="flex flex-col gap-main">
@@ -66,20 +142,29 @@ const RegisterStep2 = ({
             />
             <button
               className="bg-main-blue text-white rounded-main w-fit shrink-0 px-4 py-2 text-sm"
-              // onClick={() => setIsOpenAddressModal(true)}
+              onClick={checkUserId}
             >
               중복 확인
             </button>
           </div>
-          <span className="text-sm text-main-blue ml-main">
-            사용가능한 아이디입니다
-          </span>
+
+          {isIdAvailable === true && (
+            <span className="text-sm text-main-blue ml-main">
+              사용가능한 아이디입니다
+            </span>
+          )}
+          {isIdAvailable === false && (
+            <span className="text-sm text-main-red ml-main">
+              사용할 수 없는 아이디입니다
+            </span>
+          )}
         </div>
         <div className="flex flex-col gap-[5px]">
           <label htmlFor="password">비밀번호</label>
           <Input
             placeholder="비밀번호"
             type="password"
+            hasShowButton
             value={userInfo.password}
             onChange={(e) =>
               setUserInfo({ ...userInfo, password: e.target.value })
@@ -90,33 +175,34 @@ const RegisterStep2 = ({
             8~20자)
           </span>
 
-          <div className="flex gap-main">
+          <div className="flex gap-main mb-main">
             <div
               className={clsx(
                 "w-full h-[5px] rounded-full",
-                passwordStrength >= 1 ? "bg-main-blue" : "bg-main-light-gray"
+                passwordStrength >= 1 ? "bg-red-500/60" : "bg-main-light-gray"
               )}
             />
             <div
               className={clsx(
                 "w-full h-[5px] rounded-full",
-                passwordStrength >= 2 ? "bg-main-blue" : "bg-main-light-gray"
+                passwordStrength >= 2
+                  ? "bg-yellow-400/60"
+                  : "bg-main-light-gray"
               )}
             />
             <div
               className={clsx(
                 "w-full h-[5px] rounded-full",
-                passwordStrength >= 3 ? "bg-main-blue" : "bg-main-light-gray"
+                passwordStrength >= 3 ? "bg-green-400/60" : "bg-main-light-gray"
               )}
             />
             <div
               className={clsx(
                 "w-full h-[5px] rounded-full",
-                passwordStrength >= 4 ? "bg-main-blue" : "bg-main-light-gray"
+                passwordStrength >= 4 ? "bg-blue-500/60" : "bg-main-light-gray"
               )}
             />
           </div>
-          {/* <span className="text-sm text-main-dark-gray"></span> */}
         </div>
         <div className="flex flex-col gap-[5px]">
           <label htmlFor="passwordConfirm">비밀번호 확인</label>
@@ -128,6 +214,18 @@ const RegisterStep2 = ({
               setUserInfo({ ...userInfo, passwordConfirm: e.target.value })
             }
           />
+          {userInfo.passwordConfirm &&
+            userInfo.password !== userInfo.passwordConfirm && (
+              <span className="text-sm text-main-red ml-main">
+                비밀번호가 일치하지 않습니다
+              </span>
+            )}
+
+          {userInfo.password === userInfo.passwordConfirm && (
+            <span className="text-sm text-main-blue ml-main">
+              비밀번호가 일치합니다
+            </span>
+          )}
         </div>
         <div className="flex gap-main items-baseline">
           <input
@@ -154,17 +252,7 @@ const RegisterStep2 = ({
         </button>
         <button
           className="bg-main-blue text-white px-4 py-2 rounded-main text-sm w-fit"
-          // 실제 회원가입 처리 로직 필요
-          disabled={
-            !userInfo.id ||
-            !userInfo.password ||
-            !userInfo.passwordConfirm ||
-            !userInfo.agree
-          }
-          onClick={() => {
-            console.log(userInfo);
-            router.push("/home");
-          }}
+          onClick={handleSignup}
         >
           회원가입
         </button>

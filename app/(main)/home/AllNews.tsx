@@ -3,11 +3,12 @@
 import { Clock } from "lucide-react";
 import React, { useState } from "react";
 import NewsModal from "./NewsModal";
+import { JwtToken } from "@/type/jwt";
 
-const AllNews = () => {
+const AllNews = ({ token }: { token: JwtToken | null }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [newsList, setNewsList] = useState(
-    Array.from({ length: 9 }).map((_, index) => ({
+    Array.from({ length: token ? 9 : 15 }).map((_, index) => ({
       title: "주요 기업들, 2분기 실적",
       time: "5시간 전",
       source: "이투데이",

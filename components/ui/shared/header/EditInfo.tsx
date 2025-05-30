@@ -4,7 +4,7 @@ import Modal from "@/components/ui/Modal";
 import Input from "@/components/ui/shared/Input";
 import { Edit } from "lucide-react";
 import React, { useState } from "react";
-import AddressModal from "./AddressModal";
+import AddressModal from "../AddressModal";
 import { UserInfo } from "@/type/userInfo";
 
 const EditInfo = () => {

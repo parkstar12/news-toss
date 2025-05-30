@@ -1,27 +1,27 @@
-"use client";
-
-import React, { useRef, useState } from "react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import LoginForm from "./LoginForm";
-import useOutsideClick from "@/hooks/useOutsideClick";
-import clsx from "clsx";
-import Image from "next/image";
+import React from "react";
 import newsTossLogo from "@/public/news-toss-logo.png";
+import Image from "next/image";
+import Link from "next/link";
+import { getJwtToken } from "@/utils/auth";
+import clsx from "clsx";
+import LoginForm from "./LoginForm";
+import { cookies, headers } from "next/headers";
 import UserInfo from "./UserInfo";
-import { ArrowRight } from "lucide-react";
+import { revalidatePath } from "next/cache";
+import LogoutForm from "./LogoutForm";
 
-const Header = () => {
-  const [isOpenForm, setIsOpenForm] = useState(false);
+const Header = async () => {
+  const token = await getJwtToken();
+  const headerList = await headers();
+  const pathname = headerList.get("x-pathname");
 
-  const isLogin = false;
+  const handleLogout = async () => {
+    "use server";
 
-  const pathname = usePathname();
-  const loginFormRef = useRef<HTMLDivElement | null>(null);
-
-  useOutsideClick(loginFormRef, () => {
-    setIsOpenForm(false);
-  });
+    const cookieStore = await cookies();
+    cookieStore.delete("accessToken");
+    revalidatePath("/home");
+  };
 
   return (
     <header className="absolute w-full py-main px-[20px] z-50 backdrop-blur-sm min-w-[800px]">
@@ -43,7 +43,8 @@ const Header = () => {
           </div>
         </div>
 
-        {pathname !== "/" && (
+        {/* 네비게이션 (홈, 증권, 캘린더, 포트폴리오) */}
+        {pathname && pathname !== "/" && (
           <nav className="flex gap-5 absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2">
             <Link
               href="/home"
@@ -88,44 +89,19 @@ const Header = () => {
           </nav>
         )}
 
-        {pathname !== "/" ? (
+        {/* 로그인 상태에 따라 로그인 버튼 또는 유저 정보 표시 */}
+        {pathname !== "/" && !token && (
           <div className="relative size-fit">
-            {isLogin ? (
-              <button
-                className="text-main-dark-gray"
-                onClick={() => setIsOpenForm(!isOpenForm)}
-              >
-                <b className="underline">{"홍길동"}</b> 님
-              </button>
-            ) : (
-              <button
-                onClick={() => {
-                  setIsOpenForm(!isOpenForm);
-                }}
-                className="bg-main-blue text-white px-4 rounded-[10px] py-[5px]"
-              >
-                로그인
-              </button>
-            )}
-
-            <div
-              ref={loginFormRef}
-              className={clsx(
-                "absolute right-0 pt-2 duration-200 z-50",
-                isOpenForm ? "block" : "hidden"
-              )}
-            >
-              {isLogin ? <UserInfo /> : <LoginForm />}
-            </div>
+            <LoginForm />
           </div>
-        ) : (
-          <Link
-            href="/home"
-            className="flex items-center gap-[5px] bg-main-blue text-white px-3 py-1 rounded-main hover:scale-110 transition-all duration-300"
-          >
-            <span>시작하기</span>
-            <ArrowRight size={16} className="text-white animate-bounce-x" />
-          </Link>
+        )}
+
+        {pathname !== "/" && token && (
+          <div className="relative size-fit">
+            <UserInfo token={token}>
+              <LogoutForm action={handleLogout} />
+            </UserInfo>
+          </div>
         )}
       </div>
     </header>
