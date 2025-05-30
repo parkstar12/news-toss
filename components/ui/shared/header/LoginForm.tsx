@@ -1,12 +1,13 @@
 "use client";
 
 import clsx from "clsx";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import React, { useRef, useState } from "react";
 import { toast } from "react-toastify";
 import Input from "../Input";
 import Link from "next/link";
 import useOutsideClick from "@/hooks/useOutsideClick";
+import { JwtToken } from "@/type/jwt";
 
 const LoginForm = () => {
   const [isOpenForm, setIsOpenForm] = useState(false);
@@ -14,6 +15,7 @@ const LoginForm = () => {
   const [account, setAccount] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter();
+  const pathname = usePathname();
 
   useOutsideClick(loginFormRef, () => {
     setIsOpenForm(false);
@@ -44,8 +46,12 @@ const LoginForm = () => {
     }
   };
 
+  if (pathname === "/") {
+    return null;
+  }
+
   return (
-    <>
+    <div className="relative size-fit">
       <button
         onClick={() => {
           setIsOpenForm(!isOpenForm);
@@ -94,7 +100,7 @@ const LoginForm = () => {
           </Link>
         </form>
       </div>
-    </>
+    </div>
   );
 };
 

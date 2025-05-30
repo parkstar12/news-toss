@@ -6,6 +6,7 @@ import useOutsideClick from "@/hooks/useOutsideClick";
 import useTokenExpire from "@/hooks/useTokenExpire";
 import { JwtToken } from "@/type/jwt";
 import clsx from "clsx";
+import { usePathname } from "next/navigation";
 
 const UserInfo = ({
   token,
@@ -16,13 +17,18 @@ const UserInfo = ({
 }) => {
   const [isOpenForm, setIsOpenForm] = useState(false);
   const loginFormRef = useRef<HTMLDivElement | null>(null);
+  const pathname = usePathname();
 
   useOutsideClick(loginFormRef, () => {
     setIsOpenForm(false);
   });
 
+  if (pathname === "/") {
+    return null;
+  }
+
   return (
-    <>
+    <div className="relative size-fit">
       <div className="flex items-center gap-main">
         <button
           className="text-main-dark-gray"
@@ -63,7 +69,7 @@ const UserInfo = ({
           {/* <button className="text-xs">탈퇴하기</button> */}
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

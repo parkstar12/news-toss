@@ -3,17 +3,15 @@ import newsTossLogo from "@/public/news-toss-logo.png";
 import Image from "next/image";
 import Link from "next/link";
 import { getJwtToken } from "@/utils/auth";
-import clsx from "clsx";
 import LoginForm from "./LoginForm";
-import { cookies, headers } from "next/headers";
+import { cookies } from "next/headers";
 import UserInfo from "./UserInfo";
 import { revalidatePath } from "next/cache";
 import LogoutForm from "./LogoutForm";
+import Navigation from "./Navigation";
 
 const Header = async () => {
   const token = await getJwtToken();
-  const headerList = await headers();
-  const pathname = headerList.get("x-pathname");
 
   const handleLogout = async () => {
     "use server";
@@ -44,64 +42,15 @@ const Header = async () => {
         </div>
 
         {/* 네비게이션 (홈, 증권, 캘린더, 포트폴리오) */}
-        {pathname && pathname !== "/" && (
-          <nav className="flex gap-5 absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2">
-            <Link
-              href="/home"
-              className={clsx(
-                pathname.startsWith("/home")
-                  ? "text-black font-semibold"
-                  : "text-sub"
-              )}
-            >
-              홈
-            </Link>
-            <Link
-              href="/stock"
-              className={clsx(
-                pathname.startsWith("/stock")
-                  ? "text-black font-semibold"
-                  : "text-sub"
-              )}
-            >
-              증권
-            </Link>
-            <Link
-              href="/calendar"
-              className={clsx(
-                pathname.startsWith("/calendar")
-                  ? "text-black font-semibold"
-                  : "text-sub"
-              )}
-            >
-              캘린더
-            </Link>
-            <Link
-              href="/portfolio/my"
-              className={clsx(
-                pathname.startsWith("/portfolio")
-                  ? "text-black font-semibold"
-                  : "text-sub"
-              )}
-            >
-              포트폴리오
-            </Link>
-          </nav>
-        )}
+        <Navigation />
 
         {/* 로그인 상태에 따라 로그인 버튼 또는 유저 정보 표시 */}
-        {pathname !== "/" && !token && (
-          <div className="relative size-fit">
-            <LoginForm />
-          </div>
-        )}
+        {!token && <LoginForm />}
 
-        {pathname !== "/" && token && (
-          <div className="relative size-fit">
-            <UserInfo token={token}>
-              <LogoutForm action={handleLogout} />
-            </UserInfo>
-          </div>
+        {token && (
+          <UserInfo token={token}>
+            <LogoutForm action={handleLogout} />
+          </UserInfo>
         )}
       </div>
     </header>
