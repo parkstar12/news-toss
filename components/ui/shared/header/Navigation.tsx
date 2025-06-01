@@ -15,12 +15,12 @@ const Navigation = () => {
   return (
     <nav className="flex gap-5 absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2">
       <Link
-        href="/home"
+        href="/news"
         className={clsx(
-          pathname.startsWith("/home") ? "text-black font-semibold" : "text-sub"
+          pathname.startsWith("/news") ? "text-black font-semibold" : "text-sub"
         )}
       >
-        홈
+        뉴스
       </Link>
       <Link
         href="/stock"

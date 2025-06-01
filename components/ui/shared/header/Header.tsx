@@ -25,7 +25,7 @@ const Header = async () => {
     <header className="absolute w-full py-main px-[20px] z-50 backdrop-blur-sm min-w-[800px]">
       <div className="w-full flex relative gap-5 justify-between items-center">
         <div className="font-bold text-lg flex items-center gap-2">
-          <Link href="/home" className="size-[40px] relative">
+          <Link href="/news" className="size-[40px] relative">
             <Image
               src={newsTossLogo}
               alt="news-toss-logo"

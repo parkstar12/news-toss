@@ -51,8 +51,8 @@ const Footer = () => {
         </Link>
       </nav>
       <nav className="mb-3 flex gap-6 text-base font-medium">
-        <Link href="/home" className="hover:text-main-blue transition-colors">
-          홈
+        <Link href="/news" className="hover:text-main-blue transition-colors">
+          뉴스
         </Link>
         <Link href="/stock" className="hover:text-main-blue transition-colors">
           증권

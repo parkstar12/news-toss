@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import Modal from "@/components/ui/Modal";
-import NewsModal from "../../home/NewsModal";
+import NewsModal from "../../news/NewsModal";
 
 const PAGE_SIZE = 5;
 

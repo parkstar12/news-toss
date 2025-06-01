@@ -11,6 +11,7 @@ const nextConfig: NextConfig = {
     ];
   },
   images: {
+    dangerouslyAllowSVG: true,
     domains: ["placehold.co"],
   },
 };

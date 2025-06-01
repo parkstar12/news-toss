@@ -7,7 +7,7 @@ const HomePage = async () => {
   const token = await getJwtToken();
 
   return (
-    <div className="flex flex-col gap-[40px]">
+    <div className="flex flex-col gap-[40px] max-w-[1000px] mx-auto">
       <MainNews />
       <CustomNews token={token} />
       <AllNews token={token} />

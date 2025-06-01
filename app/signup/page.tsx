@@ -38,7 +38,7 @@ const SignUpPage = () => {
       <Modal
         isOpen={isOpen}
         onClose={() => {
-          router.push("/home");
+          router.push("/news");
         }}
         hasBackdropBlur={false}
         isClickOutsideClose={false}

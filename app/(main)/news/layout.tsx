@@ -7,7 +7,7 @@ export const metadata: Metadata = {
 };
 
 const HomeLayout = ({ children }: { children: React.ReactNode }) => {
-  return <div className="max-w-[1000px] mx-auto">{children}</div>;
+  return <>{children}</>;
 };
 
 export default HomeLayout;
