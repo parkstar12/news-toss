@@ -19,7 +19,6 @@ type Candle = {
 };
 
 const CANDLE_INTERVALS = [
-  { label: "1초봉", value: "1s", seconds: 1 },
   { label: "1분봉", value: "1m", seconds: 60 },
   { label: "3분봉", value: "3m", seconds: 180 },
   { label: "5분봉", value: "5m", seconds: 300 },

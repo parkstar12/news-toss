@@ -1,7 +1,9 @@
 "use client";
 
 import Modal from "@/components/ui/Modal";
+import DownPrice from "@/components/ui/shared/DownPrice";
 import Input from "@/components/ui/shared/Input";
+import UpPrice from "@/components/ui/shared/UpPrice";
 import { useDebounce } from "@/hooks/useDebounce";
 import { ChevronRight, Search } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -12,7 +14,16 @@ const SearchStock = () => {
   const [stockSearch, setStockSearch] = useState("");
   const debouncedSearch = useDebounce(stockSearch, 500);
   const [isOpen, setIsOpen] = useState(false);
-  const [searchResult, setSearchResult] = useState<any[]>([]);
+  const [searchResult, setSearchResult] = useState<
+    {
+      changeAmount: string;
+      changeRate: string;
+      currentPrice: string;
+      sign: string;
+      stockCode: string;
+      stockName: string;
+    }[]
+  >([]);
 
   useEffect(() => {
     if (debouncedSearch) {
@@ -27,9 +38,32 @@ const SearchStock = () => {
   }, [stockSearch]);
 
   const searchStocks = async (query: string) => {
-    // API 호출 등 검색 로직
-    setSearchResult([query, query]);
+    const res = await fetch(`/api/v1/stocks/search?keyword=${query}`);
+    if (!res.ok) setSearchResult([]);
+
+    const json = await res.json();
+    setSearchResult(json.data);
   };
+
+  const handleClickSearchResult = async (stockCode: string) => {
+    // 종목 검색 count 증가
+    try {
+      await fetch(`/api/v1/stocks/search`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          stockCode,
+        }),
+      });
+    } catch (error) {
+      console.error("❌ 종목 검색 count 증가 에러:", error);
+    }
+
+    router.push(`/stock/${stockCode}`);
+  };
+
   return (
     <>
       <div className="w-full shadow-color rounded-main relative">
@@ -76,15 +110,42 @@ const SearchStock = () => {
                 <div
                   className="w-full flex flex-col justify-around hover:bg-main-blue/10 rounded-main transition-colors duration-200 ease-in-out p-main gap-[5px] group relative"
                   key={`search-stock-${result}-${idx}`}
-                  onClick={() => router.push(`/stock/${result}`)}
+                  onClick={() => handleClickSearchResult(result.stockCode)}
                 >
                   <div className="flex items-center gap-2 w-full">
                     <div className="bg-black rounded-full size-[40px] shrink-0" />
                     <div className="flex flex-col flex-1 truncate text-sm">
-                      <span className="font-bold text-gray-800 truncate w-full">
-                        포스코홀딩스
-                      </span>
-                      <span className="text-main-dark-gray">{result}</span>
+                      <p className="flex items-center gap-main text-gray-800 truncate w-full">
+                        <span className="font-bold">{result.stockName}</span>
+                        <span className="text-gray-400">
+                          {result.stockCode}
+                        </span>
+                      </p>
+                      <div className="flex items-center gap-main">
+                        <span className="text-main-dark-gray">
+                          {Number(result.currentPrice).toLocaleString()}원
+                        </span>
+                        <div className="flex justify-between h-fit">
+                          {(result.sign === "1" || result.sign === "2") && (
+                            <UpPrice
+                              change={Number(result.changeAmount)}
+                              changeRate={Number(result.changeRate)}
+                            />
+                          )}
+                          {result.sign === "3" && (
+                            <span className="text-gray-400 font-medium">
+                              {Number(result.changeAmount)} (
+                              {Number(result.changeRate)}%)
+                            </span>
+                          )}
+                          {(result.sign === "4" || result.sign === "5") && (
+                            <DownPrice
+                              change={Number(result.changeAmount)}
+                              changeRate={Number(result.changeRate)}
+                            />
+                          )}
+                        </div>
+                      </div>
                     </div>
                   </div>
                   <button className="absolute top-1/2 -translate-y-1/2 right-main hidden group-hover:block">

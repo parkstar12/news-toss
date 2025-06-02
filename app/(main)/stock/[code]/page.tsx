@@ -9,6 +9,17 @@ const StockDetailPage = async ({
 }) => {
   const { code } = await params;
 
+  // 종목 검색 count 증가
+  await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/stocks/search`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      stockCode: code,
+    }),
+  });
+
   return (
     <div className="flex flex-col gap-[20px]">
       <StockHeader code={code} />
