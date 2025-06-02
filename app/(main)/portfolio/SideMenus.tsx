@@ -12,7 +12,6 @@ const SideMenus = () => {
     { href: "/portfolio/my", label: "내 포트폴리오" },
     { href: "/portfolio/analysis", label: "내 포트폴리오 분석" },
     { href: "/portfolio/compare", label: "포트폴리오 비교 분석" },
-    { href: "/portfolio/info", label: "내 정보" },
   ];
 
   return (
