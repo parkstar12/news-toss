@@ -9,6 +9,7 @@ import Bookmark from "@/components/ui/shared/Bookmark";
 import Scrab from "@/components/ui/shared/Scrab";
 import Popular from "@/type/stocks/Popular";
 import { toast } from "react-toastify";
+import { JwtToken } from "@/type/jwt";
 
 interface PopularStockProps {
   popularStocks: {
@@ -21,7 +22,7 @@ interface PopularStockProps {
   }[];
 }
 
-const PopularStock = () => {
+const PopularStock = ({ token }: { token: JwtToken | null }) => {
   const [popularStocks, setPopularStocks] = useState<Popular[] | null>(null);
 
   const fetchPopularStocks = async () => {
@@ -31,6 +32,7 @@ const PopularStock = () => {
       if (!res.ok) setPopularStocks(null);
       const json = await res.json();
       setPopularStocks(json.data);
+      console.log(json.data);
     } catch (e) {
       console.error("❌ 인기종목 에러:", e);
     }
@@ -51,6 +53,10 @@ const PopularStock = () => {
     if (!popularStocks) toast.error("데이터를 불러오지 못했습니다.");
   };
 
+  const handleScrab = (code: string) => {
+    console.log(code);
+  };
+
   if (!popularStocks)
     return (
       <div className="flex flex-col items-center gap-main bg-white p-main text-main-red text-center">
@@ -68,22 +74,36 @@ const PopularStock = () => {
   return (
     <div className="col-span-2 p-main mb-[20px]">
       <h2 className="text-xl font-bold text-gray-800 mb-4">인기 종목</h2>
-      <div className="grid grid-cols-2 gap-x-main">
+      <div className="grid grid-cols-2 gap-main">
         {popularStocks &&
           popularStocks.map((stock, index) => (
             <div
               key={`popular-${stock.hts_kor_isnm}`}
-              className="rounded-main px-main py-4 transition duration-300 hover:bg-main-blue/10 hover:scale-102 cursor-pointer relative group"
-              onClick={() => handleClickStock(stock.mksc_shrn_iscd)}
+              className="rounded-main px-[20px] py-3 transition duration-300 hover:shadow-color hover:scale-102 cursor-pointer relative group"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleClickStock(stock.mksc_shrn_iscd);
+              }}
             >
+              <Scrab
+                type="stock"
+                stockCode={stock.mksc_shrn_iscd}
+                token={token}
+                fill
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleScrab(stock.mksc_shrn_iscd);
+                }}
+              />
+
               <Bookmark className="absolute top-0 left-0" rank={index + 1} />
               <div className="flex gap-main w-full">
-                <div className="relative">
-                  <Scrab
-                    className="absolute bottom-0 right-[-4px]"
-                    stockCode={stock.mksc_shrn_iscd}
-                  />
-                  <div className="bg-black/10 rounded-full size-[40px] shrink-0" />
+                <div className="relative flex items-center justify-center">
+                  <div className="bg-main-blue/10 rounded-full size-[40px] shrink-0 flex items-center justify-center">
+                    <span className="text-main-blue font-semibold">
+                      {stock.hts_kor_isnm[0]}
+                    </span>
+                  </div>
                 </div>
                 <div className="flex flex-col flex-1 truncate">
                   <span className="font-bold text-gray-800 truncate w-full">

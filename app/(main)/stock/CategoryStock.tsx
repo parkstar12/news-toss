@@ -1,20 +1,11 @@
 "use client";
 
 import clsx from "clsx";
-import {
-  ChevronDown,
-  ChevronLeft,
-  ChevronRight,
-  ChevronUp,
-  Heart,
-} from "lucide-react";
+import { ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Scrab from "@/components/ui/shared/Scrab";
-
-interface CategoryStockProps {
-  categoryData: string[];
-}
+import { JwtToken } from "@/type/jwt";
 
 const CATEGORY_GROUPS = {
   제조업: [
@@ -51,7 +42,7 @@ const CATEGORY_GROUPS = {
   기타: ["기타"],
 };
 
-const CategoryStock = ({ categoryData }: CategoryStockProps) => {
+const CategoryStock = ({ token }: { token: JwtToken | null }) => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [categoryStocks, setCategoryStocks] = useState<{
     totalPages: number;
@@ -61,6 +52,23 @@ const CategoryStock = ({ categoryData }: CategoryStockProps) => {
   const totalPage = categoryStocks?.totalPages || 1;
   const router = useRouter();
   const [openGroup, setOpenGroup] = useState<string | null>(null);
+  const [categoryData, setCategoryData] = useState<string[]>([]);
+
+  useEffect(() => {
+    const fetchCategoryData = async () => {
+      try {
+        const res = await fetch(`/api/v1/stocks/categories?page=1`);
+        if (!res.ok) throw new Error(res.statusText);
+        const json = await res.json();
+        setCategoryData(
+          json.data?.map((item: { categoryName: string }) => item.categoryName)
+        );
+      } catch (e) {
+        console.error("❌ 카테고리 에러:", e);
+      }
+    };
+    fetchCategoryData();
+  }, []);
 
   useEffect(() => {
     if (categoryData.length > 0) {
@@ -159,6 +167,10 @@ const CategoryStock = ({ categoryData }: CategoryStockProps) => {
     );
   }
 
+  const handleScrab = (code: string) => {
+    console.log(code);
+  };
+
   return (
     <div className="p-main flex flex-col gap-main">
       <h2 className="text-xl font-bold">카테고리</h2>
@@ -170,8 +182,10 @@ const CategoryStock = ({ categoryData }: CategoryStockProps) => {
                 <div
                   key={group}
                   className={clsx(
-                    "px-main hover:bg-main-blue/10 rounded-main",
-                    openGroup === group && "bg-main-blue/10"
+                    "px-main transition-colors duration-300 rounded-main border",
+                    openGroup === group
+                      ? "border-main-blue/20"
+                      : "border-transparent"
                   )}
                 >
                   <button
@@ -233,24 +247,37 @@ const CategoryStock = ({ categoryData }: CategoryStockProps) => {
           <div className="text-main-dark-gray flex items-center gap-1 px-main py-2 border-b border-main-light-gray">
             <span>{getCategoryGroup(selectedCategory)}</span>
             <ChevronRight size={14} />
-            <span>{selectedCategory}</span>
+            <span className="text-main-blue font-semibold">
+              {selectedCategory}
+            </span>
           </div>
 
-          <div className="grid grid-cols-2 grid-rows-3">
+          <div className="grid grid-cols-2 grid-rows-3 gap-y-main">
             {categoryStocks &&
               categoryStocks.stocks.map((stock) => (
                 <div
-                  className="w-full flex flex-col justify-around hover:bg-main-blue/10 hover:scale-102 rounded-main transition-all duration-200 ease-in-out p-main gap-[5px] relative group"
+                  className="w-full flex flex-col justify-around hover:shadow-color hover:scale-102 rounded-main transition-all duration-200 ease-in-out px-[20px] py-main gap-[5px] relative group"
                   key={selectedCategory + stock.stockCode}
                   onClick={() => router.push(`/stock/${stock.stockCode}`)}
                 >
+                  <Scrab
+                    type="stock"
+                    stockCode={stock.stockCode}
+                    token={token}
+                    fill
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleScrab(stock.stockCode);
+                    }}
+                  />
+
                   <div className="flex items-center gap-2 w-full">
                     <div className="relative">
-                      <Scrab
-                        className="absolute bottom-0 right-[-4px]"
-                        stockCode={stock.stockCode}
-                      />
-                      <div className="bg-black/10 rounded-full size-[40px] shrink-0" />
+                      <div className="bg-main-blue/10 rounded-full size-[40px] shrink-0 flex items-center justify-center">
+                        <span className="text-main-blue font-semibold">
+                          {stock.stockName[0]}
+                        </span>
+                      </div>
                     </div>
                     <div className="flex flex-col flex-1 truncate text-sm">
                       <span className="font-bold text-gray-800 truncate w-full">
