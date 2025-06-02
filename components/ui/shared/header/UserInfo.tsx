@@ -49,24 +49,25 @@ const UserInfo = ({
         <div className="bg-white w-[350px] rounded-main shadow-color p-[20px] flex flex-col gap-main">
           <div className="flex items-center gap-main">
             <h2 className="text-main-dark-gray font-bold text-xl">내 정보</h2>
-            <EditInfo />
+            <EditInfo token={token} />
           </div>
           <div className="grid grid-cols-[auto_1fr] gap-y-main gap-x-[20px]">
             <span>이름</span>
             <span>{token.memberName}</span>
 
             <span>휴대폰</span>
-            <span>010-1234-1234</span>
+            <span>{token.phoneNumber}</span>
 
             <span>이메일</span>
-            <span>test@test.com</span>
+            <span>{token.email}</span>
 
             <span>집주소</span>
-            <span>서울 강남구 역삼동 123-123</span>
+            <span>
+              {token.zipCode} {token.Address} {token.AddressDetail}
+            </span>
           </div>
 
           {children}
-          {/* <button className="text-xs">탈퇴하기</button> */}
         </div>
       </div>
     </div>

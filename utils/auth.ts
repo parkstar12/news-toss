@@ -2,6 +2,7 @@
 
 import { cookies } from "next/headers";
 import { jwtDecode } from "jwt-decode";
+import { JwtToken } from "@/type/jwt";
 
 export async function getJwtToken() {
   const cookieStore = await cookies();
@@ -10,13 +11,7 @@ export async function getJwtToken() {
   if (!token) return null;
 
   try {
-    const decoded: {
-      sub: string;
-      memberId: string;
-      memberName: string;
-      iat: number;
-      exp: number;
-    } = jwtDecode(token);
+    const decoded: JwtToken = jwtDecode(token);
     return decoded;
   } catch {
     return null;

@@ -1,7 +1,12 @@
 export interface JwtToken {
-  sub: string;
+  Address: string;
+  AddressDetail: string;
+  email: string;
+  exp: number;
+  iat: number;
   memberId: string;
   memberName: string;
-  iat: number;
-  exp: number;
+  phoneNumber: string;
+  sub: string; //"ACCESS_TOKEN"
+  zipCode: string;
 }

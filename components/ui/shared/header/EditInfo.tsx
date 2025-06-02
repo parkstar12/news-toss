@@ -6,23 +6,27 @@ import { Edit } from "lucide-react";
 import React, { useState } from "react";
 import AddressModal from "../AddressModal";
 import { UserInfo } from "@/type/userInfo";
+import { JwtToken } from "@/type/jwt";
 
-const EditInfo = () => {
+const EditInfo = ({ token }: { token: JwtToken }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isOpenAddressModal, setIsOpenAddressModal] = useState(false);
-  const [info, setInfo] = useState<UserInfo>({
-    name: "",
-    phone: {
-      countryCode: "",
-      phoneNumber1: "",
-      phoneNumber2: "",
-    },
-    email: "",
-    address: {
-      zipcode: "",
-      address: "",
-      detail: "",
-    },
+  const [info, setInfo] = useState<UserInfo>(() => {
+    const phoneNumber = token.phoneNumber.split("-");
+    return {
+      name: token.memberName,
+      phone: {
+        countryCode: phoneNumber[0],
+        phoneNumber1: phoneNumber[1],
+        phoneNumber2: phoneNumber[2],
+      },
+      email: token.email,
+      address: {
+        zipcode: token.zipCode,
+        address: token.Address,
+        detail: token.AddressDetail,
+      },
+    };
   });
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -60,11 +64,7 @@ const EditInfo = () => {
             <Input
               type="text"
               placeholder="휴대폰번호"
-              value={
-                info.phone.countryCode +
-                info.phone.phoneNumber1 +
-                info.phone.phoneNumber2
-              }
+              value={`${info.phone.countryCode}-${info.phone.phoneNumber1}-${info.phone.phoneNumber2}`}
               onChange={(e) =>
                 setInfo({
                   ...info,
