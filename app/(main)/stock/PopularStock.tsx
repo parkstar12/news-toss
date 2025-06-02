@@ -1,12 +1,14 @@
 "use client";
 
-import { ChevronRight, Triangle } from "lucide-react";
-import React from "react";
+import { ChevronRight, RefreshCcw, Triangle } from "lucide-react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import UpPrice from "@/components/ui/shared/UpPrice";
 import DownPrice from "@/components/ui/shared/DownPrice";
 import Bookmark from "@/components/ui/shared/Bookmark";
 import Scrab from "@/components/ui/shared/Scrab";
+import Popular from "@/type/stocks/Popular";
+import { toast } from "react-toastify";
 
 interface PopularStockProps {
   popularStocks: {
@@ -19,57 +21,49 @@ interface PopularStockProps {
   }[];
 }
 
-const PopularStock = ({ popularStocks }: PopularStockProps) => {
+const PopularStock = () => {
+  const [popularStocks, setPopularStocks] = useState<Popular[] | null>(null);
+
+  const fetchPopularStocks = async () => {
+    // 인기 종목
+    try {
+      const res = await fetch(`/api/v1/stocks/popular`);
+      if (!res.ok) setPopularStocks(null);
+      const json = await res.json();
+      setPopularStocks(json.data);
+    } catch (e) {
+      console.error("❌ 인기종목 에러:", e);
+    }
+  };
+
+  useEffect(() => {
+    fetchPopularStocks();
+  }, []);
+
   const router = useRouter();
 
   const handleClickStock = (code: string) => {
     router.push(`/stock/${code}`);
   };
 
-  // const stocks = [
-  //   {
-  //     name: "삼성전자",
-  //     code: "005930",
-  //     price: 72400,
-  //     change: 800,
-  //     changeRate: 1.12,
-  //   },
-  //   {
-  //     name: "SK하이닉스",
-  //     code: "000660",
-  //     price: 162300,
-  //     change: -1200,
-  //     changeRate: -0.74,
-  //   },
-  //   {
-  //     name: "LG에너지솔루션",
-  //     code: "373220",
-  //     price: 379000,
-  //     change: 2000,
-  //     changeRate: 0.53,
-  //   },
-  //   {
-  //     name: "삼성바이오로직스",
-  //     code: "207940",
-  //     price: 780000,
-  //     change: 8500,
-  //     changeRate: 1.1,
-  //   },
-  //   {
-  //     name: "현대차adsfasdfsafasdfasfsasfㅋㅋㅋ",
-  //     code: "005380",
-  //     price: 243000,
-  //     change: -3000,
-  //     changeRate: -1.22,
-  //   },
-  //   {
-  //     name: "포스코홀딩스",
-  //     code: "005490",
-  //     price: 495000,
-  //     change: 6000,
-  //     changeRate: 1.23,
-  //   },
-  // ];
+  const handleRefresh = () => {
+    fetchPopularStocks();
+    if (!popularStocks) toast.error("데이터를 불러오지 못했습니다.");
+  };
+
+  if (!popularStocks)
+    return (
+      <div className="flex flex-col items-center gap-main bg-white p-main text-main-red text-center">
+        <span>인기종목 데이터를 불러오지 못했습니다.</span>
+        <button
+          className="w-fit text-main-red bg-main-red/10 hover:bg-main-red/20 transition-all duration-300 rounded-main px-main py-1 flex items-center gap-1"
+          onClick={handleRefresh}
+        >
+          <span>다시 시도</span>
+          <RefreshCcw size={16} />
+        </button>
+      </div>
+    );
 
   return (
     <div className="col-span-2 p-main mb-[20px]">

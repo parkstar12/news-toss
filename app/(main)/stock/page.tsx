@@ -7,40 +7,31 @@ import CategoryStock from "./CategoryStock";
 import SearchStock from "./SearchStock";
 
 const StockPage = async () => {
-  // 오늘 날짜 (YYYYMMDD)
-  const endDate = new Date().toISOString().slice(0, 10).replace(/-/g, "");
+  let KOSPIData = null;
+  let KOSDAQData = null;
+  let popularData = null;
+  let categoryData = null;
 
-  // 100일 전 날짜 (YYYYMMDD)
-  const startDateObj = new Date();
-  startDateObj.setDate(startDateObj.getDate() - 100);
-  const startDate = startDateObj.toISOString().slice(0, 10).replace(/-/g, "");
-
-  const KOSPIResponse = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/v1/stocks/indices/KOSPI?startDate=${startDate}&endDate=${endDate}`
-  );
-  const KOSPIData = await KOSPIResponse.json();
-
-  const KOSDAQResponse = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/v1/stocks/indices/KOSDAQ?startDate=${startDate}&endDate=${endDate}`
-  );
-  const KOSDAQData = await KOSDAQResponse.json();
-
-  const popularResponse = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/v1/stocks/popular`
-  );
-  const popularData = await popularResponse.json();
-
-  const categoryResponse = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/v1/stocks/categories?page=1`
-  );
-  const categoryData = await categoryResponse.json();
+  // 카테고리
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/v1/stocks/categories?page=1`
+    );
+    if (!res.ok) throw new Error(res.statusText);
+    const json = await res.json();
+    categoryData = json.data?.map(
+      (item: { categoryName: string }) => item.categoryName
+    );
+  } catch (e) {
+    console.error("❌ 카테고리 에러:", e);
+  }
 
   return (
     <div className="flex flex-col gap-[40px] max-w-[1200px] mx-auto">
       <div className="grid grid-cols-3 gap-main">
-        {KOSPIData.data && <KOSPIChart KOSPIData={KOSPIData.data} />}
+        <KOSPIChart />
 
-        {KOSDAQData.data && <KOSDAQChart KOSDAQData={KOSDAQData.data} />}
+        <KOSDAQChart />
 
         <div className="row-span-8 relative">
           <div className="flex flex-col gap-main p-main sticky top-0">
@@ -50,18 +41,16 @@ const StockPage = async () => {
         </div>
 
         <div className="col-span-2 row-span-1">
-          {popularData.data && (
-            <PopularStock popularStocks={popularData.data} />
-          )}
+          <PopularStock />
         </div>
 
         <div className="col-span-2 row-span-2">
-          {categoryData.data && (
-            <CategoryStock
-              categoryData={categoryData.data.map(
-                (item: { categoryName: string }) => item.categoryName
-              )}
-            />
+          {categoryData ? (
+            <CategoryStock categoryData={categoryData} />
+          ) : (
+            <div className="flex flex-col gap-main bg-white p-main text-red-600">
+              카테고리 데이터를 불러오지 못했습니다.
+            </div>
           )}
         </div>
       </div>

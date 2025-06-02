@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -15,6 +15,9 @@ import {
 import UpPrice from "@/components/ui/shared/UpPrice";
 import DownPrice from "@/components/ui/shared/DownPrice";
 import clsx from "clsx";
+import { KOSPI } from "@/type/stocks/KOSPI";
+import { RefreshCcw } from "lucide-react";
+import { toast } from "react-toastify";
 
 ChartJS.register(
   LineElement,
@@ -51,21 +54,50 @@ const options = {
   },
 };
 
-const KOSPIChart = ({
-  KOSPIData,
-}: {
-  KOSPIData: {
-    prev: string; // 전일 종가
-    sign: string; // 등락 부호
-    prev_rate: string; // 전일 대비 등락률(%)
-    indices: {
-      bstp_nmix_hgpr: string; // KOSPI 지수(또는 종목)의 장중 최고가
-      bstp_nmix_lwpr: string; // KOSPI 지수(또는 종목)의 장중 최저가
-      bstp_nmix_prpr: string; // KOSPI 지수(또는 종목)의 종가(마감 가격)
-      stck_bsop_date: string; // 기준 일자 (YYYYMMDD, 해당 데이터의 날짜)
-    }[];
+const KOSPIChart = () => {
+  const [KOSPIData, setKOSPIData] = useState<KOSPI | null>(null);
+
+  const fetchKOSPI = async () => {
+    const endDate = new Date().toISOString().slice(0, 10).replace(/-/g, "");
+    const startDateObj = new Date();
+    startDateObj.setDate(startDateObj.getDate() - 100);
+    const startDate = startDateObj.toISOString().slice(0, 10).replace(/-/g, "");
+
+    try {
+      const res = await fetch(
+        `/api/v1/stocks/indices/KOSPI?startDate=${startDate}&endDate=${endDate}`
+      );
+      if (!res.ok) setKOSPIData(null);
+      const json = await res.json();
+      setKOSPIData(json.data);
+    } catch (e) {
+      console.error("❌ KOSPI 에러:", e);
+    }
   };
-}) => {
+
+  useEffect(() => {
+    fetchKOSPI();
+  }, []);
+
+  const handleRefresh = () => {
+    fetchKOSPI();
+    if (!KOSPIData) toast.error("데이터를 불러오지 못했습니다.");
+  };
+
+  if (!KOSPIData)
+    return (
+      <div className="flex flex-col items-center gap-main bg-white p-main text-main-red text-center">
+        <span>KOSPI 데이터를 불러오지 못했습니다.</span>
+        <button
+          className="w-fit text-main-red bg-main-red/10 hover:bg-main-red/20 transition-all duration-300 rounded-main px-main py-1 flex items-center gap-1"
+          onClick={handleRefresh}
+        >
+          <span>다시 시도</span>
+          <RefreshCcw size={16} />
+        </button>
+      </div>
+    );
+
   const labels = KOSPIData.indices.map((item) => item.stck_bsop_date);
   const data = {
     labels,
