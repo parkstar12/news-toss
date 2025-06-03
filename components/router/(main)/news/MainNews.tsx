@@ -1,10 +1,9 @@
 "use client";
 
 import { ChevronLeft, ChevronRight, Clock } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import clsx from "clsx";
 import bentoStyle from "./bento.module.css";
-import RealTimeNews from "./RealTimeNews";
 import Image from "next/image";
 import { News } from "@/type/news";
 import Link from "next/link";
@@ -14,6 +13,8 @@ const NEWS_PER_PAGE = 5;
 const MainNews = () => {
   const [news, setNews] = useState<News[]>([]);
   const [currentPage, setCurrentPage] = useState(0);
+
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     const fetchNews = async () => {
@@ -25,17 +26,18 @@ const MainNews = () => {
       });
       const data = await res.json();
       setNews(data.data);
-      console.log(data.data);
     };
     fetchNews();
   }, []);
 
   useEffect(() => {
-    const interval = setInterval(() => {
+    intervalRef.current = setInterval(() => {
       setCurrentPage((prev) => (prev + 1) % 2);
     }, 5000);
 
-    return () => clearInterval(interval);
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
   }, []);
 
   // 현재 페이지의 뉴스 5개
@@ -47,17 +49,42 @@ const MainNews = () => {
   const gridNews = pageNews.slice(1, 5);
 
   const handlePrevPage = () => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
     setCurrentPage((prev) => (prev - 1 + 2) % 2);
+
+    // interval 재설정
+    intervalRef.current = setInterval(() => {
+      setCurrentPage((prev) => (prev + 1) % 2);
+    }, 5000);
   };
+
   const handleNextPage = () => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
     setCurrentPage((prev) => (prev + 1) % 2);
+
+    // interval 재설정
+    intervalRef.current = setInterval(() => {
+      setCurrentPage((prev) => (prev + 1) % 2);
+    }, 5000);
   };
 
   const mainNews = pageNews[0];
 
   return (
     <div className="grid grid-cols-3 w-full gap-[20px]">
-      <div className="col-span-2 w-full h-[400px] relative">
+      <div className="col-span-3 grid grid-rows-[auto_1fr] gap-main w-full h-[400px] relative">
+        <div className="text-3xl font-bold">
+          <span>오늘의 </span>
+          <span className="bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent">
+            주요 뉴스
+          </span>
+        </div>
         {mainNews && (
           <Link
             href={`/news/${mainNews.newsId}`}
@@ -78,11 +105,11 @@ const MainNews = () => {
             </div>
             <div
               className={clsx(
-                "absolute bottom-[20px] left-[20px] max-w-[400px] transition-opacity duration-200 ease-in-out"
+                "absolute transition-opacity duration-200 ease-in-out w-full bottom-0 left-0"
               )}
             >
-              <div className="flex flex-col gap-main">
-                <p className="text-2xl font-bold line-clamp-1">
+              <div className="flex flex-col gap-[20px] px-[20px] py-[20px]">
+                <p className="text-xl font-bold line-clamp-1">
                   {mainNews.title}
                 </p>
                 <div className="flex items-center text-main-dark-gray text-xs">
@@ -108,12 +135,10 @@ const MainNews = () => {
         </div>
       </div>
 
-      <RealTimeNews />
-
       {/* 아래 4개 뉴스 (2x2 그리드) */}
       <div
         className={clsx(
-          "col-span-2 grid grid-cols-2 grid-rows-2 gap-main transition-opacity duration-200 ease-in-out"
+          "col-span-3 grid grid-cols-2 grid-rows-2 gap-main transition-opacity duration-200 ease-in-out"
         )}
       >
         {gridNews.map((item, idx) => (

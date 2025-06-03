@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import styles from "./RealTimeNews.module.css";
 import clsx from "clsx";
-import { RefreshCw } from "lucide-react";
+import { Radio, RefreshCw } from "lucide-react";
 
 const newsData = [
   {
@@ -51,26 +51,6 @@ const newsData = [
     summary: "요약9",
     time: "9시간 전",
   },
-  {
-    title: "제목10",
-    summary: "요약10",
-    time: "10시간 전",
-  },
-  {
-    title: "제목11",
-    summary: "요약11",
-    time: "11시간 전",
-  },
-  {
-    title: "제목12",
-    summary: "요약12",
-    time: "12시간 전",
-  },
-  {
-    title: "제목13",
-    summary: "요약13",
-    time: "13시간 전",
-  },
 ];
 
 export default function RealTimeNews() {
@@ -100,9 +80,17 @@ export default function RealTimeNews() {
   }, [remainSec]);
 
   return (
-    <div className="row-span-2 flex flex-col justify-between gap-main shadow-color rounded-main">
+    <div className="row-span-2 flex flex-col justify-between shadow-lg rounded-main sticky top-0">
       <div className="flex items-center justify-between p-main">
-        <h2 className="text-xl font-bold">⚡️ 실시간 뉴스</h2>
+        <div className="flex items-center gap-2">
+          <div className="relative">
+            <Radio size={20} className="text-main-blue" />
+            <div className="absolute -top-1 -right-1 size-[6px] bg-main-blue rounded-full animate-pulse" />
+          </div>
+          <span className="bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent font-bold">
+            실시간 뉴스
+          </span>
+        </div>
         <div className="flex items-center gap-[5px]">
           <RefreshCw size={12} />
           <span className="text-sm text-main-dark-gray">
@@ -112,7 +100,7 @@ export default function RealTimeNews() {
       </div>
       <div
         key={animationKey}
-        className="flex flex-col gap-main overflow-y-scroll h-[510px] p-main"
+        className="flex flex-col gap-main overflow-y-scroll h-[400px] p-main"
       >
         {news.map((item, index) => (
           <div

@@ -2,15 +2,27 @@ import MainNews from "@/components/router/(main)/news/MainNews";
 import CustomNews from "@/components/router/(main)/news/CustomNews";
 import AllNews from "@/components/router/(main)/news/AllNews";
 import { getJwtToken } from "@/utils/auth";
+import RealTimeNews from "@/components/router/(main)/news/RealTimeNews";
 
 const HomePage = async () => {
   const token = await getJwtToken();
 
   return (
-    <div className="flex flex-col gap-[40px] max-w-[1000px] mx-auto">
-      <MainNews />
-      <CustomNews token={token} />
-      <AllNews token={token} />
+    <div className="grid grid-cols-3 gap-main">
+      <div className="col-span-2 p-main">
+        <MainNews />
+      </div>
+      <div className="row-span-3 relative p-main">
+        <RealTimeNews />
+      </div>
+
+      <div className="col-span-2 p-main">
+        <CustomNews token={token} />
+      </div>
+
+      <div className="col-span-2 p-main">
+        <AllNews token={token} />
+      </div>
     </div>
   );
 };

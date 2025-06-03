@@ -8,7 +8,10 @@ const CustomNews = ({ token }: { token: JwtToken | null }) => {
   return (
     <div className="flex flex-col gap-main">
       <h2 className="text-2xl font-bold">
-        <b className="text-main-blue">{token.memberName}</b>님을 위한 맞춤 뉴스
+        <b className="bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent">
+          {token.memberName}
+        </b>
+        님을 위한 맞춤 뉴스
       </h2>
       <div className="grid grid-cols-2 gap-x-main">
         <div className="col-span-2 grid grid-cols-4 gap-main mb-[20px]">
