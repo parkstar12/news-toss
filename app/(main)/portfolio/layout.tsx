@@ -1,5 +1,5 @@
 import React from "react";
-import SideMenus from "./SideMenus";
+import SideMenus from "@/components/router/(main)/portfolio/SideMenus";
 
 const PortfolioLayout = ({ children }: { children: React.ReactNode }) => {
   return (

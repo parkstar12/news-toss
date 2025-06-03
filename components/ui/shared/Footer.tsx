@@ -3,7 +3,7 @@ import Link from "next/link";
 
 const Footer = () => {
   return (
-    <footer className="w-full py-[20px] bg-main-light-gray/30 mt-[100px] flex flex-col items-center justify-center text-center text-main-dark-gray rounded-t-main">
+    <footer className="w-full grow shrink-0 py-[20px] bg-main-light-gray/30 mt-[100px] flex flex-col items-center justify-center text-center text-main-dark-gray rounded-t-main">
       <div className="mb-4 flex flex-col items-center">
         <span className="font-bold text-lg text-gray-800">
           과거 뉴스 기반 주가 경향성 예측 서비스
@@ -12,44 +12,7 @@ const Footer = () => {
           주식 투자에 설명력을 더해주는 AI 애널리스트
         </span>
       </div>
-      {/* <nav className="flex flex-wrap justify-center gap-x-6 gap-y-2 mb-3">
-        <Link
-          href="#"
-          className="text-sm text-muted-foreground hover:underline"
-        >
-          회사소개
-        </Link>
-        <Link
-          href="#"
-          className="text-sm text-muted-foreground hover:underline"
-        >
-          개인정보처리방침
-        </Link>
-        <Link
-          href="#"
-          className="text-sm text-muted-foreground hover:underline"
-        >
-          이용약관
-        </Link>
-        <Link
-          href="#"
-          className="text-sm text-muted-foreground hover:underline"
-        >
-          광고문의
-        </Link>
-        <Link
-          href="#"
-          className="text-sm text-muted-foreground hover:underline"
-        >
-          제휴문의
-        </Link>
-        <Link
-          href="#"
-          className="text-sm text-muted-foreground hover:underline"
-        >
-          고객센터
-        </Link>
-      </nav> */}
+
       <nav className="mb-3 flex gap-6 text-base font-medium">
         <Link href="/news" className="hover:text-main-blue transition-colors">
           뉴스

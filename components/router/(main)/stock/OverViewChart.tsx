@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { dummyData } from "./dummyData";
-import { Data } from "./type";
+import { Data } from "../../../../app/(main)/stock/type";
 import clsx from "clsx";
 import { Line } from "react-chartjs-2";
 import {

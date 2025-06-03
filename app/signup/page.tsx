@@ -5,8 +5,8 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import newsTossLogo from "@/public/news-toss-logo.png";
-import RegisterStep1 from "./RegisterStep1";
-import RegisterStep2 from "./RegisterStep2";
+import RegisterStep1 from "@/components/router/siginup/RegisterStep1";
+import RegisterStep2 from "@/components/router/siginup/RegisterStep2";
 import clsx from "clsx";
 import { UserInfo } from "@/type/userInfo";
 

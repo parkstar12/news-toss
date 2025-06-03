@@ -1,8 +1,8 @@
 import React from "react";
-import NewsDetail from "./NewsDetail";
-import RelatedStocks from "./RelatedStocks";
-import RelatedPastNews from "./RelatedPastNews";
-import Related from "./Related";
+import NewsDetail from "@/components/router/(main)/news/[id]/NewsDetail";
+import RelatedStocks from "@/components/router/(main)/news/[id]/RelatedStocks";
+import RelatedPastNews from "@/components/router/(main)/news/[id]/RelatedPastNews";
+import Related from "@/components/router/(main)/news/[id]/Related";
 
 const NewsDetailPage = async ({
   params,

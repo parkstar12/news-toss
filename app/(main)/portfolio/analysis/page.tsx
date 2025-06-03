@@ -1,8 +1,8 @@
 "use client";
 
 import React from "react";
-import PortfolioDoughnutChart from "./PortfolioDoughnutChart";
-import NewsTable from "./NewsTable";
+import PortfolioDoughnutChart from "@/components/router/(main)/portfolio/analysis/PortfolioDoughnutChart";
+import NewsTable from "@/components/router/(main)/portfolio/analysis/NewsTable";
 
 const AnalysisPortfolioPage = () => {
   return (

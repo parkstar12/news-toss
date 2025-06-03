@@ -2,7 +2,7 @@
 
 import { Clock } from "lucide-react";
 import React, { useState } from "react";
-import NewsModal from "./NewsModal";
+import NewsModal from "@/components/router/(main)/news/NewsModal";
 import { JwtToken } from "@/type/jwt";
 
 const AllNews = ({ token }: { token: JwtToken | null }) => {

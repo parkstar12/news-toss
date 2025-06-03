@@ -1,7 +1,7 @@
 import React from "react";
-import AccountChart from "./AccountChart";
-import Holidings from "./Holidings";
-import ProfitLossCalendar from "./ProfitLossCalendar";
+import AccountChart from "@/components/router/(main)/portfolio/my/AccountChart";
+import Holidings from "@/components/router/(main)/portfolio/my/Holidings";
+import ProfitLossCalendar from "@/components/router/(main)/portfolio/my/ProfitLossCalendar";
 
 const MyPortfolioPage = () => {
   return (

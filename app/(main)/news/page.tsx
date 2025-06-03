@@ -1,6 +1,6 @@
-import MainNews from "./MainNews";
-import CustomNews from "./CustomNews";
-import AllNews from "./AllNews";
+import MainNews from "@/components/router/(main)/news/MainNews";
+import CustomNews from "@/components/router/(main)/news/CustomNews";
+import AllNews from "@/components/router/(main)/news/AllNews";
 import { getJwtToken } from "@/utils/auth";
 
 const HomePage = async () => {

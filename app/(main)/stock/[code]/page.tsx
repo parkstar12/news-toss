@@ -1,6 +1,6 @@
 import React from "react";
-import CandleChartViewer from "./CandleChartViewer";
-import StockHeader from "./StockHeader";
+import CandleChartViewer from "@/components/router/(main)/stock/[code]/CandleChartViewer";
+import StockHeader from "@/components/router/(main)/stock/[code]/StockHeader";
 
 const StockDetailPage = async ({
   params,
