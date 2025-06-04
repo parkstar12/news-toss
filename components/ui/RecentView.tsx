@@ -6,13 +6,8 @@ import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 
 const RecentView = () => {
-  const {
-    recentViewNews,
-    setRecentViewNews,
-    recentViewStocks,
-    setRecentViewStocks,
-    syncFromLocalStorage,
-  } = useRecentViewStore();
+  const { recentViewStocks, setRecentViewStocks, syncFromLocalStorage } =
+    useRecentViewStore();
 
   const router = useRouter();
 
@@ -20,20 +15,14 @@ const RecentView = () => {
     syncFromLocalStorage();
   }, []);
 
-  const handleRemoveNews = (
-    e: React.MouseEvent<HTMLButtonElement>,
-    newsId: string
-  ) => {
-    e.stopPropagation();
-    setRecentViewNews(recentViewNews.filter((id) => id !== newsId));
-  };
-
   const handleRemoveStock = (
     e: React.MouseEvent<HTMLButtonElement>,
     stockCode: string
   ) => {
     e.stopPropagation();
-    setRecentViewStocks(recentViewStocks.filter((code) => code !== stockCode));
+    setRecentViewStocks(
+      recentViewStocks.filter((stock) => stock.stockCode !== stockCode)
+    );
   };
 
   return (
@@ -83,24 +72,30 @@ const RecentView = () => {
 
         {recentViewStocks.length > 0 ? (
           <>
-            {recentViewStocks.map((stockCode, index) => (
+            {recentViewStocks.map((stock, index) => (
               <div
                 className="w-full flex flex-col justify-around hover:bg-main-blue/10 rounded-main transition-colors duration-200 ease-in-out px-main py-1 gap-[5px] relative group"
                 key={`latest-view-${index}`}
-                onClick={() => router.push(`/stock/${stockCode}`)}
+                onClick={() => router.push(`/stock/${stock.stockCode}`)}
               >
                 <div className="flex items-center gap-2 w-full">
-                  <div className="bg-black rounded-full size-[40px] shrink-0" />
+                  <div className="bg-main-blue/10 rounded-full size-[40px] shrink-0 flex items-center justify-center">
+                    <span className="text-main-blue font-semibold">
+                      {stock.stockName[0]}
+                    </span>
+                  </div>
                   <div className="flex flex-col flex-1 truncate text-sm">
                     <span className="font-bold text-gray-800 truncate w-full">
-                      포스코홀딩스
+                      {stock.stockName}
                     </span>
-                    <span className="text-main-dark-gray">{stockCode}</span>
+                    <span className="text-main-dark-gray">
+                      {stock.stockCode}
+                    </span>
                   </div>
                 </div>
                 <button
                   className="absolute top-1/2 -translate-y-1/2 right-main hidden group-hover:block"
-                  onClick={(e) => handleRemoveStock(e, stockCode)}
+                  onClick={(e) => handleRemoveStock(e, stock.stockCode)}
                 >
                   <X
                     className="text-main-dark-gray hover:bg-main-blue/30 rounded-full p-1 box-content transition-colors duration-200 ease-in-out"

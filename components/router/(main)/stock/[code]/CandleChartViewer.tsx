@@ -171,15 +171,18 @@ const CandleChartViewer = ({ code }: { code: string }) => {
 
   // 이전 주식 가격 데이터 가져오기
   useEffect(() => {
+    if (!code) return;
     const fetchPrevData = async () => {
       const res = await fetch(
         `/api/v1/stocks/${code}?period=${candleInterval}`
       );
-      const data: { data: Tick[] } = await res.json();
-      setTicks((prev) => [...prev, ...data.data]);
+      const json: { data: Tick[] } = await res.json();
+
+      if (!Array.isArray(json.data) || json.data.length === 0) return;
+      setTicks((prev) => [...prev, ...json.data]);
     };
     fetchPrevData();
-  }, [code, candleInterval]);
+  }, [candleInterval]);
 
   // 2초마다 현재 주식 가격 업데이트 (장이 열려있을 때만)
   useEffect(() => {
