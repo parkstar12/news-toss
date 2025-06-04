@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { ArrowUp, ArrowDown, Minus } from "lucide-react";
 
 interface Stock {
   stockName: string;
@@ -11,22 +10,6 @@ interface Stock {
   changeAmount: string;
   changeRate: string;
 }
-
-const getSignInfo = (sign: string) => {
-  if (sign === "1" || sign === "5") {
-    return {
-      color: "text-red-500",
-      icon: <ArrowUp className="inline w-4 h-4" />,
-    };
-  }
-  if (sign === "2" || sign === "6") {
-    return {
-      color: "text-blue-500",
-      icon: <ArrowDown className="inline w-4 h-4" />,
-    };
-  }
-  return { color: "text-gray-500", icon: <Minus className="inline w-4 h-4" /> };
-};
 
 const RelatedStocks = ({ stockNames }: { stockNames: string[] }) => {
   const [stocks, setStocks] = useState<Stock[]>([]);

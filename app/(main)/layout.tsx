@@ -2,12 +2,15 @@ import Sidebar from "@/components/ui/Sidebar";
 import React from "react";
 import Footer from "@/components/ui/shared/Footer";
 import Header from "@/components/ui/shared/header/Header";
+import { getJwtToken } from "@/utils/auth";
 
-export default function MainLayout({
+export default async function MainLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const token = await getJwtToken();
+
   return (
     <div className="w-screen h-screen flex">
       <main className="flex-1 flex flex-col overflow-hidden py-main pl-main">
@@ -23,7 +26,7 @@ export default function MainLayout({
           </div>
         </div>
       </main>
-      <Sidebar />
+      <Sidebar token={token} />
     </div>
   );
 }

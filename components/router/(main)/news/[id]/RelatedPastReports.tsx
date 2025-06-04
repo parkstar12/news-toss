@@ -52,7 +52,6 @@ const RelatedPastReports = ({ selectedNews }: { selectedNews: string }) => {
       const data = await res.json();
 
       setReports(data.data);
-      console.log(data.data);
     };
 
     if (selectedNews) {

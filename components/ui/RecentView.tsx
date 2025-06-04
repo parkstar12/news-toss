@@ -38,7 +38,7 @@ const RecentView = () => {
 
   return (
     <div className="grid grid-rows-2 gap-main size-full">
-      <div className="flex flex-col gap-main">
+      {/* <div className="flex flex-col gap-main">
         <h2 className="text-xl font-bold text-main-dark-gray">최근 본 뉴스</h2>
 
         {recentViewNews.length > 0 ? (
@@ -76,7 +76,7 @@ const RecentView = () => {
             <p className="text-main-dark-gray">최근 본 뉴스가 없습니다.</p>
           </div>
         )}
-      </div>
+      </div> */}
 
       <div className="flex flex-col gap-main">
         <h2 className="text-xl font-bold text-main-dark-gray">최근 본 종목</h2>

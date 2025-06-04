@@ -9,7 +9,7 @@ import {
   Trash2,
   X,
 } from "lucide-react";
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Dropdown from "./shared/Dropdown";
 import Modal from "./Modal";
 import { useRouter } from "next/navigation";
@@ -21,10 +21,12 @@ import {
 } from "@hello-pangea/dnd";
 import clsx from "clsx";
 import SearchStock from "./SearchStock";
+import { JwtToken } from "@/type/jwt";
+import { useScrapStore } from "@/store/useScrapStore";
 
 const SettingModal = Modal;
 
-const InterestStock = () => {
+const InterestStock = ({ token }: { token: JwtToken | null }) => {
   const isLogin = true;
   const [isOpenSettingModal, setIsOpenSettingModal] = useState(false);
   const [interests, setInterests] = useState([
@@ -57,6 +59,8 @@ const InterestStock = () => {
       ],
     },
   ]);
+  const { scraps } = useScrapStore();
+
   const groups = interests.map((interest) => ({
     id: interest.id,
     name: interest.gruop,
@@ -69,7 +73,7 @@ const InterestStock = () => {
   const [editingGroup, setEditingGroup] = useState<string | null>(null);
   const inputRefs = useRef<{ [id: string]: HTMLInputElement | null }>({});
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (isOpenSettingModal) {
       setSelectedSettingGroup(selectedGroup);
     }
@@ -120,66 +124,113 @@ const InterestStock = () => {
 
   return (
     <>
-      <div className="flex flex-col gap-main">
-        <h2 className="text-xl font-bold text-main-dark-gray">관심 종목</h2>
+      <div className="grid grid-rows-2 gap-main size-full">
+        <div className="flex flex-col gap-main">
+          <h2 className="text-xl font-bold text-main-dark-gray">관심 종목</h2>
 
-        <div className="flex items-center justify-between">
-          {groups.length > 0 ? (
-            <Dropdown
-              groups={groups.map((g) => g.name)}
-              selected={groups.find((g) => g.id === selectedGroup)?.name || ""}
-              onSelect={(name) => {
-                const found = groups.find((g) => g.name === name);
-                if (found) setSelectedGroup(found.id);
-              }}
-            />
-          ) : (
-            <button
-              className="flex items-center gap-[5px] cursor-pointer text-main-dark-gray hover:bg-main-blue/10 rounded-main transition-colors duration-200 ease-in-out p-main"
+          <div className="flex items-center justify-between">
+            {groups.length > 0 ? (
+              <Dropdown
+                groups={groups.map((g) => g.name)}
+                selected={
+                  groups.find((g) => g.id === selectedGroup)?.name || ""
+                }
+                onSelect={(name) => {
+                  const found = groups.find((g) => g.name === name);
+                  if (found) setSelectedGroup(found.id);
+                }}
+              />
+            ) : (
+              <button
+                className="flex items-center gap-[5px] cursor-pointer text-main-dark-gray hover:bg-main-blue/10 rounded-main transition-colors duration-200 ease-in-out p-main"
+                onClick={() => setIsOpenSettingModal(true)}
+              >
+                <Plus size={16} />
+                <span>그룹추가</span>
+              </button>
+            )}
+
+            <Settings2
               onClick={() => setIsOpenSettingModal(true)}
-            >
-              <Plus size={16} />
-              <span>그룹추가</span>
-            </button>
-          )}
+              className="text-main-dark-gray p-2 box-content hover:bg-main-blue/20 rounded-full transition-colors duration-200 ease-in-out"
+              size={20}
+            />
+          </div>
 
-          <Settings2
-            onClick={() => setIsOpenSettingModal(true)}
-            className="text-main-dark-gray p-2 box-content hover:bg-main-blue/20 rounded-full transition-colors duration-200 ease-in-out"
-            size={20}
-          />
+          <div className="grid">
+            {interests.find((interest) => interest.id === selectedGroup)?.stocks
+              .length === 0 ? (
+              <div className="w-full h-[120px] flex items-center justify-center text-main-dark-gray">
+                종목이 없습니다.
+              </div>
+            ) : (
+              interests
+                .find((interest) => interest.id === selectedGroup)
+                ?.stocks.map((stock) => (
+                  <div
+                    className="w-full flex flex-col justify-around hover:bg-main-blue/10 rounded-main transition-colors duration-200 ease-in-out p-main gap-[5px] relative group"
+                    key={`${selectedGroup}-${stock.code}-${stock.name}`}
+                    onClick={() => router.push(`/stock/${stock.code}`)}
+                  >
+                    <div className="flex items-center gap-2 w-full">
+                      <div className="bg-black rounded-full size-[40px] shrink-0" />
+                      <div className="flex flex-col flex-1 truncate text-sm">
+                        <span className="font-bold text-gray-800 truncate w-full">
+                          {stock.name}
+                        </span>
+                        <span className="text-main-dark-gray">
+                          {stock.code}
+                        </span>
+                      </div>
+                    </div>
+                    <ChevronRight
+                      className="hidden group-hover:block text-main-blue absolute top-1/2 -translate-y-1/2 right-main"
+                      size={20}
+                    />
+                  </div>
+                ))
+            )}
+          </div>
         </div>
 
-        <div className="grid">
-          {interests.find((interest) => interest.id === selectedGroup)?.stocks
-            .length === 0 ? (
+        <div className="flex flex-col gap-main">
+          <h2 className="text-xl font-bold text-main-dark-gray">
+            스크랩한 뉴스
+          </h2>
+
+          {!token && (
             <div className="w-full h-[120px] flex items-center justify-center text-main-dark-gray">
-              종목이 없습니다.
+              로그인 후 이용해주세요
             </div>
-          ) : (
-            interests
-              .find((interest) => interest.id === selectedGroup)
-              ?.stocks.map((stock) => (
-                <div
-                  className="w-full flex flex-col justify-around hover:bg-main-blue/10 rounded-main transition-colors duration-200 ease-in-out p-main gap-[5px] relative group"
-                  key={`${selectedGroup}-${stock.code}-${stock.name}`}
-                  onClick={() => router.push(`/stock/${stock.code}`)}
+          )}
+
+          {token && scraps.length === 0 && (
+            <div className="w-full h-[120px] flex items-center justify-center text-main-dark-gray">
+              스크랩한 뉴스가 없습니다.
+            </div>
+          )}
+
+          {token && scraps.length > 0 && (
+            <div className="grid">
+              {scraps.map((scrap) => (
+                <button
+                  key={`scrap-${scrap.newsId}`}
+                  className="flex flex-col items-start gap-[5px] hover:bg-main-blue/10 rounded-main transition-colors duration-200 ease-in-out p-main"
+                  onClick={() => router.push(`/news/${scrap.newsId}`)}
                 >
-                  <div className="flex items-center gap-2 w-full">
-                    <div className="bg-black rounded-full size-[40px] shrink-0" />
-                    <div className="flex flex-col flex-1 truncate text-sm">
-                      <span className="font-bold text-gray-800 truncate w-full">
-                        {stock.name}
-                      </span>
-                      <span className="text-main-dark-gray">{stock.code}</span>
-                    </div>
-                  </div>
-                  <ChevronRight
-                    className="hidden group-hover:block text-main-blue absolute top-1/2 -translate-y-1/2 right-main"
-                    size={20}
-                  />
-                </div>
-              ))
+                  <h2 className="text-sm text-start font-bold text-main-dark-gray line-clamp-2">
+                    {scrap.title}
+                  </h2>
+                  <p className="text-sm text-main-dark-gray">
+                    {new Date(scrap.wdate || "").toLocaleDateString("ko-KR", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })}
+                  </p>
+                </button>
+              ))}
+            </div>
           )}
         </div>
       </div>
