@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import { ToastContainer } from "react-toastify";
+import SentryProvider from "./SentryProvider";
 
 const pretendard = localFont({
   src: "../public/fonts/PretendardVariable.woff2",
@@ -44,7 +45,7 @@ export default function RootLayout({
           newestOnTop={false}
           closeOnClick
         />
-        {children}
+        <SentryProvider>{children}</SentryProvider>
       </body>
     </html>
   );
