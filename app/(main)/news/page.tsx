@@ -8,7 +8,7 @@ const HomePage = async () => {
   const token = await getJwtToken();
 
   return (
-    <div className="grid grid-cols-3 gap-main">
+    <div className="grid grid-cols-3 gap-main max-w-[1000px] mx-auto">
       <div className="col-span-2 p-main">
         <MainNews />
       </div>

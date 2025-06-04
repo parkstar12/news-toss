@@ -101,7 +101,7 @@ const NewsDetail = ({
   if (!news) return null;
 
   return (
-    <div className="w-full flex flex-col gap-main overflow-y-scroll">
+    <div className="w-full flex flex-col gap-main overflow-x-hidden overflow-y-scroll min-w-[600px]">
       <div className="flex flex-col gap-[5px]">
         <div className="flex items-center gap-2">
           <h2 className="text-2xl font-bold">{news.title}</h2>

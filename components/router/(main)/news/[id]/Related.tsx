@@ -11,12 +11,10 @@ const Related = ({
   return (
     <>
       <div className="relative">
-        <div className="sticky top-0 flex flex-col gap-main">
-          <div className="shadow-color rounded-main p-main">키워드</div>
+        <div className="sticky top-0 flex flex-col gap-[20px]">
+          {/* <div className="shadow-color rounded-main p-main">키워드</div> */}
 
-          <div className="shadow-color rounded-main p-main">
-            <RelatedStocks stockNames={relativeStocksData.data[0].stockName} />
-          </div>
+          <RelatedStocks stockNames={relativeStocksData.data[0].stockName} />
 
           <RelatedPastNews
             news={relatedPastNewsData.data.sort(

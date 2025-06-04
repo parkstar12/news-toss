@@ -1,5 +1,9 @@
 "use client";
 
+import DownPrice from "@/components/ui/shared/DownPrice";
+import UpPrice from "@/components/ui/shared/UpPrice";
+import { ChevronRight } from "lucide-react";
+import Link from "next/link";
 import React, { useEffect, useState } from "react";
 
 interface Stock {
@@ -16,19 +20,22 @@ const RelatedStocks = ({ stockNames }: { stockNames: string[] }) => {
 
   useEffect(() => {
     const fetchStocks = async () => {
-      for (const stockName of stockNames) {
-        const response = await fetch(
-          `/api/v1/stocks/search?keyword=${stockName}`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-        const data = await response.json();
-        setStocks((prev) => [...prev, data.data[0]]);
-      }
+      const results = await Promise.all(
+        stockNames.map(async (stockName) => {
+          const response = await fetch(
+            `/api/v1/stocks/search?keyword=${stockName}`,
+            {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+          );
+          const data = await response.json();
+          return data.data[0];
+        })
+      );
+      setStocks(results);
     };
 
     if (stockNames.length > 0) {
@@ -37,16 +44,74 @@ const RelatedStocks = ({ stockNames }: { stockNames: string[] }) => {
   }, [stockNames]);
 
   console.log("stocks", stocks);
+  console.log("stockNames", stockNames);
 
-  if (stockNames.length === 0) return <div>관련 종목 없음</div>;
+  if (stocks.length === 0)
+    return (
+      <div className="flex flex-col gap-main">
+        <h2 className="text-lg font-semibold">관련 종목</h2>
+
+        <span className="text-gray-500">관련 종목이 없습니다.</span>
+      </div>
+    );
 
   return (
-    <div>
-      {stockNames.map((stockName) => (
-        <div key={stockName}>
-          <p>{stockName}</p>
-        </div>
-      ))}
+    <div className="flex flex-col gap-main">
+      <h2 className="text-lg font-semibold">관련 종목</h2>
+
+      <div className="grid grid-cols-2 gap-x-main">
+        {stocks.map((stock) => (
+          <Link
+            href={`/stock/${stock.stockCode}`}
+            className="flex gap-main w-full hover:bg-main-blue/10 transition-all duration-300 p-main rounded-main relative group"
+            key={`news-related-stock-${stock.stockCode}`}
+          >
+            <ChevronRight
+              className="hidden group-hover:block text-main-blue absolute top-1/2 -translate-y-1/2 right-main"
+              size={20}
+            />
+            <div className="relative flex items-center justify-center">
+              <div className="bg-main-blue/10 rounded-full size-[40px] shrink-0 flex items-center justify-center">
+                <span className="text-main-blue font-semibold">
+                  {stock.stockName[0]}
+                </span>
+              </div>
+            </div>
+            <div className="flex flex-col flex-1 truncate">
+              <span className="font-bold text-gray-800 truncate w-full">
+                {stock.stockName}
+              </span>
+              <div className="text-sm flex gap-main items-center">
+                <span className="text-gray-500">{stock.stockCode}</span>
+                <div className="flex justify-between h-fit">
+                  {(stock.sign === "1" || stock.sign === "2") && (
+                    <UpPrice
+                      change={Number(stock.changeAmount)}
+                      changeRate={Number(stock.changeRate)}
+                    />
+                  )}
+                  {stock.sign === "3" && (
+                    <span className="text-gray-400 font-medium">
+                      {Number(stock.changeAmount)} ({Number(stock.changeRate)}%)
+                    </span>
+                  )}
+                  {(stock.sign === "4" || stock.sign === "5") && (
+                    <DownPrice
+                      change={Number(stock.changeAmount)}
+                      changeRate={Number(stock.changeRate)}
+                    />
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <ChevronRight
+              className="hidden group-hover:block text-main-blue absolute top-1/2 -translate-y-1/2 right-main"
+              size={20}
+            />
+          </Link>
+        ))}
+      </div>
     </div>
   );
 
