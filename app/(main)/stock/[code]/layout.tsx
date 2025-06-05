@@ -29,7 +29,7 @@ export async function generateMetadata({
 }
 
 const StockDetailLayout = ({ children }: { children: React.ReactNode }) => {
-  return <div className="px-[100px]">{children}</div>;
+  return <div className="size-full">{children}</div>;
 };
 
 export default StockDetailLayout;

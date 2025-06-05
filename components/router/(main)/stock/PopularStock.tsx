@@ -32,7 +32,6 @@ const PopularStock = ({ token }: { token: JwtToken | null }) => {
       if (!res.ok) setPopularStocks(null);
       const json = await res.json();
       setPopularStocks(json.data);
-      console.log(json.data);
     } catch (e) {
       console.error("❌ 인기종목 에러:", e);
     }

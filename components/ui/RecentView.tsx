@@ -1,19 +1,18 @@
 "use client";
 
-import { useRecentViewStore } from "@/store/sidebarStore";
+import { useRecentViewStore } from "@/store/useRecentViewStore";
 import { Clock, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 
 const RecentView = () => {
-  const { recentViewStocks, setRecentViewStocks, syncFromLocalStorage } =
-    useRecentViewStore();
+  const { recentViewStocks, setRecentViewStocks } = useRecentViewStore();
 
   const router = useRouter();
 
-  useEffect(() => {
-    syncFromLocalStorage();
-  }, []);
+  // useEffect(() => {
+  //   syncFromLocalStorage();
+  // }, []);
 
   const handleRemoveStock = (
     e: React.MouseEvent<HTMLButtonElement>,

@@ -170,69 +170,69 @@ const CandleChartViewer = ({ code }: { code: string }) => {
   }, []);
 
   // 이전 주식 가격 데이터 가져오기
-  useEffect(() => {
-    if (!code) return;
-    const fetchPrevData = async () => {
-      const res = await fetch(
-        `/api/v1/stocks/${code}?period=${candleInterval}`
-      );
-      const json: { data: Tick[] } = await res.json();
+  // useEffect(() => {
+  //   if (!code) return;
+  //   const fetchPrevData = async () => {
+  //     const res = await fetch(
+  //       `/api/v1/stocks/${code}?period=${candleInterval}`
+  //     );
+  //     const json: { data: Tick[] } = await res.json();
 
-      if (!Array.isArray(json.data) || json.data.length === 0) return;
-      setTicks((prev) => [...prev, ...json.data]);
-    };
-    fetchPrevData();
-  }, [candleInterval]);
+  //     if (!Array.isArray(json.data) || json.data.length === 0) return;
+  //     setTicks((prev) => [...prev, ...json.data]);
+  //   };
+  //   fetchPrevData();
+  // }, [candleInterval]);
 
   // 2초마다 현재 주식 가격 업데이트 (장이 열려있을 때만)
-  useEffect(() => {
-    if (!isStockDay) return;
-    const fetchCurrentData = async () => {
-      const now = new Date();
-      const res = await fetch(`/api/v1/stocks/${code}`);
-      const data: { data: string } = await res.json();
-      const yyyy = now.getFullYear().toString();
-      const mm = (now.getMonth() + 1).toString().padStart(2, "0");
-      const dd = now.getDate().toString().padStart(2, "0");
-      const today = `${yyyy}${mm}${dd}`;
-      const tick: Tick = {
-        acml_tr_pbmn: "0",
-        acml_vol: "0",
-        prdy_vrss: "0",
-        prdy_vrss_sign: "3",
-        stck_bsop_date: today,
-        stck_clpr: data.data,
-        stck_hgpr: data.data,
-        stck_lwpr: data.data,
-        stck_oprc: data.data,
-      };
-      setTicks((prev) => [...prev, tick]);
-    };
-    const interval = setInterval(fetchCurrentData, 2000);
-    return () => clearInterval(interval);
-  }, [code, isStockDay]);
+  // useEffect(() => {
+  //   if (!isStockDay) return;
+  //   const fetchCurrentData = async () => {
+  //     const now = new Date();
+  //     const res = await fetch(`/api/v1/stocks/${code}`);
+  //     const data: { data: string } = await res.json();
+  //     const yyyy = now.getFullYear().toString();
+  //     const mm = (now.getMonth() + 1).toString().padStart(2, "0");
+  //     const dd = now.getDate().toString().padStart(2, "0");
+  //     const today = `${yyyy}${mm}${dd}`;
+  //     const tick: Tick = {
+  //       acml_tr_pbmn: "0",
+  //       acml_vol: "0",
+  //       prdy_vrss: "0",
+  //       prdy_vrss_sign: "3",
+  //       stck_bsop_date: today,
+  //       stck_clpr: data.data,
+  //       stck_hgpr: data.data,
+  //       stck_lwpr: data.data,
+  //       stck_oprc: data.data,
+  //     };
+  //     setTicks((prev) => [...prev, tick]);
+  //   };
+  //   const interval = setInterval(fetchCurrentData, 2000);
+  //   return () => clearInterval(interval);
+  // }, [code, isStockDay]);
 
   // 집계 함수 및 캔들 갱신
-  useEffect(() => {
-    const intervalObj = CANDLE_INTERVALS.find(
-      (i) => i.value === candleInterval
-    );
-    if (!intervalObj) return;
-    const newCandles = aggregateCandles(ticks, intervalObj.seconds);
-    setCandles(newCandles);
-    if (candlestickSeriesRef.current) {
-      candlestickSeriesRef.current.setData(newCandles);
-    }
-    if (volumeSeriesRef.current) {
-      const volumeData = newCandles.map((c) => ({
-        time: c.time,
-        value: c.volume,
-        color:
-          c.close >= c.open ? "rgba(240,66,81,0.6)" : "rgba(52,133,250,0.6)",
-      }));
-      volumeSeriesRef.current.setData(volumeData);
-    }
-  }, [ticks, candleInterval]);
+  // useEffect(() => {
+  //   const intervalObj = CANDLE_INTERVALS.find(
+  //     (i) => i.value === candleInterval
+  //   );
+  //   if (!intervalObj) return;
+  //   const newCandles = aggregateCandles(ticks, intervalObj.seconds);
+  //   setCandles(newCandles);
+  //   if (candlestickSeriesRef.current) {
+  //     candlestickSeriesRef.current.setData(newCandles);
+  //   }
+  //   if (volumeSeriesRef.current) {
+  //     const volumeData = newCandles.map((c) => ({
+  //       time: c.time,
+  //       value: c.volume,
+  //       color:
+  //         c.close >= c.open ? "rgba(240,66,81,0.6)" : "rgba(52,133,250,0.6)",
+  //     }));
+  //     volumeSeriesRef.current.setData(volumeData);
+  //   }
+  // }, [ticks, candleInterval]);
 
   return (
     <div className="size-full flex flex-col gap-main">
