@@ -2,7 +2,7 @@
 
 import DownPrice from "@/components/ui/shared/DownPrice";
 import UpPrice from "@/components/ui/shared/UpPrice";
-import { useRecentViewStore } from "@/store/sidebarStore";
+import { useRecentViewStore } from "@/store/useRecentViewStore";
 import React, { useEffect, useState } from "react";
 
 const StockHeader = ({ code }: { code: string }) => {
@@ -14,13 +14,11 @@ const StockHeader = ({ code }: { code: string }) => {
     stockCode: string;
     stockName: string;
   } | null>(null);
-  const { recentViewStocks, setRecentViewStocks, syncFromLocalStorage } =
-    useRecentViewStore();
+  const { recentViewStocks, setRecentViewStocks } = useRecentViewStore();
 
   useEffect(() => {
     if (!stock) return;
 
-    syncFromLocalStorage();
     if (recentViewStocks.some((stock) => stock.stockCode === code)) return;
     setRecentViewStocks([
       ...recentViewStocks,
