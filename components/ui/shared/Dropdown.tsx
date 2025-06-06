@@ -9,9 +9,10 @@ interface DropdownProps {
   groups: string[];
   selected: string;
   onSelect: (group: string) => void;
+  className?: string;
 }
 
-const Dropdown = ({ groups, selected, onSelect }: DropdownProps) => {
+const Dropdown = ({ groups, selected, onSelect, className }: DropdownProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const groupRef = useRef<HTMLDivElement>(null);
   const buttonRefs = useRef<{ [group: string]: HTMLButtonElement | null }>({});
@@ -27,7 +28,10 @@ const Dropdown = ({ groups, selected, onSelect }: DropdownProps) => {
   return (
     <div className="relative">
       <button
-        className="flex items-center gap-main rounded-main pl-3 pr-2"
+        className={clsx(
+          "flex items-center gap-main rounded-main pl-3 pr-2",
+          className
+        )}
         onClick={() => setIsOpen((prev) => !prev)}
         type="button"
       >
@@ -43,7 +47,7 @@ const Dropdown = ({ groups, selected, onSelect }: DropdownProps) => {
       <div
         ref={groupRef}
         className={clsx(
-          "absolute top-full left-0 pt-[5px] transition-opacity duration-200 z-10",
+          "absolute top-full left-0 pt-[5px] transition-opacity duration-200 z-50",
           isOpen
             ? "opacity-100 pointer-events-auto"
             : "opacity-0 pointer-events-none"

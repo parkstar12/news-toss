@@ -13,7 +13,7 @@ const nextConfig: NextConfig = {
   },
   images: {
     dangerouslyAllowSVG: true,
-    domains: ["placehold.co"],
+    domains: ["placehold.co", "imgnews.pstatic.net", "ssl.pstatic.net"],
   },
 };
 
