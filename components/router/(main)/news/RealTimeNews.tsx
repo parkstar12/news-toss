@@ -80,7 +80,7 @@ export default function RealTimeNews() {
   }, [remainSec]);
 
   return (
-    <div className="row-span-2 flex flex-col justify-between shadow-lg rounded-main sticky top-0">
+    <div className="shadow-lg rounded-main">
       <div className="flex items-center justify-between p-main">
         <div className="flex items-center gap-2">
           <div className="relative">
@@ -100,7 +100,7 @@ export default function RealTimeNews() {
       </div>
       <div
         key={animationKey}
-        className="flex flex-col gap-main overflow-y-scroll h-[400px] p-main"
+        className="flex flex-col gap-main overflow-y-scroll h-[250px] p-main"
       >
         {news.map((item, index) => (
           <div
