@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 };
 
 const PortfolioMyLayout = ({ children }: { children: React.ReactNode }) => {
-  return <div className="max-w-[900px] mx-auto">{children}</div>;
+  return <div className="min-w-[900px] mx-auto">{children}</div>;
 };
 
 export default PortfolioMyLayout;

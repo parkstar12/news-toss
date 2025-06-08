@@ -10,6 +10,7 @@ import { JwtToken } from "@/type/jwt";
 import { jwtDecode } from "jwt-decode";
 import { useScrapStore } from "@/store/useScrapStore";
 import { News } from "@/type/news";
+import { toast } from "react-toastify";
 
 type Category = "내 투자" | "관심" | "최근 본" | null;
 
@@ -22,6 +23,12 @@ const Sidebar = ({ token }: { token: JwtToken | null }) => {
     if (token) {
       const fetchScrapNews = async () => {
         const res = await fetch(`/api/scrap?memberId=${token.memberId}`);
+
+        if (!res.ok) {
+          toast.error("스크랩 뉴스 로드 실패");
+          return;
+        }
+
         const data: { data: News[] } = await res.json();
         setScraps(
           data.data.map((item) => ({

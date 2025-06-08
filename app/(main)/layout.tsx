@@ -14,7 +14,7 @@ export default async function MainLayout({
   return (
     <div className="w-screen h-screen flex">
       <main className="flex-1 flex flex-col overflow-hidden py-main pl-main">
-        <div className="flex-1 bg-white rounded-main relative flex flex-col overflow-x-scroll">
+        <div className="flex-1 rounded-main relative flex flex-col overflow-x-scroll bg-white">
           <Header />
 
           <div

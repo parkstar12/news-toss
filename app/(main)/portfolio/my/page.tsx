@@ -2,67 +2,61 @@ import React from "react";
 import AccountChart from "@/components/router/(main)/portfolio/my/AccountChart";
 import Holidings from "@/components/router/(main)/portfolio/my/Holidings";
 import ProfitLossCalendar from "@/components/router/(main)/portfolio/my/ProfitLossCalendar";
+import MyAccountChart from "./MyAccountChart";
+import { getJwtToken } from "@/utils/auth";
+import { redirect } from "next/navigation";
+import MyProfit from "./MyProfit";
+import { PortfolioData } from "@/type/portfolio";
+import GaugeChart from "./GaugeChart";
 
-const MyPortfolioPage = () => {
+const MyPortfolioPage = async () => {
+  const token = await getJwtToken();
+  let portfolioData = null;
+
+  // const portfolioRes = await fetch(
+  //   `${process.env.NEXT_PUBLIC_BASE_URL}/v1/portfolios/${token!.memberId}`,
+  //   {
+  //     credentials: "include",
+  //   }
+  // );
+
+  // if (portfolioRes.ok) {
+  //   const portfolioJson: PortfolioData = await portfolioRes.json();
+  //   portfolioData = portfolioJson;
+  // }
+  console.log("portfolioData", portfolioData);
+
   return (
-    <>
-      <div className="grid grid-cols-3 gap-main rounded-main">
-        <div className="shadow-color rounded-main p-[20px] flex flex-col gap-main">
-          <h2 className="text-lg font-bold text-main-dark-gray">당일 손익</h2>
-          <div className="flex items-center text-main-red text-xl font-bold">
-            <span>+</span>
-            <span>100,000원</span>
-          </div>
-          <div className="flex gap-main items-center text-sm">
-            <span className="text-main-dark-gray">전일대비</span>
-            <div className="flex items-center text-main-red">
-              <span>+</span>
-              <span>100,000원</span>
-            </div>
-          </div>
-        </div>
-        <div className="shadow-color rounded-main p-[20px] flex flex-col gap-main">
-          <h2 className="text-lg font-bold text-main-dark-gray">
-            월 누적 손익
-          </h2>
-          <div className="flex items-center text-main-blue text-xl font-bold">
-            <span>-</span>
-            <span>100,000원</span>
-          </div>
-          <div className="flex gap-main items-center text-sm">
-            <span className="text-main-dark-gray">전월 대비</span>
-            <div className="flex items-center text-main-blue">
-              <span>-</span>
-              <span>100,000원</span>
-            </div>
-          </div>
-        </div>
-        <div className="shadow-color rounded-main p-[20px] flex flex-col gap-main">
-          <h2 className="text-lg font-bold text-main-dark-gray">
-            총 누적 손익
-          </h2>
-          <div className="flex items-center text-main-red text-xl font-bold">
-            <span>+</span>
-            <span>100,000원</span>
-          </div>
-        </div>
-        <div className="col-span-3 shadow-color rounded-main p-[20px] flex flex-col gap-main w-full">
-          <span className="text-xl font-bold">100,000원</span>
-          <p className="text-sm flex items-center gap-main">
-            <span className="text-main-dark-gray">지난주보다</span>
-            <span className="text-main-red">+321,203원 (+2.3%)</span>
-          </p>
-          <AccountChart />
-        </div>
-        <div className="col-span-3 shadow-color rounded-main p-[20px] flex flex-col gap-main w-full">
+    <div className="grid grid-cols-6 gap-[20px] max-w-[1200px] mx-auto min-w-[800px]">
+      <div className="col-span-3 flex flex-col gap-main box-content p-[20px] bg-white rounded-main shadow-sm">
+        <h2 className="text-2xl font-bold bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent w-fit">
+          내 계좌
+        </h2>
+        <MyAccountChart portfolioData={portfolioData} />
+      </div>
+
+      <div className="col-span-2 gap-main box-content p-[20px] bg-white rounded-main shadow-sm">
+        <GaugeChart value={90} /> {/* 10%, 25%, 50%, 75%, 100% */}
+      </div>
+
+      <div className="grid grid-rows-3 gap-main">
+        <MyProfit title="당일 손익" portfolioData={portfolioData} />
+        <MyProfit title="월 누적 손익" portfolioData={portfolioData} />
+        <MyProfit title="총 누적 손익" portfolioData={portfolioData} />
+      </div>
+
+      <div className="col-span-6 grid grid-cols-5 gap-[20px]">
+        <div className="col-span-2 box-content p-[20px] bg-white rounded-main shadow-sm">
           <Holidings />
         </div>
-        <div className="col-span-3 shadow-color rounded-main p-[20px] flex flex-col gap-main w-full">
-          <h2 className="text-lg font-bold text-main-dark-gray">날짜별 손익</h2>
-          <ProfitLossCalendar />
+
+        <div className="col-span-3 relative w-full">
+          <div className="sticky top-0 bg-white rounded-main p-[20px] shadow-sm">
+            <ProfitLossCalendar />
+          </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

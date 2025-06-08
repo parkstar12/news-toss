@@ -2,11 +2,21 @@
 
 import clsx from "clsx";
 import Link from "next/link";
-import React from "react";
-import { usePathname } from "next/navigation";
+import React, { useEffect } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { JwtToken } from "@/type/jwt";
+import { toast } from "react-toastify";
 
-const SideMenus = () => {
+const SideMenus = ({ token }: { token: JwtToken | null }) => {
   const pathname = usePathname();
+  const router = useRouter();
+
+  // useEffect(() => {
+  //   if (!token) {
+  //     toast.error("로그인 후 이용해주세요.");
+  //     router.replace("/news");
+  //   }
+  // }, [token, router]);
 
   const navLinks = [
     { href: "/portfolio/my", label: "내 포트폴리오" },
@@ -15,7 +25,7 @@ const SideMenus = () => {
   ];
 
   return (
-    <nav className="flex flex-col gap-main w-full sticky top-0">
+    <nav className="flex flex-col gap-main w-full sticky top-0 shrink-0 min-w-[175px]">
       {navLinks.map((link) => (
         <Link
           key={link.href}

@@ -35,92 +35,69 @@ const Holidings = () => {
   };
 
   return (
-    <>
-      <div className="flex flex-col gap-main">
-        <div className="flex items-center justify-between">
-          <h2 className="text-lg font-bold text-main-dark-gray">보유 종목</h2>
-          <button
-            className="bg-main-blue text-white px-4 py-2 rounded-main text-sm flex items-center gap-[5px]"
-            onClick={() => setIsOpenAddHoldingModal(true)}
-          >
-            <Plus size={16} /> <span>보유 종목 추가</span>
-          </button>
-        </div>
+    <div className="size-full flex flex-col gap-main">
+      <div className="w-full flex justify-between items-center">
+        <h2 className="text-2xl font-bold bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent">
+          보유 종목
+        </h2>
+        <button
+          className="bg-main-blue text-white px-4 py-2 rounded-main text-sm flex items-center gap-[5px]"
+          onClick={() => setIsOpenAddHoldingModal(true)}
+        >
+          <Plus size={16} /> <span>보유 종목 추가</span>
+        </button>
+      </div>
+      <div className="grid grid-cols-1 overflow-y-auto flex-1 p-main gap-main">
         {holidings.length > 0 ? (
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[700px] bg-white shadow-color border-separate border-spacing-0">
-              <thead>
-                <tr>
-                  <th className="px-4 py-2 text-center bg-main-light-gray text-main-dark-gray font-semibold rounded-l-main">
-                    종목명
-                  </th>
-                  <th className="px-4 py-2 text-center bg-main-light-gray text-main-dark-gray font-semibold">
-                    투자자금
-                  </th>
-                  <th className="px-4 py-2 text-center bg-main-light-gray text-main-dark-gray font-semibold">
-                    수량
-                  </th>
-                  <th className="px-4 py-2 text-center bg-main-light-gray text-main-dark-gray font-semibold">
-                    수익
-                  </th>
-                  <th className="px-4 py-2 text-center bg-main-light-gray text-main-dark-gray font-semibold">
-                    수익률
-                  </th>
-                  <th className="px-4 py-2 text-center bg-main-light-gray text-main-dark-gray font-semibold rounded-r-main"></th>
-                </tr>
-              </thead>
-              <tbody>
-                {holidings.map((h) => (
-                  <tr
-                    key={h.code}
-                    className="border-b hover:bg-main-blue/10 transition"
-                  >
-                    <td className="px-4 py-2 font-medium rounded-l-main ">
-                      {h.name}{" "}
-                      <span className="text-xs text-main-dark-gray">
-                        {h.code}
-                      </span>
-                    </td>
-                    <td className="px-4 py-2 text-center">
-                      {h.capital.toLocaleString()}원
-                    </td>
-                    <td className="px-4 py-2 text-center">{h.quantity}</td>
-                    <td
-                      className={clsx(
-                        "px-4 py-2 text-center",
-                        h.profit >= 0 ? "text-main-red" : "text-main-blue"
-                      )}
-                    >
-                      {h.profit.toLocaleString()}원
-                    </td>
-                    <td
-                      className={clsx(
-                        "px-4 py-2 text-center",
-                        h.profitRate >= 0 ? "text-main-red" : "text-main-blue"
-                      )}
-                    >
-                      {h.profitRate}%
-                    </td>
-                    <td className="px-4 py-2 text-center rounded-r-main">
-                      <button
-                        className="bg-main-blue/20 text-main-blue px-4 py-2 rounded-main text-sm"
-                        onClick={() => openSettlementModal(h)}
-                      >
-                        청산
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          [...holidings, ...holidings].map((h, index) => (
+            <div
+              key={index}
+              className="rounded-main p-4 bg-white flex flex-col gap-main hover:scale-102 hover:border-main-blue/20 border border-transparent duration-200 ease-in-out"
+            >
+              <div className="flex justify-between items-center">
+                <div className="flex gap-[5px] items-baseline">
+                  <p className="text-lg font-bold text-gray-800">{h.name}</p>
+                  <p className="text-sm text-gray-500">{h.code}</p>
+                </div>
+
+                <button
+                  className="px-3 py-1 text-sm rounded-full bg-main-blue/20 text-main-blue hover:bg-main-blue/30 font-semibold"
+                  onClick={() => openSettlementModal(h)}
+                >
+                  청산
+                </button>
+              </div>
+
+              <div className="grid grid-cols-2 gap-x-[20px] text-sm text-gray-700">
+                <div className="flex justify-between gap-main">
+                  <span className="text-main-dark-gray">투자금</span>
+                  <span className="font-medium">
+                    {h.capital.toLocaleString()}원
+                  </span>
+                </div>
+                <div className="flex justify-between gap-main">
+                  <span className="text-main-dark-gray">수량</span>
+                  <span className="font-medium">{h.quantity}주</span>
+                </div>
+                <div className="flex justify-between gap-main">
+                  <span className="text-main-dark-gray">수익</span>
+                  <span className="font-medium text-main-red">
+                    {h.profit.toLocaleString()}원
+                  </span>
+                </div>
+                <div className="flex justify-between gap-main">
+                  <span className="text-main-dark-gray">수익률</span>
+                  <span className="font-medium text-main-red">
+                    {h.profitRate.toLocaleString()}%
+                  </span>
+                </div>
+              </div>
+            </div>
+          ))
         ) : (
           <div className="text-center text-gray-400 py-[50px] flex flex-col gap-[5px]] items-center">
             <span className="text-main-dark-gray">
               보유종목이 존재하지 않습니다.
-            </span>
-            <span className="text-main-dark-gray">
-              상단의 추가 버튼을 통해 종목을 추가해 주세요
             </span>
           </div>
         )}
@@ -190,7 +167,7 @@ const Holidings = () => {
           </h2>
         </div>
       </AddHoldingModal>
-    </>
+    </div>
   );
 };
 
