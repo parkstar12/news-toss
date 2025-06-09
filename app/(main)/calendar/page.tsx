@@ -77,27 +77,27 @@ const CalendarPage = () => {
   useEffect(() => {
     const sse = new EventSource("/api/news/stream");
 
-    // 연결 성공 시
-    sse.onopen = () => {
-      console.log("✅ SSE 연결됨");
-    };
+    // 연결 이벤트
+    sse.addEventListener("connect", (event) => {
+      console.log("✅ 서버 연결됨:", event.data); // 'connected' 출력
+    });
 
-    // 에러 핸들링
-    sse.onerror = (event) => {
-      console.error("❌ SSE 에러 발생", event);
-    };
-
-    // "news"라는 이벤트 이름으로 수신
+    // 뉴스 이벤트 수신
     sse.addEventListener("news", (event) => {
       try {
         const data = JSON.parse(event.data);
-        console.log("📰 뉴스 이벤트 수신:", data);
+        console.log("📰 뉴스 수신:", data);
       } catch (err) {
         console.error("❌ JSON 파싱 에러:", err);
       }
     });
 
-    // 컴포넌트 언마운트 시 연결 종료
+    // 에러 핸들링
+    sse.onerror = (event) => {
+      console.error("❌ SSE 에러 발생:", event);
+    };
+
+    // 컴포넌트 언마운트 시 종료
     return () => {
       sse.close();
       console.log("🛑 SSE 연결 종료");
