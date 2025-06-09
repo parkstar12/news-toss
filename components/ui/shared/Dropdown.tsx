@@ -10,9 +10,18 @@ interface DropdownProps {
   selected: string;
   onSelect: (group: string) => void;
   className?: string;
+  textColor?: string;
+  maxHeight?: number;
 }
 
-const Dropdown = ({ groups, selected, onSelect, className }: DropdownProps) => {
+const Dropdown = ({
+  groups,
+  selected,
+  onSelect,
+  className,
+  textColor = "text-main-dark-gray",
+  maxHeight = 200,
+}: DropdownProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const groupRef = useRef<HTMLDivElement>(null);
   const buttonRefs = useRef<{ [group: string]: HTMLButtonElement | null }>({});
@@ -35,7 +44,7 @@ const Dropdown = ({ groups, selected, onSelect, className }: DropdownProps) => {
         onClick={() => setIsOpen((prev) => !prev)}
         type="button"
       >
-        <span className="text-main-dark-gray">{selected}</span>
+        <span className={textColor}>{selected}</span>
         <ChevronDown
           size={20}
           className={clsx(
@@ -53,7 +62,10 @@ const Dropdown = ({ groups, selected, onSelect, className }: DropdownProps) => {
             : "opacity-0 pointer-events-none"
         )}
       >
-        <div className="w-fit bg-white rounded-main p-main flex flex-col items-start shadow-lg max-h-[200px] overflow-y-auto">
+        <div
+          className="w-fit bg-white rounded-main p-main flex flex-col items-start shadow-lg overflow-y-auto"
+          style={{ maxHeight: `${maxHeight}px` }}
+        >
           {groups.map((group) => (
             <button
               key={group}
