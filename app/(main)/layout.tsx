@@ -1,6 +1,5 @@
 import Sidebar from "@/components/ui/Sidebar";
 import React from "react";
-import Footer from "@/components/ui/shared/Footer";
 import Header from "@/components/ui/shared/header/Header";
 import { getJwtToken } from "@/utils/auth";
 
@@ -22,7 +21,6 @@ export default async function MainLayout({
             className="flex-1 overflow-y-scroll pt-[100px] flex flex-col justify-between"
           >
             <div className="grow shrink-0 min-w-[1000px]">{children}</div>
-            <Footer />
           </div>
         </div>
       </main>

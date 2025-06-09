@@ -74,6 +74,36 @@ const CalendarPage = () => {
     setSelectedCompany(null);
   }, [day]);
 
+  useEffect(() => {
+    const sse = new EventSource("/api/news/stream");
+
+    // 연결 성공 시
+    sse.onopen = () => {
+      console.log("✅ SSE 연결됨");
+    };
+
+    // 에러 핸들링
+    sse.onerror = (event) => {
+      console.error("❌ SSE 에러 발생", event);
+    };
+
+    // "news"라는 이벤트 이름으로 수신
+    sse.addEventListener("news", (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        console.log("📰 뉴스 이벤트 수신:", data);
+      } catch (err) {
+        console.error("❌ JSON 파싱 에러:", err);
+      }
+    });
+
+    // 컴포넌트 언마운트 시 연결 종료
+    return () => {
+      sse.close();
+      console.log("🛑 SSE 연결 종료");
+    };
+  }, []);
+
   return (
     <div className="grid grid-cols-5 gap-[40px]">
       <div className="col-span-3 w-full flex flex-col gap-main">

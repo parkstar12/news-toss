@@ -1,3 +1,4 @@
+import Footer from "@/components/ui/shared/Footer";
 import { Metadata } from "next";
 import React from "react";
 
@@ -7,7 +8,12 @@ export const metadata: Metadata = {
 };
 
 const HomeLayout = ({ children }: { children: React.ReactNode }) => {
-  return <div className="flex flex-col gap-[40px] mx-auto">{children}</div>;
+  return (
+    <div className="flex flex-col gap-[40px] mx-auto">
+      {children}
+      <Footer />
+    </div>
+  );
 };
 
 export default HomeLayout;

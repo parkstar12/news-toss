@@ -26,38 +26,47 @@ import { useScrapStore } from "@/store/useScrapStore";
 
 const SettingModal = Modal;
 
+interface Interest {
+  id: string;
+  gruop: string;
+  stocks: {
+    code: string;
+    name: string;
+  }[];
+}
+
 const InterestStock = ({ token }: { token: JwtToken | null }) => {
   const isLogin = true;
   const [isOpenSettingModal, setIsOpenSettingModal] = useState(false);
-  const [interests, setInterests] = useState([
-    {
-      id: "group-1",
-      gruop: "내 커스텀 그룹임",
-      stocks: [
-        {
-          code: "005930",
-          name: "삼성전자",
-        },
-        {
-          code: "012345",
-          name: "포스코홀딩스",
-        },
-        {
-          code: "012235",
-          name: "포스코홀딩스2",
-        },
-      ],
-    },
-    {
-      id: "group-2",
-      gruop: "내 커스텀2",
-      stocks: [
-        {
-          code: "005930",
-          name: "삼성전자",
-        },
-      ],
-    },
+  const [interests, setInterests] = useState<Interest[]>([
+    // {
+    //   id: "group-1",
+    //   gruop: "내 커스텀 그룹임",
+    //   stocks: [
+    //     {
+    //       code: "005930",
+    //       name: "삼성전자",
+    //     },
+    //     {
+    //       code: "012345",
+    //       name: "포스코홀딩스",
+    //     },
+    //     {
+    //       code: "012235",
+    //       name: "포스코홀딩스2",
+    //     },
+    //   ],
+    // },
+    // {
+    //   id: "group-2",
+    //   gruop: "내 커스텀2",
+    //   stocks: [
+    //     {
+    //       code: "005930",
+    //       name: "삼성전자",
+    //     },
+    //   ],
+    // },
   ]);
   const { scraps } = useScrapStore();
 
