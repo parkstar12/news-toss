@@ -6,6 +6,8 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Scrab from "@/components/ui/shared/Scrab";
 import { JwtToken } from "@/type/jwt";
+import UpPrice from "@/components/ui/shared/UpPrice";
+import DownPrice from "@/components/ui/shared/DownPrice";
 
 const CATEGORY_GROUPS = {
   제조업: [
@@ -46,7 +48,14 @@ const CategoryStock = ({ token }: { token: JwtToken | null }) => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [categoryStocks, setCategoryStocks] = useState<{
     totalPages: number;
-    stocks: { stockName: string; stockCode: string }[];
+    stocks: {
+      stockName: string;
+      stockCode: string;
+      sign: string;
+      currentPrice: string;
+      changeRate: string;
+      changeAmount: string;
+    }[];
   }>({ totalPages: 0, stocks: [] });
   const [page, setPage] = useState(1);
   const totalPage = categoryStocks?.totalPages || 1;
@@ -271,27 +280,62 @@ const CategoryStock = ({ token }: { token: JwtToken | null }) => {
                     }}
                   />
 
-                  <div className="flex items-center gap-2 w-full">
-                    <div className="relative">
+                  <div className="flex gap-main w-full">
+                    <div className="relative flex items-center justify-center">
                       <div className="bg-main-blue/10 rounded-full size-[40px] shrink-0 flex items-center justify-center">
                         <span className="text-main-blue font-semibold">
                           {stock.stockName[0]}
                         </span>
                       </div>
                     </div>
-                    <div className="flex flex-col flex-1 truncate text-sm">
-                      <span className="font-bold text-gray-800 truncate w-full">
-                        {stock.stockName}
-                      </span>
-                      <span className="text-main-dark-gray">
-                        {stock.stockCode}
-                      </span>
+                    <div className="flex flex-col flex-1 truncate">
+                      <div className="text-gray-800 truncate w-full flex items-baseline gap-1">
+                        <span className="font-bold">{stock.stockName}</span>
+                        <span className="text-gray-500 text-xs">
+                          {stock.stockCode}
+                        </span>
+                      </div>
+                      <div className="text-sm flex gap-main items-center">
+                        <span
+                          className={clsx(
+                            "text-gray-500 text-sm font-semibold",
+                            (stock.sign === "1" || stock.sign === "2") &&
+                              "text-main-red",
+                            (stock.sign === "4" || stock.sign === "5") &&
+                              "text-main-blue",
+                            stock.sign === "3" && "text-gray-500"
+                          )}
+                        >
+                          {Number(stock.currentPrice).toLocaleString()}
+                        </span>
+
+                        <div className="flex justify-between h-fit">
+                          {(stock.sign === "1" || stock.sign === "2") && (
+                            <UpPrice
+                              change={Number(stock.changeAmount)}
+                              changeRate={Number(stock.changeRate)}
+                            />
+                          )}
+                          {stock.sign === "3" && (
+                            <span className="text-gray-400 font-medium">
+                              {Number(stock.changeAmount)} (
+                              {Number(stock.changeRate)}%)
+                            </span>
+                          )}
+                          {(stock.sign === "4" || stock.sign === "5") && (
+                            <DownPrice
+                              change={Number(stock.changeAmount)}
+                              changeRate={Number(stock.changeRate)}
+                            />
+                          )}
+                        </div>
+                      </div>
                     </div>
+                    <ChevronRight
+                      className="hidden group-hover:block text-main-blue absolute top-1/2 -translate-y-1/2 right-main"
+                      size={20}
+                    />
                   </div>
-                  <ChevronRight
-                    className="hidden group-hover:block text-main-blue absolute top-1/2 -translate-y-1/2 right-main"
-                    size={20}
-                  />
                 </div>
               ))}
           </div>
