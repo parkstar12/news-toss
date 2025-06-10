@@ -75,7 +75,20 @@ const CalendarPage = () => {
   }, [day]);
 
   useEffect(() => {
-    const sse = new EventSource("/api/news/stream");
+    const sse = new EventSource("http://43.200.17.139:8080/api/news/stream");
+    // const sse = new EventSource("/api/news/stream");
+
+    sse.onopen = (event) => {
+      console.log("✅ 서버 연결됨", event);
+    };
+
+    sse.onerror = (event) => {
+      console.error("❌ SSE 에러 발생:", event);
+    };
+
+    sse.onmessage = (event) => {
+      console.log("📰 뉴스 수신:", event.data);
+    };
 
     // 연결 이벤트
     sse.addEventListener("connect", (event) => {
