@@ -13,17 +13,19 @@ const MyPortfolioPage = async () => {
   const token = await getJwtToken();
   let portfolioData = null;
 
-  // const portfolioRes = await fetch(
-  //   `${process.env.NEXT_PUBLIC_BASE_URL}/v1/portfolios/${token!.memberId}`,
-  //   {
-  //     credentials: "include",
-  //   }
-  // );
+  if (token) {
+    const portfolioRes = await fetch(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/v1/portfolios/${token.memberId}`,
+      {
+        credentials: "include",
+      }
+    );
 
-  // if (portfolioRes.ok) {
-  //   const portfolioJson: PortfolioData = await portfolioRes.json();
-  //   portfolioData = portfolioJson;
-  // }
+    if (portfolioRes.ok) {
+      const portfolioJson: PortfolioData = await portfolioRes.json();
+      portfolioData = portfolioJson;
+    }
+  }
   console.log("portfolioData", portfolioData);
 
   return (

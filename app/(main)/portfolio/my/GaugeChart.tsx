@@ -24,14 +24,22 @@ const GaugeChart = ({ value = 70 }: { value: number }) => {
       {
         data: [20, 20, 20, 20, 20], // 총 100 맞추기
         backgroundColor: [
-          "#ff6666", // 공격투자형
-          "#ff9966", // 적극투자형
-          "#ffff66", // 위험중립형
-          "#66ff66", // 안정추구형
-          "#66b3ff", // 안전형
+          "rgba(255, 99, 132, 0.2)",
+          "rgba(54, 162, 235, 0.2)",
+          "rgba(255, 206, 86, 0.2)",
+          "rgba(75, 192, 192, 0.2)",
+          "rgba(153, 102, 255, 0.2)",
+          "rgba(255, 159, 64, 0.2)",
         ],
-        borderWidth: 2,
-        borderColor: "#ffffff",
+        borderColor: [
+          "rgba(255, 99, 132, 1)",
+          "rgba(54, 162, 235, 1)",
+          "rgba(255, 206, 86, 1)",
+          "rgba(75, 192, 192, 1)",
+          "rgba(153, 102, 255, 1)",
+          "rgba(255, 159, 64, 1)",
+        ],
+        borderWidth: 0.5,
         borderAlign: "center", // 내부 중심선 기준
         spacing: 10, // 조각 간 간격
         borderRadius: 5, // 둥근 모서리
