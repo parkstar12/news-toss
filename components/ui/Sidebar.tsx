@@ -5,7 +5,7 @@ import React, { useEffect, useState } from "react";
 import { useSidebarStore } from "@/store/sidebarStore";
 import clsx from "clsx";
 import RecentView from "./RecentView";
-import Interest from "./Interest";
+import Interest from "./interest/Interest";
 import { JwtToken } from "@/type/jwt";
 import { jwtDecode } from "jwt-decode";
 import { useScrapStore } from "@/store/useScrapStore";

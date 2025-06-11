@@ -54,7 +54,7 @@ const Modal = ({
       />
       <div className="relative">
         <div
-          className={`z-40 bg-white rounded-main p-[20px] min-w-[400px] max-w-[50vw] max-h-[90vh] shadow-color transition-opacity duration-500 overflow-y-scroll ${
+          className={`z-40 bg-white rounded-main p-[20px] min-w-[400px] max-w-[80vw] max-h-[90vh] shadow-color transition-opacity duration-500 overflow-y-scroll ${
             visible ? "opacity-100" : "opacity-0"
           }`}
         >

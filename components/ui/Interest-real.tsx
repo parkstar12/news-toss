@@ -35,39 +35,18 @@ interface Interest {
   }[];
 }
 
+interface InterestGroup {
+  id: string;
+  name: string;
+  sequence: number;
+  main: boolean;
+  memberId: string;
+}
+
 const InterestStock = ({ token }: { token: JwtToken | null }) => {
-  const isLogin = true;
   const [isOpenSettingModal, setIsOpenSettingModal] = useState(false);
-  const [interests, setInterests] = useState<Interest[]>([
-    // {
-    //   id: "group-1",
-    //   gruop: "내 커스텀 그룹임",
-    //   stocks: [
-    //     {
-    //       code: "005930",
-    //       name: "삼성전자",
-    //     },
-    //     {
-    //       code: "012345",
-    //       name: "포스코홀딩스",
-    //     },
-    //     {
-    //       code: "012235",
-    //       name: "포스코홀딩스2",
-    //     },
-    //   ],
-    // },
-    // {
-    //   id: "group-2",
-    //   gruop: "내 커스텀2",
-    //   stocks: [
-    //     {
-    //       code: "005930",
-    //       name: "삼성전자",
-    //     },
-    //   ],
-    // },
-  ]);
+  const [interestGroups, setInterestGroups] = useState<InterestGroup[]>([]);
+  const [interests, setInterests] = useState<Interest[]>([]);
   const { scraps } = useScrapStore();
 
   const groups = interests.map((interest) => ({
@@ -88,7 +67,38 @@ const InterestStock = ({ token }: { token: JwtToken | null }) => {
     }
   }, [isOpenSettingModal, selectedGroup]);
 
-  if (!isLogin) {
+  useEffect(() => {
+    if (token) {
+      console.log("멤버아이디", token.memberId);
+      // 관심종목 그룹 조회
+      const fetchInterestGroups = async () => {
+        try {
+          const res = await fetch(`/api/favorite/${token.memberId}`);
+          const result = await res.json();
+
+          if (res.ok) {
+            console.log("그룹 조회 성공", result);
+            const groupsData = result.data.map((group: any) => ({
+              id: group.groupId,
+              name: group.groupName,
+              sequence: group.groupSequence,
+              main: group.main,
+              memberId: group.memberId,
+            }));
+
+            setInterestGroups(groupsData);
+          } else {
+            console.error("Failed to fetch interest groups:", result.message);
+          }
+        } catch (error) {
+          console.error("Error fetching interest groups:", error);
+        }
+      };
+      fetchInterestGroups();
+    }
+  }, [token]);
+
+  if (!token) {
     return (
       <div className="gap-main size-full">
         <h2 className="text-xl font-bold text-main-dark-gray">관심 종목</h2>
@@ -119,9 +129,21 @@ const InterestStock = ({ token }: { token: JwtToken | null }) => {
 
   const handleGroupDragEnd = (result: DropResult) => {
     if (!result.destination) return;
-    setInterests((prev) =>
-      reorder(prev, result.source.index, result.destination!.index)
-    );
+
+    const sourceIndex = result.source.index;
+    const destinationIndex = result.destination.index;
+
+    if (
+      sourceIndex < 0 ||
+      destinationIndex < 0 ||
+      sourceIndex >= interestGroups.length ||
+      destinationIndex >= interestGroups.length
+    ) {
+      console.error("Invalid drag indices");
+      return;
+    }
+
+    setInterests((prev) => reorder(prev, sourceIndex, destinationIndex));
   };
 
   function reorder<T>(list: T[], startIndex: number, endIndex: number): T[] {
@@ -131,6 +153,63 @@ const InterestStock = ({ token }: { token: JwtToken | null }) => {
     return result;
   }
 
+  const handleAddGroup = () => {
+    const newId = `group-${Date.now()}-${Math.random()}`;
+    const newGroup = {
+      id: newId,
+      name: `그룹명${interestGroups.length + 1}`,
+      sequence: interestGroups.length,
+      main: false,
+      memberId: token?.memberId || "",
+    };
+
+    setInterestGroups((prev) => {
+      const newList = [newGroup, ...prev];
+      setEditingGroup(newId);
+      setSelectedSettingGroup(newId);
+      setTimeout(() => {
+        inputRefs.current[newId]?.focus();
+      }, 0);
+      return newList;
+    });
+  };
+
+  const handleGroupBlur = async (groupId: string, groupName: string) => {
+    const newGroup = {
+      groupName,
+      groupSequence: interests.length,
+      main: true,
+    };
+
+    try {
+      const response = await fetch(`/api/favorite/${token.memberId}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newGroup),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to save group");
+      } else {
+        console.log("그룹 추가 성공");
+      }
+
+      const savedGroup = await response.json();
+
+      setInterests((prev) =>
+        prev.map((g) =>
+          g.id === groupId
+            ? { ...g, id: savedGroup.id, gruop: savedGroup.groupName }
+            : g
+        )
+      );
+    } catch (error) {
+      console.error("Error adding group:", error);
+    }
+  };
+
   return (
     <>
       <div className="grid grid-rows-2 gap-main size-full">
@@ -138,20 +217,21 @@ const InterestStock = ({ token }: { token: JwtToken | null }) => {
           <h2 className="text-xl font-bold text-main-dark-gray">관심 종목</h2>
 
           <div className="flex items-center justify-between">
-            {groups.length > 0 ? (
+            {interestGroups.length > 0 ? (
               <Dropdown
-                groups={groups.map((g) => g.name)}
+                groups={interestGroups.map((g) => g.name)}
                 selected={
-                  groups.find((g) => g.id === selectedGroup)?.name || ""
+                  interestGroups.find((g) => g.id === selectedGroup)?.name || ""
                 }
                 onSelect={(name) => {
-                  const found = groups.find((g) => g.name === name);
+                  const found = interestGroups.find((g) => g.name === name);
                   if (found) setSelectedGroup(found.id);
                 }}
+                key={selectedGroup}
               />
             ) : (
               <button
-                className="flex items-center gap-[5px] cursor-pointer text-main-dark-gray hover:bg-main-blue/10 rounded-main transition-colors duration-200 ease-in-out p-main"
+                className="flex items-center gap-[5px] cursor-pointer text-main-dark-gray hover:bg-main-blue/10 rounded-main transition-colors duration-200 ease-in-out px-main py-1"
                 onClick={() => setIsOpenSettingModal(true)}
               >
                 <Plus size={16} />
@@ -267,12 +347,8 @@ const InterestStock = ({ token }: { token: JwtToken | null }) => {
                       ref={provided.innerRef}
                       className="flex flex-col gap-main"
                     >
-                      {interests.length === 0 ? (
-                        <div className="w-full h-[100px] flex items-center justify-center text-main-dark-gray">
-                          그룹을 추가해주세요
-                        </div>
-                      ) : (
-                        interests.map((item, index) => (
+                      {interestGroups && interestGroups.length > 0 ? (
+                        interestGroups.map((item, index) => (
                           <Draggable
                             key={item.id}
                             draggableId={item.id}
@@ -313,18 +389,20 @@ const InterestStock = ({ token }: { token: JwtToken | null }) => {
                                     editingGroup !== item.id &&
                                       "text-main-dark-gray cursor-default"
                                   )}
-                                  value={item.gruop}
+                                  value={item.name}
                                   readOnly={editingGroup !== item.id}
                                   onChange={(e) => {
-                                    setInterests((prev) =>
+                                    setInterestGroups((prev) =>
                                       prev.map((g) =>
                                         g.id === item.id
-                                          ? { ...g, gruop: e.target.value }
+                                          ? { ...g, name: e.target.value }
                                           : g
                                       )
                                     );
                                   }}
-                                  onBlur={() => setEditingGroup(null)}
+                                  onBlur={() =>
+                                    handleGroupBlur(item.id, item.name)
+                                  }
                                   onKeyDown={(e) => {
                                     if (e.key === "Enter") {
                                       e.currentTarget.blur();
@@ -348,16 +426,16 @@ const InterestStock = ({ token }: { token: JwtToken | null }) => {
                                   <Trash2
                                     onClick={(e) => {
                                       e.stopPropagation();
-                                      setInterests((prev) =>
+                                      setInterestGroups((prev) =>
                                         prev.filter((g) => g.id !== item.id)
                                       );
                                       if (selectedGroup === item.id)
                                         setSelectedGroup(
-                                          interests[0]?.id || ""
+                                          interestGroups[0]?.id || ""
                                         );
                                       if (selectedSettingGroup === item.id)
                                         setSelectedSettingGroup(
-                                          interests[0]?.id || ""
+                                          interestGroups[0]?.id || ""
                                         );
                                     }}
                                     className="text-main-dark-gray hover:bg-main-blue/30 rounded-full p-1 box-content transition-colors duration-200 ease-in-out"
@@ -368,6 +446,10 @@ const InterestStock = ({ token }: { token: JwtToken | null }) => {
                             )}
                           </Draggable>
                         ))
+                      ) : (
+                        <div className="w-full h-[100px] flex items-center justify-center text-main-dark-gray">
+                          그룹을 추가해주세요
+                        </div>
                       )}
                       {provided.placeholder}
                     </div>
@@ -376,28 +458,7 @@ const InterestStock = ({ token }: { token: JwtToken | null }) => {
               </DragDropContext>
               <button
                 className="w-full flex items-center justify-center gap-[5px] py-2 bg-main-blue text-white rounded-main transition-colors sticky bottom-0"
-                onClick={() => {
-                  const newId = `group-${Date.now()}-${Math.random()}`;
-                  setInterests((prev) => {
-                    const newList = [
-                      {
-                        id: newId,
-                        gruop: `그룹명${prev.length + 1}`,
-                        stocks: [],
-                      },
-                      ...prev,
-                    ];
-                    if (prev.length === 0) {
-                      setSelectedGroup(newId);
-                    }
-                    setEditingGroup(newId);
-                    setSelectedSettingGroup(newId);
-                    setTimeout(() => {
-                      inputRefs.current[newId]?.focus();
-                    }, 0);
-                    return newList;
-                  });
-                }}
+                onClick={handleAddGroup}
               >
                 <Plus size={16} />
                 <span>그룹 추가</span>
@@ -413,9 +474,18 @@ const InterestStock = ({ token }: { token: JwtToken | null }) => {
                     setInterests((prev) =>
                       prev.map((g) =>
                         g.id === selectedSettingGroup
-                          ? g.stocks.some((s) => s.code === stock.code)
+                          ? g.stocks.some((s) => s.code === stock.stockCode)
                             ? g // 이미 있으면 추가 안 함
-                            : { ...g, stocks: [...g.stocks, stock] }
+                            : {
+                                ...g,
+                                stocks: [
+                                  ...g.stocks,
+                                  {
+                                    code: stock.stockCode,
+                                    name: stock.stockName,
+                                  },
+                                ],
+                              }
                           : g
                       )
                     );

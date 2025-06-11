@@ -3,18 +3,30 @@
 import Modal from "@/components/ui/Modal";
 import Input from "@/components/ui/shared/Input";
 import { useDebounce } from "@/hooks/useDebounce";
+import clsx from "clsx";
 import { Plus, Search } from "lucide-react";
 import React, { useEffect, useState } from "react";
+import UpPrice from "./shared/UpPrice";
+import DownPrice from "./shared/DownPrice";
 
 interface SearchStockProps {
-  onSelect?: (stock: { code: string; name: string }) => void;
+  onSelect?: (stock: SearchResult) => void;
+}
+
+interface SearchResult {
+  changeAmount: string;
+  changeRate: string;
+  currentPrice: string;
+  sign: string;
+  stockCode: string;
+  stockName: string;
 }
 
 const SearchStock = ({ onSelect }: SearchStockProps) => {
   const [stockSearch, setStockSearch] = useState("");
   const debouncedSearch = useDebounce(stockSearch, 500);
   const [isOpen, setIsOpen] = useState(false);
-  const [searchResult, setSearchResult] = useState<any[]>([]);
+  const [searchResult, setSearchResult] = useState<SearchResult[]>([]);
 
   useEffect(() => {
     if (debouncedSearch) {
@@ -29,13 +41,10 @@ const SearchStock = ({ onSelect }: SearchStockProps) => {
   }, [stockSearch]);
 
   const searchStocks = async (query: string) => {
-    // API 호출 등 검색 로직
-    // 예시: [{ code: "005930", name: "삼성전자" }, ...]
-    setSearchResult([
-      { code: "005930", name: "삼성전자" },
-      { code: "003490", name: "포스코홀딩스" },
-      { code: query, name: `검색결과: ${query}` },
-    ]);
+    if (!query) return;
+    const res = await fetch(`/api/v1/stocks/search?keyword=${query}`);
+    const json = await res.json();
+    setSearchResult(json.data);
   };
   return (
     <>
@@ -82,7 +91,7 @@ const SearchStock = ({ onSelect }: SearchStockProps) => {
               {searchResult.map((result, idx) => (
                 <div
                   className="w-full flex flex-col justify-around hover:bg-main-blue/10 rounded-main transition-colors duration-200 ease-in-out p-main gap-[5px] group relative"
-                  key={`search-stock-${result.code}-${idx}`}
+                  key={`search-stock-${result.stockCode}-${idx}`}
                   onClick={() => {
                     setIsOpen(false);
                     setStockSearch("");
@@ -90,21 +99,62 @@ const SearchStock = ({ onSelect }: SearchStockProps) => {
                     if (onSelect) onSelect(result);
                   }}
                 >
-                  <div className="flex items-center gap-2 w-full">
-                    <div className="bg-black rounded-full size-[40px] shrink-0" />
-                    <div className="flex flex-col flex-1 truncate text-sm">
-                      <span className="font-bold text-gray-800 truncate w-full">
-                        {result.name}
-                      </span>
-                      <span className="text-main-dark-gray">{result.code}</span>
+                  <div className="flex gap-main w-full">
+                    <div className="relative flex items-center justify-center">
+                      <div className="bg-main-blue/10 rounded-full size-[40px] shrink-0 flex items-center justify-center">
+                        <span className="text-main-blue font-semibold">
+                          {result.stockName[0]}
+                        </span>
+                      </div>
                     </div>
-                  </div>
-                  <button className="absolute top-1/2 -translate-y-1/2 right-main hidden group-hover:block">
+                    <div className="flex flex-col flex-1 truncate">
+                      <div className="text-gray-800 truncate w-full flex items-baseline gap-1">
+                        <span className="font-bold">{result.stockName}</span>
+                        <span className="text-gray-500 text-xs">
+                          {result.stockCode}
+                        </span>
+                      </div>
+                      <div className="text-sm flex gap-main items-center">
+                        <span
+                          className={clsx(
+                            "text-gray-500 text-sm font-semibold",
+                            (result.sign === "1" || result.sign === "2") &&
+                              "text-main-red",
+                            (result.sign === "4" || result.sign === "5") &&
+                              "text-main-blue",
+                            result.sign === "3" && "text-gray-500"
+                          )}
+                        >
+                          {Number(result.currentPrice).toLocaleString()}
+                        </span>
+
+                        <div className="flex justify-between h-fit">
+                          {(result.sign === "1" || result.sign === "2") && (
+                            <UpPrice
+                              change={Number(result.changeAmount)}
+                              changeRate={Number(result.changeRate)}
+                            />
+                          )}
+                          {result.sign === "3" && (
+                            <span className="text-gray-400 font-medium">
+                              {Number(result.changeAmount)} (
+                              {Number(result.changeRate)}%)
+                            </span>
+                          )}
+                          {(result.sign === "4" || result.sign === "5") && (
+                            <DownPrice
+                              change={Number(result.changeAmount)}
+                              changeRate={Number(result.changeRate)}
+                            />
+                          )}
+                        </div>
+                      </div>
+                    </div>
                     <Plus
-                      className="text-main-blue hover:bg-main-blue/30 rounded-full p-1 box-content transition-colors duration-200 ease-in-out"
+                      className="hidden group-hover:block text-main-blue absolute top-1/2 -translate-y-1/2 right-main"
                       size={20}
                     />
-                  </button>
+                  </div>
                 </div>
               ))}
             </>
