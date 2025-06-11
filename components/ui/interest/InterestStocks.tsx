@@ -151,31 +151,26 @@ const InterestStocks = ({ token }: { token: JwtToken | null }) => {
   const handleEditGroupNameBlur = async (groupId: string) => {
     if (!token) return;
     try {
-      // const res = await fetch(`/api/favorite/${token.memberId}/${groupId}`, {
-      //   method: "PUT",
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      //   body: JSON.stringify({ groupName: editedGroupName }),
-      // });
+      const res = await fetch(`/api/favorite/${token.memberId}/${groupId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ groupName: editedGroupName }),
+      });
 
-      // if (!res.ok) {
-      //   toast.error(`${editedGroupName} 그룹명 수정 실패`);
-      //   return;
-      // } else {
-      //   toast.success(`그룹명이 수정되었습니다.`);
-      // }
-
-      // console.log("✅ 그룹명 수정 성공");
-
-      // 변경 사항 반영
-      setInterestGroups((prev) =>
-        prev.map((g) =>
-          g.groupId === groupId ? { ...g, groupName: editedGroupName } : g
-        )
-      );
-
-      toast.success("그룹명이 수정되었습니다.");
+      if (!res.ok) {
+        toast.error(`${editedGroupName} 그룹명 수정 실패`);
+        return;
+      } else {
+        toast.success(`그룹명이 수정되었습니다.`);
+        // 변경 사항 반영
+        setInterestGroups((prev) =>
+          prev.map((g) =>
+            g.groupId === groupId ? { ...g, groupName: editedGroupName } : g
+          )
+        );
+      }
     } catch (err) {
       toast.error("그룹명 수정 실패");
       console.error(err);
@@ -254,36 +249,60 @@ const InterestStocks = ({ token }: { token: JwtToken | null }) => {
       return toast.error("그룹 추가 실패");
     }
 
+    const json = await res.json();
+
     toast.success("그룹이 추가되었습니다.");
     setInterestGroups((prev) => [
       ...prev,
       {
-        groupId: `group-${randomId}`, // 그룹 아이디 반환해 줘야함 중요!!!!!**********
-        groupName: `그룹명${randomId}`,
-        // main: false,
-        // memberId: token.memberId,
-        // groupSequence: prev.length + 1,
+        groupId: json.data.groupId,
+        groupName: json.data.groupName,
+        main: false,
+        memberId: json.data.memberId,
+        groupSequence: json.data.groupSequence,
       },
     ]);
 
-    const setMainRes = await fetch(
-      `/api/favorite/${token.memberId}/${`group-${randomId}`}/main`,
-      {
-        method: "PUT",
-      }
-    );
+    if (interestGroups.length === 0) {
+      const setMainRes = await fetch(
+        `/api/favorite/${json.data.memberId}/${json.data.groupId}/main`,
+        {
+          method: "PUT",
+        }
+      );
 
-    if (!setMainRes.ok) {
-      return toast.error("메인 그룹 설정 실패");
+      if (!setMainRes.ok) {
+        return toast.error("메인 그룹 설정 실패");
+      } else {
+        toast.success("메인 그룹이 설정되었습니다.");
+        setInterestGroups((prev) =>
+          prev.map((group) =>
+            group.groupId === json.data.groupId
+              ? { ...group, main: true }
+              : group
+          )
+        );
+      }
+    }
+  };
+
+  const handleSetMainGroup = async (groupId: string) => {
+    if (!token) return;
+
+    const res = await fetch(`/api/favorite/${token.memberId}/${groupId}/main`, {
+      method: "PUT",
+    });
+
+    const result = await fetch(`/api/favorite/${token.memberId}`);
+    const json: { data: InterestGroup[] } = await result.json();
+    setInterestGroups(json.data);
+
+    // setSelectedGroup(json.data.find((group) => group.groupId === groupId)?.groupId || null);
+
+    if (!res.ok) {
+      toast.error("메인 그룹 설정 실패");
     } else {
       toast.success("메인 그룹이 설정되었습니다.");
-      setInterestGroups((prev) =>
-        prev.map((group) =>
-          group.groupId === `group-${randomId}`
-            ? { ...group, main: true }
-            : group
-        )
-      );
     }
   };
 
@@ -569,11 +588,22 @@ const InterestStocks = ({ token }: { token: JwtToken | null }) => {
                                     />
 
                                     {group.main ? (
-                                      <div className="size-[20px]">
+                                      <div
+                                        className="size-[20px]"
+                                        onClick={() => {
+                                          handleSetMainGroup(group.groupId);
+                                        }}
+                                      >
                                         <Star />
                                       </div>
                                     ) : (
-                                      <StarIcon size={20} strokeWidth={0.5} />
+                                      <StarIcon
+                                        size={20}
+                                        strokeWidth={0.5}
+                                        onClick={() => {
+                                          handleSetMainGroup(group.groupId);
+                                        }}
+                                      />
                                     )}
 
                                     <input
@@ -582,6 +612,7 @@ const InterestStocks = ({ token }: { token: JwtToken | null }) => {
                                           inputRefs.current[group.groupId] = el;
                                         }
                                       }}
+                                      maxLength={10}
                                       className="border-none bg-transparent outline-none"
                                       readOnly={
                                         editingGroupId !== group.groupId
