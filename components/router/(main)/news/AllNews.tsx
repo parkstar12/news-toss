@@ -68,7 +68,7 @@ const AllNews = ({ token }: { token: JwtToken | null }) => {
     <div className="flex flex-col gap-main">
       <div className="flex justify-between items-center mb-main">
         <h2 className="text-2xl font-bold bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent">
-          모든 주요 뉴스
+          모든 뉴스
         </h2>
 
         <Dropdown

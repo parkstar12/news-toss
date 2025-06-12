@@ -11,28 +11,25 @@ import { formatDate } from "@/utils/formatDate";
 
 const NEWS_PER_PAGE = 5;
 
-const MainNews = () => {
-  const [news, setNews] = useState<News[]>([]);
+const MainNews = ({ news }: { news: News[] }) => {
   const [currentPage, setCurrentPage] = useState(0);
 
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  useEffect(() => {
-    const fetchNews = async () => {
-      {
-        /* /api/news/v2/highlight/redistest */
-      }
-      const res = await fetch("/api/news/v2/top10", {
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      const data = await res.json();
-      setNews(data.data);
-    };
-    fetchNews();
-  }, []);
+  // useEffect(() => {
+  //   const fetchNews = async () => {
+  //     const res = await fetch("/api/news/v2/top10", {
+  //       credentials: "include",
+  //     });
+
+  //     // const res = await fetch("/api/news/v2/highlight/redistest", {
+  //     //   credentials: "include",
+  //     // });
+  //     const data = await res.json();
+  //     setNews(data.data);
+  //   };
+  //   fetchNews();
+  // }, []);
 
   useEffect(() => {
     intervalRef.current = setInterval(() => {
