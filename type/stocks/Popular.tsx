@@ -5,6 +5,7 @@ interface Popular {
   prdy_vrss_sign: string; // 전일대비 부호
   prdy_vrss: string; // 전일대비
   prdy_ctrt: string; // 전일대비율
+  stockImage: string; // 종목 이미지
 }
 
 export default Popular;

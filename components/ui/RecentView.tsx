@@ -2,6 +2,7 @@
 
 import { useRecentViewStore } from "@/store/useRecentViewStore";
 import { Clock, X } from "lucide-react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 
@@ -78,10 +79,22 @@ const RecentView = () => {
                 onClick={() => router.push(`/stock/${stock.stockCode}`)}
               >
                 <div className="flex items-center gap-2 w-full">
-                  <div className="bg-main-blue/10 rounded-full size-[40px] shrink-0 flex items-center justify-center">
-                    <span className="text-main-blue font-semibold">
-                      {stock.stockName[0]}
-                    </span>
+                  <div className="relative flex items-center justify-center size-[40px] shrink-0">
+                    {stock.stockImage ? (
+                      <Image
+                        src={stock.stockImage}
+                        alt={stock.stockName}
+                        fill
+                        className="rounded-full"
+                        sizes="40px"
+                      />
+                    ) : (
+                      <div className="bg-main-blue/10 rounded-full size-[40px] shrink-0 flex items-center justify-center">
+                        <span className="text-main-blue font-semibold">
+                          {stock.stockName[0]}
+                        </span>
+                      </div>
+                    )}
                   </div>
                   <div className="flex flex-col flex-1 truncate text-sm">
                     <span className="font-bold text-gray-800 truncate w-full">

@@ -14,6 +14,7 @@ import UpPrice from "@/components/ui/shared/UpPrice";
 import DownPrice from "@/components/ui/shared/DownPrice";
 import { useRecentViewStore } from "@/store/useRecentViewStore";
 import { useParams } from "next/navigation";
+import Image from "next/image";
 
 interface StockData {
   acml_tr_pbmn: string;
@@ -43,6 +44,7 @@ interface CurrentStock {
   sign: string;
   stockCode: string;
   stockName: string;
+  stockImage: string;
 }
 
 type IntervalKey = "D" | "W" | "M" | "Y";
@@ -219,7 +221,7 @@ const StockDetailPage = () => {
         const recent = {
           stockCode: json.data[0].stockCode,
           stockName: json.data[0].stockName,
-          img: "",
+          stockImage: json.data[0].stockImage,
         };
         setRecentViewStocks([
           recent,
@@ -352,12 +354,22 @@ const StockDetailPage = () => {
       {stock && (
         <div className="col-span-3 flex gap-main">
           <div className="flex items-center gap-2">
-            <div className="relative">
-              <div className="bg-main-blue/10 rounded-full size-[40px] shrink-0 flex items-center justify-center">
-                <span className="text-main-blue font-semibold">
-                  {stock.stockName[0]}
-                </span>
-              </div>
+            <div className="relative flex items-center justify-center size-[40px] shrink-0">
+              {stock.stockImage ? (
+                <Image
+                  src={stock.stockImage}
+                  alt={stock.stockName}
+                  fill
+                  className="rounded-full"
+                  sizes="40px"
+                />
+              ) : (
+                <div className="bg-main-blue/10 rounded-full size-[40px] shrink-0 flex items-center justify-center">
+                  <span className="text-main-blue font-semibold">
+                    {stock.stockName[0]}
+                  </span>
+                </div>
+              )}
             </div>
             <div className="flex flex-col flex-1 truncate text-sm">
               <p className="flex items-center gap-main text-gray-800 truncate w-full">

@@ -6,6 +6,7 @@ import Input from "@/components/ui/shared/Input";
 import UpPrice from "@/components/ui/shared/UpPrice";
 import { useDebounce } from "@/hooks/useDebounce";
 import { ChevronRight, Search } from "lucide-react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
@@ -22,6 +23,7 @@ const SearchStock = () => {
       sign: string;
       stockCode: string;
       stockName: string;
+      stockImage: string;
     }[]
   >([]);
 
@@ -113,7 +115,23 @@ const SearchStock = () => {
                   onClick={() => handleClickSearchResult(result.stockCode)}
                 >
                   <div className="flex items-center gap-2 w-full">
-                    <div className="bg-black rounded-full size-[40px] shrink-0" />
+                    <div className="relative flex items-center justify-center size-[40px] shrink-0">
+                      {result.stockImage ? (
+                        <Image
+                          src={result.stockImage}
+                          alt={result.stockName}
+                          fill
+                          className="rounded-full"
+                          sizes="40px"
+                        />
+                      ) : (
+                        <div className="bg-main-blue/10 rounded-full size-[40px] shrink-0 flex items-center justify-center">
+                          <span className="text-main-blue font-semibold">
+                            {result.stockName[0]}
+                          </span>
+                        </div>
+                      )}
+                    </div>
                     <div className="flex flex-col flex-1 truncate text-sm">
                       <p className="flex items-center gap-main text-gray-800 truncate w-full">
                         <span className="font-bold">{result.stockName}</span>

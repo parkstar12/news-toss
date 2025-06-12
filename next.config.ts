@@ -18,7 +18,12 @@ const nextConfig: NextConfig = {
   },
   images: {
     dangerouslyAllowSVG: true,
-    domains: ["placehold.co", "imgnews.pstatic.net", "ssl.pstatic.net"],
+    domains: [
+      "placehold.co",
+      "imgnews.pstatic.net",
+      "ssl.pstatic.net",
+      "s3-symbol-logo.tradingview.com",
+    ],
   },
 };
 

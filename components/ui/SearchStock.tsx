@@ -8,6 +8,7 @@ import { Plus, Search } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import UpPrice from "./shared/UpPrice";
 import DownPrice from "./shared/DownPrice";
+import Image from "next/image";
 
 interface SearchStockProps {
   onSelect?: (stock: SearchResult) => void;
@@ -20,6 +21,7 @@ interface SearchResult {
   sign: string;
   stockCode: string;
   stockName: string;
+  stockImage: string;
 }
 
 const SearchStock = ({ onSelect }: SearchStockProps) => {
@@ -100,12 +102,21 @@ const SearchStock = ({ onSelect }: SearchStockProps) => {
                   }}
                 >
                   <div className="flex gap-main w-full">
-                    <div className="relative flex items-center justify-center">
-                      <div className="bg-main-blue/10 rounded-full size-[40px] shrink-0 flex items-center justify-center">
-                        <span className="text-main-blue font-semibold">
-                          {result.stockName[0]}
-                        </span>
-                      </div>
+                    <div className="relative flex items-center justify-center size-[40px] shrink-0">
+                      {result.stockImage ? (
+                        <Image
+                          src={result.stockImage}
+                          alt={result.stockName}
+                          fill
+                          className="rounded-full"
+                        />
+                      ) : (
+                        <div className="bg-main-blue/10 rounded-full size-[40px] shrink-0 flex items-center justify-center">
+                          <span className="text-main-blue font-semibold">
+                            {result.stockName[0]}
+                          </span>
+                        </div>
+                      )}
                     </div>
                     <div className="flex flex-col flex-1 truncate">
                       <div className="text-gray-800 truncate w-full flex items-baseline gap-1">

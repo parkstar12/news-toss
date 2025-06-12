@@ -24,6 +24,7 @@ import { toast } from "react-toastify";
 import UpPrice from "../shared/UpPrice";
 import DownPrice from "../shared/DownPrice";
 import Star from "@/components/lottie/star/Star";
+import Image from "next/image";
 
 const SettingModal = Modal;
 
@@ -43,6 +44,7 @@ interface InterestStock {
     sign: string;
     changeAmount: string;
     changeRate: string;
+    stockImage: string;
   };
   stockSequence: number;
 }
@@ -54,6 +56,7 @@ interface SearchResult {
   sign: string;
   stockCode: string;
   stockName: string;
+  stockImage: string;
 }
 
 function reorder<T>(list: T[], startIndex: number, endIndex: number): T[] {
@@ -435,12 +438,22 @@ const InterestStocks = ({ token }: { token: JwtToken | null }) => {
                                 {...provided.dragHandleProps}
                                 className="flex gap-main items-center w-full rounded-main transition-colors duration-200 ease-in-out p-main cursor-pointer"
                               >
-                                <div className="relative flex items-center justify-center">
-                                  <div className="bg-main-blue/10 rounded-full size-[40px] shrink-0 flex items-center justify-center">
-                                    <span className="text-main-blue font-semibold">
-                                      {stock.stockInfo.stockName[0]}
-                                    </span>
-                                  </div>
+                                <div className="relative flex items-center justify-center size-[40px] shrink-0">
+                                  {stock.stockInfo.stockImage ? (
+                                    <Image
+                                      src={stock.stockInfo.stockImage}
+                                      alt={stock.stockInfo.stockName}
+                                      fill
+                                      className="rounded-full"
+                                      sizes="40px"
+                                    />
+                                  ) : (
+                                    <div className="bg-main-blue/10 rounded-full size-[40px] shrink-0 flex items-center justify-center">
+                                      <span className="text-main-blue font-semibold">
+                                        {stock.stockInfo.stockName[0]}
+                                      </span>
+                                    </div>
+                                  )}
                                 </div>
                                 <div className="flex flex-col flex-1 truncate">
                                   <div className="text-gray-800 truncate w-full flex items-baseline gap-1">
@@ -723,12 +736,22 @@ const InterestStocks = ({ token }: { token: JwtToken | null }) => {
                                     >
                                       <GripVertical size={16} />
 
-                                      <div className="relative flex items-center justify-center">
-                                        <div className="bg-main-blue/10 rounded-full size-[40px] shrink-0 flex items-center justify-center">
-                                          <span className="text-main-blue font-semibold">
-                                            {stock.stockInfo.stockName[0]}
-                                          </span>
-                                        </div>
+                                      <div className="relative flex items-center justify-center size-[40px] shrink-0">
+                                        {stock.stockInfo.stockImage ? (
+                                          <Image
+                                            src={stock.stockInfo.stockImage}
+                                            alt={stock.stockInfo.stockName}
+                                            fill
+                                            className="rounded-full"
+                                            sizes="40px"
+                                          />
+                                        ) : (
+                                          <div className="bg-main-blue/10 rounded-full size-[40px] shrink-0 flex items-center justify-center">
+                                            <span className="text-main-blue font-semibold">
+                                              {stock.stockInfo.stockName[0]}
+                                            </span>
+                                          </div>
+                                        )}
                                       </div>
                                       <div className="flex flex-col flex-1 truncate">
                                         <div className="text-gray-800 truncate w-full flex items-baseline gap-1">

@@ -8,6 +8,7 @@ import Scrab from "@/components/ui/shared/Scrab";
 import { JwtToken } from "@/type/jwt";
 import UpPrice from "@/components/ui/shared/UpPrice";
 import DownPrice from "@/components/ui/shared/DownPrice";
+import Image from "next/image";
 
 const CATEGORY_GROUPS = {
   제조업: [
@@ -55,6 +56,7 @@ const CategoryStock = ({ token }: { token: JwtToken | null }) => {
       currentPrice: string;
       changeRate: string;
       changeAmount: string;
+      stockImage: string;
     }[];
   }>({ totalPages: 0, stocks: [] });
   const [page, setPage] = useState(1);
@@ -281,12 +283,22 @@ const CategoryStock = ({ token }: { token: JwtToken | null }) => {
                   />
 
                   <div className="flex gap-main w-full">
-                    <div className="relative flex items-center justify-center">
-                      <div className="bg-main-blue/10 rounded-full size-[40px] shrink-0 flex items-center justify-center">
-                        <span className="text-main-blue font-semibold">
-                          {stock.stockName[0]}
-                        </span>
-                      </div>
+                    <div className="relative flex items-center justify-center size-[40px] shrink-0">
+                      {stock.stockImage ? (
+                        <Image
+                          src={stock.stockImage}
+                          alt={stock.stockName}
+                          fill
+                          className="rounded-full"
+                          sizes="40px"
+                        />
+                      ) : (
+                        <div className="bg-main-blue/10 rounded-full size-[40px] shrink-0 flex items-center justify-center">
+                          <span className="text-main-blue font-semibold">
+                            {stock.stockName[0]}
+                          </span>
+                        </div>
+                      )}
                     </div>
                     <div className="flex flex-col flex-1 truncate">
                       <div className="text-gray-800 truncate w-full flex items-baseline gap-1">

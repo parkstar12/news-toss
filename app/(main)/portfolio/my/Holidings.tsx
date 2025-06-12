@@ -10,6 +10,7 @@ import SearchStock from "@/components/ui/SearchStock";
 import { JwtToken } from "@/type/jwt";
 import { toast } from "react-toastify";
 import clsx from "clsx";
+import Image from "next/image";
 
 const SettlementModal = Modal;
 const AddHoldingModal = Modal;
@@ -32,6 +33,7 @@ interface SearchResult {
   stockCode: string;
   stockName: string;
   quantity: number;
+  stockImage: string;
 }
 
 const Holidings = ({
@@ -91,8 +93,6 @@ const Holidings = ({
           }[];
         };
       } = await res.json();
-
-      console.log(json.data, "홀딩스");
 
       setHoldings(json.data.portfolioStocksResponseDto);
     };
@@ -354,10 +354,21 @@ const Holidings = ({
               {searchStockResult.map((stock, index) => (
                 <React.Fragment key={`add-stock-${stock.stockCode}`}>
                   <div className="flex items-center px-main gap-main">
-                    <div className="bg-main-blue/10 rounded-full size-[40px] shrink-0 flex items-center justify-center">
-                      <span className="text-main-blue font-semibold">
-                        {stock.stockName[0]}
-                      </span>
+                    <div className="relative flex items-center justify-center size-[40px] shrink-0">
+                      {stock.stockImage ? (
+                        <Image
+                          src={stock.stockImage}
+                          alt={stock.stockName}
+                          fill
+                          className="rounded-full"
+                        />
+                      ) : (
+                        <div className="bg-main-blue/10 rounded-full size-[40px] shrink-0 flex items-center justify-center">
+                          <span className="text-main-blue font-semibold">
+                            {stock.stockName[0]}
+                          </span>
+                        </div>
+                      )}
                     </div>
                     <div className="flex gap-1 items-center">
                       <span>{stock.stockName}</span>

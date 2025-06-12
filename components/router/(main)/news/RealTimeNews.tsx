@@ -58,6 +58,49 @@ export default function RealTimeNews() {
   const [news, setNews] = useState([...newsData]);
   const [remainSec, setRemainSec] = useState(60);
 
+  useEffect(() => {
+    const sse = new EventSource("http://43.200.17.139:8080/api/news/stream");
+    // const sse = new EventSource("/api/news/stream");
+
+    sse.onopen = (event) => {
+      console.log("✅ 서버 연결됨", event);
+    };
+
+    sse.onerror = (event) => {
+      console.error("❌ SSE 에러 발생:", event);
+    };
+
+    sse.onmessage = (event) => {
+      console.log("📰 뉴스 수신 test:", event.data);
+    };
+
+    // 연결 이벤트
+    sse.addEventListener("connect", (event) => {
+      console.log("✅ 서버 연결됨:", event.data); // 'connected' 출력
+    });
+
+    // 뉴스 이벤트 수신
+    sse.addEventListener("news", (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        console.log("📰 뉴스 수신:", data);
+      } catch (err) {
+        console.error("❌ JSON 파싱 에러:", err);
+      }
+    });
+
+    // 에러 핸들링
+    sse.onerror = (event) => {
+      console.error("❌ SSE 에러 발생:", event);
+    };
+
+    // 컴포넌트 언마운트 시 종료
+    return () => {
+      sse.close();
+      console.log("🛑 SSE 연결 종료");
+    };
+  }, []);
+
   // 1초마다 남은 시간 감소
   useEffect(() => {
     const timer = setInterval(() => {

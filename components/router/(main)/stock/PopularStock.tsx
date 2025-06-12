@@ -10,6 +10,7 @@ import Scrab from "@/components/ui/shared/Scrab";
 import Popular from "@/type/stocks/Popular";
 import { toast } from "react-toastify";
 import { JwtToken } from "@/type/jwt";
+import Image from "next/image";
 
 interface PopularStockProps {
   popularStocks: {
@@ -97,12 +98,22 @@ const PopularStock = ({ token }: { token: JwtToken | null }) => {
 
               <Bookmark className="absolute top-0 left-0" rank={index + 1} />
               <div className="flex gap-main w-full">
-                <div className="relative flex items-center justify-center">
-                  <div className="bg-main-blue/10 rounded-full size-[40px] shrink-0 flex items-center justify-center">
-                    <span className="text-main-blue font-semibold">
-                      {stock.hts_kor_isnm[0]}
-                    </span>
-                  </div>
+                <div className="relative flex items-center justify-center size-[40px] shrink-0">
+                  {stock.stockImage ? (
+                    <Image
+                      src={stock.stockImage}
+                      alt={stock.hts_kor_isnm}
+                      fill
+                      className="rounded-full"
+                      sizes="40px"
+                    />
+                  ) : (
+                    <div className="bg-main-blue/10 rounded-full size-[40px] shrink-0 flex items-center justify-center">
+                      <span className="text-main-blue font-semibold">
+                        {stock.hts_kor_isnm[0]}
+                      </span>
+                    </div>
+                  )}
                 </div>
                 <div className="flex flex-col flex-1 truncate">
                   <span className="font-bold text-gray-800 truncate w-full">

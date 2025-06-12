@@ -1,7 +1,7 @@
 import { create } from "zustand";
 
 export interface RecentViewStock {
-  img: string;
+  stockImage: string;
   stockCode: string;
   stockName: string;
 }
