@@ -19,6 +19,9 @@ const MainNews = () => {
 
   useEffect(() => {
     const fetchNews = async () => {
+      {
+        /* /api/news/v2/highlight/redistest */
+      }
       const res = await fetch("/api/news/v2/top10", {
         credentials: "include",
         headers: {

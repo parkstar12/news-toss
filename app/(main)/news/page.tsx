@@ -8,21 +8,22 @@ const HomePage = async () => {
   const token = await getJwtToken();
 
   return (
-    <div className="grid grid-cols-4 gap-main max-w-[1300px] mx-auto relative">
-      <div className="col-span-3 p-main">
+    <div className="grid gap-main max-w-[1000px] mx-auto relative">
+      <div className="p-main">
         <MainNews />
       </div>
-      <div className="row-span-3 relative p-main">
+
+      {/* <div className="row-span-3 relative p-main">
         <div className="row-span-2 flex flex-col gap-main sticky top-0">
           <RealTimeNews />
         </div>
-      </div>
+      </div> */}
 
-      <div className="col-span-3 p-main">
+      <div className="p-main">
         <CustomNews token={token} />
       </div>
 
-      <div className="col-span-3 p-main">
+      <div className="p-main">
         <AllNews token={token} />
       </div>
     </div>

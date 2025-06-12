@@ -72,14 +72,14 @@ const Sidebar = ({ token }: { token: JwtToken | null }) => {
 
       <div className="flex flex-col gap-[20px] shrink-0 items-center px-[10px]">
         <button
-          className="flex flex-col items-center cursor-pointer"
+          className="flex flex-col items-center cursor-pointer hover:bg-sub/40 rounded-sm transition-colors duration-200"
           onClick={handleToggle}
         >
           <ChevronsLeft
             size={25}
             className={clsx(
-              "duration-200 hover:bg-sub/40 rounded-sm p-1 box-content",
-              isOpen && "rotate-180"
+              "p-1 box-content transition-transform duration-500",
+              isOpen && "rotate-540"
             )}
           />
         </button>
