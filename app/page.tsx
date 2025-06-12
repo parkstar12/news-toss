@@ -74,7 +74,7 @@ export default function LandingPage() {
               </div>
               <div className="flex items-center justify-center">
                 <Image
-                  src="/placeholder.svg?height=400&width=600"
+                  src="https://placehold.co/600x400"
                   width="600"
                   height="400"
                   alt="StreamLine Dashboard"
@@ -158,7 +158,7 @@ export default function LandingPage() {
               </div>
               <div className="flex items-center justify-center">
                 <Image
-                  src="/placeholder.svg?height=400&width=500"
+                  src="https://placehold.co/500x400"
                   width="500"
                   height="400"
                   alt="Features Overview"

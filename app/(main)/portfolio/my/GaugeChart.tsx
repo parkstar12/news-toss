@@ -10,10 +10,11 @@ import {
   TooltipItem,
 } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ChevronRight } from "lucide-react";
 import { PortfolioData } from "@/type/portfolio";
 import { driver } from "driver.js";
+import InvestmentStyleModal from "./InvestmentStyleModal";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -25,6 +26,8 @@ const GaugeChart = ({
   portfolioData: PortfolioData | null;
 }) => {
   const ref = useRef<any>(null);
+  const [isOpenInvestmentStyleModal, setIsOpenInvestmentStyleModal] =
+    useState(false);
 
   const dummyData: ChartData<"doughnut"> = {
     labels: ["공격투자형", "적극투자형", "위험중립형", "안정추구형", "안전형"],
@@ -184,6 +187,51 @@ const GaugeChart = ({
 
   if (!portfolioData)
     return (
+      <>
+        <div className="size-full flex flex-col gap-main">
+          <div className="flex justify-between items-end">
+            <h2 className="text-2xl font-bold bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent w-fit">
+              내 투자성향
+            </h2>
+
+            <button
+              id="investment-style"
+              className="text-sm text-main-dark-gray hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main pl-2 pr-1 py-1 flex items-center gap-1"
+              onClick={() => setIsOpenInvestmentStyleModal(true)}
+            >
+              <span>투자성향 변경</span>
+              <ChevronRight size={16} />
+            </button>
+          </div>
+
+          <div className="relative">
+            <div className="absolute inset-0 bg-white/50 z-20 size-full flex items-center justify-center">
+              <span className="text-main-dark-gray font-semibold">
+                투자성향을 설정해주세요.
+              </span>
+            </div>
+
+            <div className="blur-xs h-full ">
+              <div className="w-full h-full flex justify-center items-center flex-1 relative">
+                <Doughnut
+                  // ref={ref}
+                  data={dummyData}
+                  options={options}
+                  className="w-full"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        <InvestmentStyleModal
+          isOpen={isOpenInvestmentStyleModal}
+          onClose={() => setIsOpenInvestmentStyleModal(false)}
+        />
+      </>
+    );
+
+  return (
+    <>
       <div className="size-full flex flex-col gap-main">
         <div className="flex justify-between items-end">
           <h2 className="text-2xl font-bold bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent w-fit">
@@ -193,58 +241,27 @@ const GaugeChart = ({
           <button
             id="investment-style"
             className="text-sm text-main-dark-gray hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main pl-2 pr-1 py-1 flex items-center gap-1"
+            onClick={() => setIsOpenInvestmentStyleModal(true)}
           >
             <span>투자성향 변경</span>
             <ChevronRight size={16} />
           </button>
         </div>
 
-        <div className="relative">
-          <div className="absolute inset-0 bg-white/50 z-20 size-full flex items-center justify-center">
-            <span className="text-main-dark-gray font-semibold">
-              투자성향을 설정해주세요.
-            </span>
-          </div>
-
-          <div className="blur-xs h-full ">
-            <div className="w-full h-full flex justify-center items-center flex-1 relative">
-              <Doughnut
-                // ref={ref}
-                data={dummyData}
-                options={options}
-                className="w-full"
-              />
-            </div>
-          </div>
+        <div className="w-full flex justify-center items-center flex-1">
+          <Doughnut
+            ref={ref}
+            data={dummyData}
+            options={options}
+            className="w-full"
+          />
         </div>
       </div>
-    );
-
-  return (
-    <div className="size-full flex flex-col gap-main">
-      <div className="flex justify-between items-end">
-        <h2 className="text-2xl font-bold bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent w-fit">
-          내 투자성향
-        </h2>
-
-        <button
-          id="investment-style"
-          className="text-sm text-main-dark-gray hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main pl-2 pr-1 py-1 flex items-center gap-1"
-        >
-          <span>투자성향 변경</span>
-          <ChevronRight size={16} />
-        </button>
-      </div>
-
-      <div className="w-full flex justify-center items-center flex-1">
-        <Doughnut
-          ref={ref}
-          data={dummyData}
-          options={options}
-          className="w-full"
-        />
-      </div>
-    </div>
+      <InvestmentStyleModal
+        isOpen={isOpenInvestmentStyleModal}
+        onClose={() => setIsOpenInvestmentStyleModal(false)}
+      />
+    </>
   );
 };
 
