@@ -12,24 +12,32 @@ import {
 import { Doughnut } from "react-chartjs-2";
 import { useEffect, useRef } from "react";
 import { ChevronRight } from "lucide-react";
+import { PortfolioData } from "@/type/portfolio";
+import { driver } from "driver.js";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-const GaugeChart = ({ value = 70 }: { value: number }) => {
+const GaugeChart = ({
+  value = 70,
+  portfolioData,
+}: {
+  value: number;
+  portfolioData: PortfolioData | null;
+}) => {
   const ref = useRef<any>(null);
 
-  const data: ChartData<"doughnut"> = {
+  const dummyData: ChartData<"doughnut"> = {
     labels: ["공격투자형", "적극투자형", "위험중립형", "안정추구형", "안전형"],
     datasets: [
       {
         data: [20, 20, 20, 20, 20], // 총 100 맞추기
         backgroundColor: [
-          "rgba(255, 99, 132, 0.2)",
-          "rgba(54, 162, 235, 0.2)",
-          "rgba(255, 206, 86, 0.2)",
-          "rgba(75, 192, 192, 0.2)",
-          "rgba(153, 102, 255, 0.2)",
-          "rgba(255, 159, 64, 0.2)",
+          "rgba(255, 99, 132, 0.25)",
+          "rgba(54, 162, 235, 0.25)",
+          "rgba(255, 206, 86, 0.25)",
+          "rgba(75, 192, 192, 0.25)",
+          "rgba(153, 102, 255, 0.25)",
+          "rgba(255, 159, 64, 0.25)",
         ],
         borderColor: [
           "rgba(255, 99, 132, 1)",
@@ -39,10 +47,10 @@ const GaugeChart = ({ value = 70 }: { value: number }) => {
           "rgba(153, 102, 255, 1)",
           "rgba(255, 159, 64, 1)",
         ],
-        borderWidth: 0.5,
+        borderWidth: 0.2,
         borderAlign: "center", // 내부 중심선 기준
-        spacing: 10, // 조각 간 간격
-        borderRadius: 5, // 둥근 모서리
+        // spacing: 10, // 조각 간 간격
+        // borderRadius: 5, // 둥근 모서리
         circumference: 180,
         rotation: 270,
       },
@@ -51,8 +59,8 @@ const GaugeChart = ({ value = 70 }: { value: number }) => {
 
   const options: ChartOptions<"doughnut"> = {
     responsive: true,
-    maintainAspectRatio: false,
-    cutout: "70%",
+    maintainAspectRatio: true,
+    cutout: "65%",
     plugins: {
       legend: {
         display: true,
@@ -87,7 +95,7 @@ const GaugeChart = ({ value = 70 }: { value: number }) => {
 
         const angle = (Math.PI * value) / 100;
         const cx = left + width / 2;
-        const cy = top + height / 1.1; // 반원 기준 중심
+        const cy = top + height / 1.3; // 반원 기준 중심
         const radius = height * 0.5;
 
         const dx = radius * Math.cos(angle + Math.PI);
@@ -136,6 +144,82 @@ const GaugeChart = ({ value = 70 }: { value: number }) => {
     chart.update();
   }, [value]);
 
+  useEffect(() => {
+    // if (portfolioData) return;
+    const steps = [];
+    if (portfolioData) {
+      steps.push({
+        element: "#investment-style",
+        popover: {
+          title: "투자성향 설정",
+          description: "설문을 통해 본인의 투자성향을 설정해주세요",
+        },
+      });
+    }
+
+    if (portfolioData) {
+      steps.push({
+        element: "#add-holding",
+        popover: {
+          title: "보유 종목 추가",
+          description: "갖고 계신 보유 종목을 추가해주세요",
+        },
+      });
+    }
+
+    const driverObj = driver({
+      showProgress: true,
+      steps,
+      stagePadding: 5,
+      allowClose: false,
+      nextBtnText: "다음",
+      prevBtnText: "이전",
+      doneBtnText: "완료",
+    });
+
+    driverObj.drive();
+
+    return () => driverObj.destroy();
+  }, [portfolioData]);
+
+  if (!portfolioData)
+    return (
+      <div className="size-full flex flex-col gap-main">
+        <div className="flex justify-between items-end">
+          <h2 className="text-2xl font-bold bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent w-fit">
+            내 투자성향
+          </h2>
+
+          <button
+            id="investment-style"
+            className="text-sm text-main-dark-gray hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main pl-2 pr-1 py-1 flex items-center gap-1"
+          >
+            <span>투자성향 변경</span>
+            <ChevronRight size={16} />
+          </button>
+        </div>
+
+        <div className="relative">
+          <div className="absolute inset-0 bg-white/50 z-20 size-full flex items-center justify-center">
+            <span className="text-main-dark-gray font-semibold">
+              투자성향을 설정해주세요.
+            </span>
+          </div>
+
+          <div className="blur-xs h-full ">
+            <div className="w-full h-full flex justify-center items-center flex-1 relative">
+              <Doughnut
+                // ref={ref}
+                data={dummyData}
+                options={options}
+                className="w-full"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+
   return (
     <div className="size-full flex flex-col gap-main">
       <div className="flex justify-between items-end">
@@ -143,13 +227,22 @@ const GaugeChart = ({ value = 70 }: { value: number }) => {
           내 투자성향
         </h2>
 
-        <button className="text-sm text-main-dark-gray hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main pl-2 pr-1 py-1 flex items-center gap-1">
+        <button
+          id="investment-style"
+          className="text-sm text-main-dark-gray hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main pl-2 pr-1 py-1 flex items-center gap-1"
+        >
           <span>투자성향 변경</span>
           <ChevronRight size={16} />
         </button>
       </div>
+
       <div className="w-full flex justify-center items-center flex-1">
-        <Doughnut ref={ref} data={data} options={options} className="w-full" />
+        <Doughnut
+          ref={ref}
+          data={dummyData}
+          options={options}
+          className="w-full"
+        />
       </div>
     </div>
   );

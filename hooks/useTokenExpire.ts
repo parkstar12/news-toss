@@ -17,6 +17,7 @@ function useTokenExpire(exp?: number) {
       if (diff <= 0) {
         setExpireText("");
         toast.error("로그인 시간이 만료되었습니다");
+        clearInterval(interval);
         router.refresh();
       } else {
         const min = Math.floor(diff / 60);
