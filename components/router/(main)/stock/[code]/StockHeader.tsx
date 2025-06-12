@@ -3,6 +3,7 @@
 import DownPrice from "@/components/ui/shared/DownPrice";
 import UpPrice from "@/components/ui/shared/UpPrice";
 import { useRecentViewStore } from "@/store/useRecentViewStore";
+import Image from "next/image";
 import React, { useEffect, useState } from "react";
 
 const StockHeader = ({ code }: { code: string }) => {
@@ -13,6 +14,7 @@ const StockHeader = ({ code }: { code: string }) => {
     sign: string;
     stockCode: string;
     stockName: string;
+    stockImage: string;
   } | null>(null);
   const { recentViewStocks, setRecentViewStocks } = useRecentViewStore();
 
@@ -23,7 +25,7 @@ const StockHeader = ({ code }: { code: string }) => {
     setRecentViewStocks([
       ...recentViewStocks,
       {
-        img: "",
+        stockImage: stock.stockImage,
         stockCode: stock.stockCode,
         stockName: stock.stockName,
       },
@@ -41,6 +43,7 @@ const StockHeader = ({ code }: { code: string }) => {
           sign: string;
           stockCode: string;
           stockName: string;
+          stockImage: string;
         }[];
       } = await res.json();
 
@@ -55,12 +58,21 @@ const StockHeader = ({ code }: { code: string }) => {
 
   return (
     <div className="flex items-center gap-2 w-full">
-      <div className="relative">
-        <div className="bg-main-blue/10 rounded-full size-[40px] shrink-0 flex items-center justify-center">
-          <span className="text-main-blue font-semibold">
-            {stock.stockName[0]}
-          </span>
-        </div>
+      <div className="relative flex items-center justify-center size-[40px] shrink-0">
+        {stock.stockImage ? (
+          <Image
+            src={stock.stockImage}
+            alt={stock.stockName}
+            fill
+            className="rounded-full"
+          />
+        ) : (
+          <div className="bg-main-blue/10 rounded-full size-[40px] shrink-0 flex items-center justify-center">
+            <span className="text-main-blue font-semibold">
+              {stock.stockName[0]}
+            </span>
+          </div>
+        )}
       </div>
       <div className="flex flex-col flex-1 truncate text-sm">
         <p className="flex items-center gap-main text-gray-800 truncate w-full">
