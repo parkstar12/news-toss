@@ -1,5 +1,4 @@
 import React from "react";
-import OverViewChart from "@/components/router/(main)/stock/OverViewChart";
 import KOSPIChart from "@/components/router/(main)/stock/KOSPIChart";
 import KOSDAQChart from "@/components/router/(main)/stock/KOSDAQChart";
 import PopularStock from "@/components/router/(main)/stock/PopularStock";
@@ -9,6 +8,7 @@ import { getJwtToken } from "@/utils/auth";
 import { KOSPI } from "@/type/stocks/KOSPI";
 import { KOSDAQ } from "@/type/stocks/KOSDAQ";
 import Popular from "@/type/stocks/Popular";
+import TestOverView from "@/components/router/(main)/stock/OverViewChart";
 
 const StockPage = async () => {
   const token = await getJwtToken();
@@ -45,7 +45,8 @@ const StockPage = async () => {
       <div className="row-span-8 relative">
         <div className="flex flex-col gap-main p-main sticky top-0">
           <SearchStock />
-          <OverViewChart />
+          {/* <OverViewChart /> */}
+          <TestOverView />
         </div>
       </div>
 
@@ -81,10 +82,6 @@ async function fetchIndices(
       next: { revalidate: 3600 },
     }
   );
-
-  if (index === "KOSPI") {
-    throw new Error("🔥 KOSPI API 강제 에러 발생!");
-  }
 
   if (!res.ok) throw new Error("API 요청 실패");
 
