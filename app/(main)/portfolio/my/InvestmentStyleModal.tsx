@@ -1,18 +1,24 @@
 "use client";
 
 import Modal from "@/components/ui/Modal";
+import { JwtToken } from "@/type/jwt";
 import clsx from "clsx";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 const FormModal = Modal;
 
 const InvestmentStyleModal = ({
   isOpen,
   onClose,
+  setInvestScore,
+  token,
 }: {
   isOpen: boolean;
   onClose: () => void;
+  setInvestScore: React.Dispatch<React.SetStateAction<number>>;
+  token: JwtToken | null;
 }) => {
   const [questionPage, setQuestionPage] = useState(0);
   const [isAccept, setIsAccept] = useState(false);
@@ -28,8 +34,19 @@ const InvestmentStyleModal = ({
     setQuestionPage(questionPage - 1);
   };
 
+  const handleClose = () => {
+    setQuestionPage(0);
+    setIsAccept(false);
+    setSelectedAnswer([0, 0, 0, 0, 0]);
+    onClose();
+  };
+
   return (
-    <FormModal isOpen={isOpen} onClose={onClose} isClickOutsideClose={false}>
+    <FormModal
+      isOpen={isOpen}
+      onClose={handleClose}
+      isClickOutsideClose={false}
+    >
       <div className="flex flex-col gap-[20px] px-main w-[600px]">
         <h2 className="text-xl font-bold text-main-dark-gray">투자성향 설정</h2>
 
@@ -42,13 +59,13 @@ const InvestmentStyleModal = ({
           <div
             className={clsx(
               "h-full bg-main-blue rounded-full transition-all duration-300",
-              questionPage === 1 && "w-1/5",
-              questionPage === 2 && "w-2/5",
-              questionPage === 3 && "w-3/5",
-              questionPage === 4 && "w-4/5",
-              questionPage === 5 && "w-5/5"
+              questionPage === 1 && "w-0",
+              questionPage === 2 && "w-1/5",
+              questionPage === 3 && "w-2/5",
+              questionPage === 4 && "w-3/5",
+              questionPage === 5 && "w-4/5"
             )}
-          ></div>
+          />
         </div>
 
         {questionPage === 0 && (
@@ -103,8 +120,9 @@ const InvestmentStyleModal = ({
         {questionPage === 6 && (
           <ResultForm
             onClose={onClose}
-            prev={handlePrevQuestion}
             selectedAnswer={selectedAnswer}
+            setInvestScore={setInvestScore}
+            token={token}
           />
         )}
       </div>
@@ -288,7 +306,7 @@ const Question2 = ({
             handleSelectAnswer(1, 1, selectedAnswer, setSelectedAnswer);
           }}
         >
-          원금 손실이 없도록 안정적인 자산 운용
+          없음
         </button>
         <button
           className={clsx(
@@ -299,7 +317,7 @@ const Question2 = ({
             handleSelectAnswer(1, 2, selectedAnswer, setSelectedAnswer);
           }}
         >
-          물가상승률을 웃도는 수익
+          예/적금 외에 간접투자(펀드 등) 경험 있음
         </button>
         <button
           className={clsx(
@@ -310,7 +328,7 @@ const Question2 = ({
             handleSelectAnswer(1, 3, selectedAnswer, setSelectedAnswer);
           }}
         >
-          자산을 증식하고자 하는 목적
+          직접투자(국내주식 등) 경험 있음
         </button>
         <button
           className={clsx(
@@ -321,7 +339,7 @@ const Question2 = ({
             handleSelectAnswer(1, 4, selectedAnswer, setSelectedAnswer);
           }}
         >
-          고수익을 위해 위험도 감수
+          직접투자(해외주식/ETF 등) 경험 있고 손실 경험도 있음
         </button>
         <button
           className={clsx(
@@ -332,7 +350,7 @@ const Question2 = ({
             handleSelectAnswer(1, 5, selectedAnswer, setSelectedAnswer);
           }}
         >
-          단기 차익 실현을 위한 공격적 투자
+          파생상품/고위험 상품 경험 있음
         </button>
       </div>
 
@@ -379,7 +397,7 @@ const Question3 = ({
             handleSelectAnswer(2, 1, selectedAnswer, setSelectedAnswer);
           }}
         >
-          원금 손실이 없도록 안정적인 자산 운용
+          절대 하지 않음
         </button>
         <button
           className={clsx(
@@ -390,7 +408,7 @@ const Question3 = ({
             handleSelectAnswer(2, 2, selectedAnswer, setSelectedAnswer);
           }}
         >
-          물가상승률을 웃도는 수익
+          신중히 고려하되 가능성 낮음
         </button>
         <button
           className={clsx(
@@ -401,7 +419,7 @@ const Question3 = ({
             handleSelectAnswer(2, 3, selectedAnswer, setSelectedAnswer);
           }}
         >
-          자산을 증식하고자 하는 목적
+          일정 수익 기대된다면 고려함
         </button>
         <button
           className={clsx(
@@ -412,7 +430,7 @@ const Question3 = ({
             handleSelectAnswer(2, 4, selectedAnswer, setSelectedAnswer);
           }}
         >
-          고수익을 위해 위험도 감수
+          손실을 감수하고도 투자함
         </button>
         <button
           className={clsx(
@@ -423,7 +441,7 @@ const Question3 = ({
             handleSelectAnswer(2, 5, selectedAnswer, setSelectedAnswer);
           }}
         >
-          단기 차익 실현을 위한 공격적 투자
+          적극적으로 투자하겠음
         </button>
       </div>
 
@@ -470,7 +488,7 @@ const Question4 = ({
             handleSelectAnswer(3, 1, selectedAnswer, setSelectedAnswer);
           }}
         >
-          원금 손실이 없도록 안정적인 자산 운용
+          1년 이하
         </button>
         <button
           className={clsx(
@@ -481,7 +499,7 @@ const Question4 = ({
             handleSelectAnswer(3, 2, selectedAnswer, setSelectedAnswer);
           }}
         >
-          물가상승률을 웃도는 수익
+          1~3년
         </button>
         <button
           className={clsx(
@@ -492,7 +510,7 @@ const Question4 = ({
             handleSelectAnswer(3, 3, selectedAnswer, setSelectedAnswer);
           }}
         >
-          자산을 증식하고자 하는 목적
+          3~5년
         </button>
         <button
           className={clsx(
@@ -503,7 +521,7 @@ const Question4 = ({
             handleSelectAnswer(3, 4, selectedAnswer, setSelectedAnswer);
           }}
         >
-          고수익을 위해 위험도 감수
+          5~10년
         </button>
         <button
           className={clsx(
@@ -514,7 +532,7 @@ const Question4 = ({
             handleSelectAnswer(3, 5, selectedAnswer, setSelectedAnswer);
           }}
         >
-          단기 차익 실현을 위한 공격적 투자
+          10년 이상
         </button>
       </div>
 
@@ -561,7 +579,7 @@ const Question5 = ({
             handleSelectAnswer(4, 1, selectedAnswer, setSelectedAnswer);
           }}
         >
-          원금 손실이 없도록 안정적인 자산 운용
+          손실이 나면 투자 중단함
         </button>
         <button
           className={clsx(
@@ -572,7 +590,7 @@ const Question5 = ({
             handleSelectAnswer(4, 2, selectedAnswer, setSelectedAnswer);
           }}
         >
-          물가상승률을 웃도는 수익
+          손실이 나면 투자 줄임
         </button>
         <button
           className={clsx(
@@ -583,7 +601,7 @@ const Question5 = ({
             handleSelectAnswer(4, 3, selectedAnswer, setSelectedAnswer);
           }}
         >
-          자산을 증식하고자 하는 목적
+          손실이 나면 기다려봄
         </button>
         <button
           className={clsx(
@@ -594,7 +612,7 @@ const Question5 = ({
             handleSelectAnswer(4, 4, selectedAnswer, setSelectedAnswer);
           }}
         >
-          고수익을 위해 위험도 감수
+          손실이 나도 추가 매수 고려
         </button>
         <button
           className={clsx(
@@ -605,7 +623,7 @@ const Question5 = ({
             handleSelectAnswer(4, 5, selectedAnswer, setSelectedAnswer);
           }}
         >
-          단기 차익 실현을 위한 공격적 투자
+          손실이 나도 투자 전략 변경해서 계속 투자
         </button>
       </div>
 
@@ -632,26 +650,138 @@ const Question5 = ({
 
 const ResultForm = ({
   onClose,
-  prev,
   selectedAnswer,
+  setInvestScore,
+  token,
 }: {
   onClose: () => void;
-  prev: () => void;
   selectedAnswer: number[];
+  setInvestScore: React.Dispatch<React.SetStateAction<number>>;
+  token: JwtToken | null;
 }) => {
+  useEffect(() => {
+    setInvestScore(selectedAnswer.reduce((acc, curr) => acc + curr, 0));
+  }, [selectedAnswer, setInvestScore]);
+
+  const getInvestmentResult = (score: number) => {
+    if (score <= 7) {
+      return {
+        type: "🟦 안전형",
+        description: `
+      당신은 자산의 안전을 최우선으로 생각하는 매우 신중한 투자자입니다.<br/>
+      원금 손실에 대한 두려움이 크며, 투자보다는 저축이나 예금 같은 자산 보호 중심의 금융상품에 더 익숙한 편이에요.<br/>
+      
+      이런 투자자에게는 예금, 적금, 국공채, MMF 같은 <b>초저위험 상품</b>이 적합하며,<br/>
+      수익보다는 자산의 <b>보전(stability)</b>이 핵심 목적입니다.<br/>
+      
+      시장 변동성이 큰 주식이나 해외투자는 부담스러울 수 있으므로,<br/>
+      금융 상품 가입 전에는 충분한 정보를 검토하고, 전문가의 조언을 참고하는 것이 좋아요.<br/>
+        `,
+      };
+    } else if (score <= 12) {
+      return {
+        type: "🟩 안정추구형",
+        description: `
+      당신은 손실에 대한 걱정이 있지만, 일정 수준의 수익을 기대하는 투자자입니다.<br/>
+      위험을 회피하려는 성향이 있지만, 자산을 방치하지 않고 적극적으로 운용하려는 태도를 가지고 있어요.<br/>
+      
+      추천되는 상품은 <b>채권형 펀드</b>, <b>혼합형 펀드</b>, <b>우량 배당주 ETF</b> 등입니다.<br/>
+      이런 상품은 상대적으로 안정적이면서도 예금보다 높은 수익률을 기대할 수 있어요.<br/>
+      
+      주식 투자는 부담스럽지만, 소액으로 ETF를 분산 투자하는 것도 좋은 방법이에요.<br/>
+      리스크 관리를 위한 분산 투자 전략이 매우 중요합니다.<br/>
+        `,
+      };
+    } else if (score <= 17) {
+      return {
+        type: "🟨 위험중립형",
+        description: `
+      당신은 수익과 안정성 사이에서 균형을 추구하는 투자자입니다.<br/>
+      일정 부분의 손실은 감수할 수 있지만, 전반적으로 위험 대비 수익을 고려해 투자하는 경향이 있어요.<br/>
+      
+      추천되는 포트폴리오는 주식과 채권의 <b>50:50 혼합</b> 또는, 상황에 따라 비중을 조절하는 <b>TDF(Target Date Fund)</b>, <b>밸런스형 ETF</b>입니다.<br/>
+      
+      시장 상황에 따라 전략을 유연하게 조정할 수 있는 능력이 중요하며,<br/>
+      자산 배분과 분기별 리밸런싱을 통해 장기적인 수익을 추구할 수 있어요.<br/>
+      
+      이 성향의 투자자는 종목 선정보다 <b>자산 배분 전략</b>이 핵심입니다.
+        `,
+      };
+    } else if (score <= 21) {
+      return {
+        type: "🟧 적극투자형",
+        description: `
+      당신은 수익에 대한 욕구가 강하며, 일정 수준의 리스크를 감수할 수 있는 투자자입니다.<br/>
+      단기보다는 중장기적인 관점에서 자산을 적극적으로 운용하려는 경향이 강해요.<br/>
+      
+      추천되는 투자 전략은 <b>개별 성장주 투자</b>, <b>섹터 ETF</b>, <b>해외주식</b>, <b>테마형 펀드</b>입니다.<br/>
+      특히 기술주, 헬스케어, ESG 관련 테마에 관심을 가져볼 수 있어요.<br/>
+      
+      높은 수익률을 추구하는 만큼, 투자 후 리스크 관리가 중요하고,<br/>
+      <b>리밸런싱</b>, <b>뉴스 기반 모니터링</b>, <b>포트폴리오 다변화</b>를 통해 리스크를 최소화하는 것이 좋아요.<br/>
+        `,
+      };
+    } else {
+      return {
+        type: "🟥 공격투자형",
+        description: `
+      당신은 높은 수익률을 위해 큰 손실도 감수할 수 있는 고위험 성향의 투자자입니다.<br/>
+      시장 흐름을 빠르게 파악하고 기회를 놓치지 않으려는 성향이 강하며, 과감한 결정을 내리는 데 주저하지 않아요.<br/>
+      
+      추천되는 전략은 <b>개별 고성장주 투자</b>, <b>단기 매매(스윙/데이 트레이딩)</b>, <b>해외 레버리지 ETF</b>, <b>암호화폐 등 고위험 고수익 자산군</b>입니다.<br/>
+      
+      이 성향의 투자자는 <b>정보 습득 능력</b>, <b>시장 모니터링</b>, <b>자기만의 기준</b>이 중요하며,<br/>
+      수익률 변동이 큰 만큼 <b>멘탈 관리와 손절 기준</b> 설정도 꼭 필요해요.<br/>
+      
+      높은 기대 수익을 추구하되, 리스크가 항상 동반된다는 점을 명확히 인식해야 해요.
+        `,
+      };
+    }
+  };
+
+  const { type, description } = getInvestmentResult(
+    selectedAnswer.reduce((acc, curr) => acc + curr, 0)
+  );
+
+  const handleClose = async () => {
+    if (!token) return;
+    const score = selectedAnswer.reduce((acc, curr) => acc + curr, 0);
+    const res = await fetch(
+      `/api/auth/invest?memberId=${token.memberId}&invest_score=${score}`,
+      {
+        credentials: "include",
+      }
+    );
+
+    const json = await res.json();
+    console.log(json);
+
+    setInvestScore(score);
+
+    if (!res.ok) {
+      toast.error("투자자 성향 분석 결과를 저장하는데 실패했습니다.");
+    } else {
+      toast.success("투자자 성향 분석 결과를 저장했습니다.");
+    }
+    onClose();
+  };
+
   return (
     <div className="flex flex-col gap-main">
       <h2 className="text-lg font-semibold">투자자 성향 분석 결과</h2>
 
-      <div>{selectedAnswer.reduce((acc, curr) => acc + curr, 0)}점임</div>
+      <span className="text-lg font-semibold">{type}</span>
+      <p
+        className="text-sm text-main-dark-gray leading-relaxed"
+        dangerouslySetInnerHTML={{ __html: description }}
+      />
 
       <div className="flex justify-end">
         <button
           className="text-sm text-main-dark-gray hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main pr-2 pl-1 py-1 flex items-center gap-1"
-          onClick={prev}
+          onClick={handleClose}
         >
-          <ChevronLeft size={16} />
-          <span>이전</span>
+          <span>확인</span>
         </button>
       </div>
     </div>

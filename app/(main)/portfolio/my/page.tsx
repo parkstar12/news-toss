@@ -3,8 +3,6 @@ import Holidings from "./Holidings";
 import ProfitLossCalendar from "./ProfitLossCalendar";
 import MyAccountChart from "./MyAccountChart";
 import { getJwtToken } from "@/utils/auth";
-import { redirect } from "next/navigation";
-import { PortfolioData } from "@/type/portfolio";
 import GaugeChart from "./GaugeChart";
 
 const MyPortfolioPage = async () => {
@@ -20,7 +18,7 @@ const MyPortfolioPage = async () => {
       </div>
 
       <div className="col-span-3 gap-main box-content p-[20px] bg-white rounded-main shadow-sm">
-        <GaugeChart value={90} token={token} /> {/* 10%, 25%, 50%, 75%, 100% */}
+        <GaugeChart token={token} />
       </div>
 
       <div className="col-span-10 grid grid-cols-5 gap-[20px]">

@@ -19,17 +19,18 @@ import { usePortfolioStore } from "@/store/usePortfolio";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-const GaugeChart = ({
-  value = 70,
-  token,
-}: {
-  value: number;
-  token: JwtToken | null;
-}) => {
+const GaugeChart = ({ token }: { token: JwtToken | null }) => {
   const ref = useRef<any>(null);
   const [isOpenInvestmentStyleModal, setIsOpenInvestmentStyleModal] =
     useState(false);
   const { portfolio } = usePortfolioStore();
+  const [investScore, setInvestScore] = useState(0);
+
+  useEffect(() => {
+    if (!token) return;
+
+    setInvestScore(token.invest);
+  }, [token, portfolio]);
 
   const dummyData: ChartData<"doughnut"> = {
     labels: ["공격투자형", "적극투자형", "위험중립형", "안정추구형", "안전형"],
@@ -90,6 +91,20 @@ const GaugeChart = ({
     const chart = ref.current;
     if (!chart) return;
 
+    let value = 0;
+
+    if (investScore <= 7) {
+      value = 5;
+    } else if (investScore <= 12) {
+      value = 28;
+    } else if (investScore <= 17) {
+      value = 50;
+    } else if (investScore <= 21) {
+      value = 72;
+    } else {
+      value = 95;
+    }
+
     const needle = {
       id: "needle",
       afterDatasetDraw(chart: any) {
@@ -147,7 +162,7 @@ const GaugeChart = ({
     if (!chart.config.plugins) chart.config.plugins = [];
     chart.config.plugins.push(needle);
     chart.update();
-  }, [value]);
+  }, [investScore]);
 
   useEffect(() => {
     if (!token) return;
@@ -155,7 +170,7 @@ const GaugeChart = ({
 
     const steps = [];
 
-    if (token.invest === 0) {
+    if (investScore === 0) {
       steps.push({
         element: "#investment-style",
         popover: {
@@ -188,9 +203,9 @@ const GaugeChart = ({
     driverObj.drive();
 
     return () => driverObj.destroy();
-  }, [portfolio, token]);
+  }, [portfolio, investScore]);
 
-  if (token && token.invest === 0)
+  if (token && investScore === 0)
     return (
       <>
         <div className="size-full flex flex-col gap-main">
@@ -219,7 +234,7 @@ const GaugeChart = ({
             <div className="blur-xs h-full ">
               <div className="w-full h-full flex justify-center items-center flex-1 relative">
                 <Doughnut
-                  // ref={ref}
+                  ref={ref}
                   data={dummyData}
                   options={options}
                   className="w-full"
@@ -231,6 +246,8 @@ const GaugeChart = ({
         <InvestmentStyleModal
           isOpen={isOpenInvestmentStyleModal}
           onClose={() => setIsOpenInvestmentStyleModal(false)}
+          setInvestScore={setInvestScore}
+          token={token}
         />
       </>
     );
@@ -265,6 +282,8 @@ const GaugeChart = ({
       <InvestmentStyleModal
         isOpen={isOpenInvestmentStyleModal}
         onClose={() => setIsOpenInvestmentStyleModal(false)}
+        setInvestScore={setInvestScore}
+        token={token}
       />
     </>
   );
