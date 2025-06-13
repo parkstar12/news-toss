@@ -54,49 +54,29 @@ const options = {
   },
 };
 
-const KOSPIChart = () => {
-  const [KOSPIData, setKOSPIData] = useState<KOSPI | null>(null);
-
-  const fetchKOSPI = async () => {
-    const endDate = new Date().toISOString().slice(0, 10).replace(/-/g, "");
-    const startDateObj = new Date();
-    startDateObj.setDate(startDateObj.getDate() - 100);
-    const startDate = startDateObj.toISOString().slice(0, 10).replace(/-/g, "");
-
-    try {
-      const res = await fetch(
-        `/api/v1/stocks/indices/KOSPI?startDate=${startDate}&endDate=${endDate}`
-      );
-      if (!res.ok) setKOSPIData(null);
-      const json = await res.json();
-      setKOSPIData(json.data);
-    } catch (e) {
-      console.error("❌ KOSPI 에러:", e);
-    }
-  };
-
-  useEffect(() => {
-    fetchKOSPI();
-  }, []);
-
-  const handleRefresh = () => {
-    fetchKOSPI();
-    if (!KOSPIData) toast.error("데이터를 불러오지 못했습니다.");
-  };
-
-  if (!KOSPIData)
+const KOSPIChart = ({
+  KOSPIData,
+  error,
+}: {
+  KOSPIData: KOSPI | null;
+  error: string | null;
+}) => {
+  if (error)
     return (
-      <div className="flex flex-col items-center gap-main bg-white p-main text-main-red text-center">
-        <span>KOSPI 데이터를 불러오지 못했습니다.</span>
-        <button
-          className="w-fit text-main-red bg-main-red/10 hover:bg-main-red/20 transition-all duration-300 rounded-main px-main py-1 flex items-center gap-1"
-          onClick={handleRefresh}
-        >
-          <span>다시 시도</span>
-          <RefreshCcw size={16} />
-        </button>
+      <div className="p-4 bg-gray-300 animate-pulse rounded-md text-center">
+        에러임
       </div>
     );
+
+  if (!KOSPIData) {
+    return (
+      <div className="p-4 bg-gray-100 animate-pulse rounded-md text-center">
+        📈 차트 데이터를 불러오는 중입니다...
+      </div>
+    );
+  }
+
+  if (!KOSPIData) return <div>로딩중...</div>;
 
   const labels = KOSPIData.indices.map((item) => item.stck_bsop_date);
   const data = {

@@ -250,7 +250,7 @@ const Holidings = ({
               </span>
             </div>
 
-            <div className="grid grid-cols-1 overflow-y-auto flex-1 p-main gap-main blur-xs">
+            <div className="grid grid-cols-1 overflow-y-auto flex-1 p-main gap-main">
               {dummyHoldings.slice(0, 3).map((h, index) => (
                 <div
                   key={`dummy-${index}`}

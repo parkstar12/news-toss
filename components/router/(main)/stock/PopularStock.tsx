@@ -12,35 +12,30 @@ import { toast } from "react-toastify";
 import { JwtToken } from "@/type/jwt";
 import Image from "next/image";
 
-interface PopularStockProps {
-  popularStocks: {
-    hts_kor_isnm: string; // 종목명
-    mksc_shrn_iscd: string; // 종목코드
-    data_rank: string; // 순위
-    prdy_vrss_sign: string; // 전일대비 부호
-    prdy_vrss: string; // 전일대비
-    prdy_ctrt: string; // 전일대비율
-  }[];
-}
+const PopularStock = ({
+  token,
+  popularStocks,
+}: {
+  token: JwtToken | null;
+  popularStocks: Popular[] | null;
+}) => {
+  // const [popularStocks, setPopularStocks] = useState<Popular[] | null>(null);
 
-const PopularStock = ({ token }: { token: JwtToken | null }) => {
-  const [popularStocks, setPopularStocks] = useState<Popular[] | null>(null);
+  // const fetchPopularStocks = async () => {
+  //   // 인기 종목
+  //   try {
+  //     const res = await fetch(`/api/v1/stocks/popular`);
+  //     if (!res.ok) setPopularStocks(null);
+  //     const json = await res.json();
+  //     setPopularStocks(json.data);
+  //   } catch (e) {
+  //     console.error("❌ 인기종목 에러:", e);
+  //   }
+  // };
 
-  const fetchPopularStocks = async () => {
-    // 인기 종목
-    try {
-      const res = await fetch(`/api/v1/stocks/popular`);
-      if (!res.ok) setPopularStocks(null);
-      const json = await res.json();
-      setPopularStocks(json.data);
-    } catch (e) {
-      console.error("❌ 인기종목 에러:", e);
-    }
-  };
-
-  useEffect(() => {
-    fetchPopularStocks();
-  }, []);
+  // useEffect(() => {
+  //   fetchPopularStocks();
+  // }, []);
 
   const router = useRouter();
 
@@ -48,28 +43,30 @@ const PopularStock = ({ token }: { token: JwtToken | null }) => {
     router.push(`/stock/${code}`);
   };
 
-  const handleRefresh = () => {
-    fetchPopularStocks();
-    if (!popularStocks) toast.error("데이터를 불러오지 못했습니다.");
-  };
+  // const handleRefresh = () => {
+  //   fetchPopularStocks();
+  //   if (!popularStocks) toast.error("데이터를 불러오지 못했습니다.");
+  // };
 
   const handleScrab = (code: string) => {
     console.log(code);
   };
 
-  if (!popularStocks)
-    return (
-      <div className="flex flex-col items-center gap-main bg-white p-main text-main-red text-center">
-        <span>인기종목 데이터를 불러오지 못했습니다.</span>
-        <button
-          className="w-fit text-main-red bg-main-red/10 hover:bg-main-red/20 transition-all duration-300 rounded-main px-main py-1 flex items-center gap-1"
-          onClick={handleRefresh}
-        >
-          <span>다시 시도</span>
-          <RefreshCcw size={16} />
-        </button>
-      </div>
-    );
+  // if (!popularStocks)
+  //   return (
+  //     <div className="flex flex-col items-center gap-main bg-white p-main text-main-red text-center">
+  //       <span>인기종목 데이터를 불러오지 못했습니다.</span>
+  //       <button
+  //         className="w-fit text-main-red bg-main-red/10 hover:bg-main-red/20 transition-all duration-300 rounded-main px-main py-1 flex items-center gap-1"
+  //         onClick={handleRefresh}
+  //       >
+  //         <span>다시 시도</span>
+  //         <RefreshCcw size={16} />
+  //       </button>
+  //     </div>
+  //   );
+
+  if (!popularStocks) return null;
 
   return (
     <div className="col-span-2 p-main mb-[20px]">

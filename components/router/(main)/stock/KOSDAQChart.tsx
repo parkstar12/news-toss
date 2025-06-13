@@ -54,49 +54,27 @@ const options = {
   },
 };
 
-const KOSDAQChart = () => {
-  const [KOSDAQData, setKOSDAQData] = useState<KOSDAQ | null>(null);
-
-  const fetchKOSDAQ = async () => {
-    const endDate = new Date().toISOString().slice(0, 10).replace(/-/g, "");
-    const startDateObj = new Date();
-    startDateObj.setDate(startDateObj.getDate() - 100);
-    const startDate = startDateObj.toISOString().slice(0, 10).replace(/-/g, "");
-
-    try {
-      const res = await fetch(
-        `/api/v1/stocks/indices/KOSDAQ?startDate=${startDate}&endDate=${endDate}`
-      );
-      if (!res.ok) setKOSDAQData(null);
-      const json = await res.json();
-      setKOSDAQData(json.data);
-    } catch (e) {
-      console.error("❌ KOSDAQ 에러:", e);
-    }
-  };
-
-  useEffect(() => {
-    fetchKOSDAQ();
-  }, []);
-
-  const handleRefresh = () => {
-    fetchKOSDAQ();
-    if (!KOSDAQData) toast.error("데이터를 불러오지 못했습니다.");
-  };
-
-  if (!KOSDAQData)
+const KOSDAQChart = ({
+  KOSDAQData,
+  error,
+}: {
+  KOSDAQData: KOSDAQ | null;
+  error: string | null;
+}) => {
+  if (error)
     return (
-      <div className="flex flex-col items-center gap-main bg-white p-main text-main-red text-center">
-        <span>KOSPI 데이터를 불러오지 못했습니다.</span>
-        <button
-          className="w-fit text-main-red bg-main-red/10 hover:bg-main-red/20 transition-all duration-300 rounded-main px-main py-1 flex items-center gap-1"
-          onClick={handleRefresh}
-        >
-          <span>다시 시도</span>
-          <RefreshCcw size={16} />
-        </button>
+      <div className="p-4 bg-gray-300 animate-pulse rounded-md text-center">
+        에러임
       </div>
     );
+
+  if (!KOSDAQData) {
+    return (
+      <div className="p-4 bg-gray-100 animate-pulse rounded-md text-center">
+        📈 차트 데이터를 불러오는 중입니다...
+      </div>
+    );
+  }
 
   const labels = KOSDAQData.indices.map((item) => item.stck_bsop_date);
   const data = {
