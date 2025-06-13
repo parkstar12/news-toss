@@ -19,8 +19,6 @@ import { faker } from "@faker-js/faker";
 import clsx from "clsx";
 import { JwtToken } from "@/type/jwt";
 import MyProfit from "./MyProfit";
-import { toast } from "react-toastify";
-import { useRouter } from "next/navigation";
 
 ChartJS.register(
   LineElement,
@@ -96,15 +94,6 @@ const MyAccountChart = ({ token }: { token: JwtToken | null }) => {
   const [chartType, setChartType] = useState<ChartType>("D");
   const [asset, setAsset] = useState<Asset | null>(null);
   const [dummyData, setDummyData] = useState<ChartData<"line"> | null>(null);
-  const router = useRouter();
-
-  useEffect(() => {
-    if (!token) {
-      toast.error("로그인이 필요한 서비스입니다.");
-      router.back();
-      return;
-    }
-  }, [token, router]);
 
   useEffect(() => {
     const labels = Array.from({ length: 50 }, (_, i) => `${i}일`);

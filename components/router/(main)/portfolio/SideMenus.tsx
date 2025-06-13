@@ -11,12 +11,12 @@ const SideMenus = ({ token }: { token: JwtToken | null }) => {
   const pathname = usePathname();
   const router = useRouter();
 
-  // useEffect(() => {
-  //   if (!token) {
-  //     toast.error("로그인 후 이용해주세요.");
-  //     router.replace("/news");
-  //   }
-  // }, [token, router]);
+  useEffect(() => {
+    if (!token) {
+      toast.error("로그인이 필요한 서비스입니다.");
+      router.replace("/news");
+    }
+  }, [token, router]);
 
   const navLinks = [
     { href: "/portfolio/my", label: "내 포트폴리오" },

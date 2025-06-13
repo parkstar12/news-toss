@@ -9,21 +9,6 @@ import GaugeChart from "./GaugeChart";
 
 const MyPortfolioPage = async () => {
   const token = await getJwtToken();
-  let portfolioData = null;
-
-  if (token) {
-    const portfolioRes = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/v1/portfolios/${token.memberId}`,
-      {
-        credentials: "include",
-      }
-    );
-
-    if (portfolioRes.ok) {
-      const portfolioJson: PortfolioData = await portfolioRes.json();
-      portfolioData = portfolioJson;
-    }
-  }
 
   return (
     <div className="grid grid-cols-10 gap-[20px] max-w-[1200px] mx-auto min-w-[800px] pb-[100px]">
@@ -35,13 +20,12 @@ const MyPortfolioPage = async () => {
       </div>
 
       <div className="col-span-3 gap-main box-content p-[20px] bg-white rounded-main shadow-sm">
-        <GaugeChart value={90} portfolioData={portfolioData} />{" "}
-        {/* 10%, 25%, 50%, 75%, 100% */}
+        <GaugeChart value={90} token={token} /> {/* 10%, 25%, 50%, 75%, 100% */}
       </div>
 
       <div className="col-span-10 grid grid-cols-5 gap-[20px]">
         <div className="col-span-2 box-content p-[20px] bg-white rounded-main shadow-sm">
-          <Holidings portfolioData={portfolioData} token={token} />
+          <Holidings token={token} />
         </div>
 
         <div className="col-span-3 relative w-full">

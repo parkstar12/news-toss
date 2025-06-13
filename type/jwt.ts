@@ -4,6 +4,7 @@ export interface JwtToken {
   email: string;
   exp: number;
   iat: number;
+  invest: number;
   memberId: string;
   memberName: string;
   phoneNumber: string;

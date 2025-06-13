@@ -1,7 +1,7 @@
 export interface PortfolioData {
-  totalPnl: number;
-  portfolioStocksResponseDto: {
+  portfolioStocks: {
     stockName: string;
+    stockImage: string;
     stockCode: string;
     stockCount: number;
     entryPrice: number;

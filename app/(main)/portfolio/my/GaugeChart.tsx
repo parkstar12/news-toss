@@ -12,22 +12,24 @@ import {
 import { Doughnut } from "react-chartjs-2";
 import { useEffect, useRef, useState } from "react";
 import { ChevronRight } from "lucide-react";
-import { PortfolioData } from "@/type/portfolio";
 import { driver } from "driver.js";
 import InvestmentStyleModal from "./InvestmentStyleModal";
+import { JwtToken } from "@/type/jwt";
+import { usePortfolioStore } from "@/store/usePortfolio";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const GaugeChart = ({
   value = 70,
-  portfolioData,
+  token,
 }: {
   value: number;
-  portfolioData: PortfolioData | null;
+  token: JwtToken | null;
 }) => {
   const ref = useRef<any>(null);
   const [isOpenInvestmentStyleModal, setIsOpenInvestmentStyleModal] =
     useState(false);
+  const { portfolio } = usePortfolioStore();
 
   const dummyData: ChartData<"doughnut"> = {
     labels: ["공격투자형", "적극투자형", "위험중립형", "안정추구형", "안전형"],
@@ -148,9 +150,12 @@ const GaugeChart = ({
   }, [value]);
 
   useEffect(() => {
-    // if (portfolioData) return;
+    if (!token) return;
+    if (!portfolio) return;
+
     const steps = [];
-    if (portfolioData) {
+
+    if (token.invest === 0) {
       steps.push({
         element: "#investment-style",
         popover: {
@@ -160,7 +165,7 @@ const GaugeChart = ({
       });
     }
 
-    if (portfolioData) {
+    if (portfolio.length === 0) {
       steps.push({
         element: "#add-holding",
         popover: {
@@ -183,9 +188,9 @@ const GaugeChart = ({
     driverObj.drive();
 
     return () => driverObj.destroy();
-  }, [portfolioData]);
+  }, [portfolio, token]);
 
-  if (!portfolioData)
+  if (token && token.invest === 0)
     return (
       <>
         <div className="size-full flex flex-col gap-main">

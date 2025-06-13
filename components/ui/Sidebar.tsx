@@ -11,12 +11,16 @@ import { jwtDecode } from "jwt-decode";
 import { useScrapStore } from "@/store/useScrapStore";
 import { News } from "@/type/news";
 import { toast } from "react-toastify";
+import MyPortfolio from "./MyPortfolio";
+import { PortfolioData } from "@/type/portfolio";
+import { Portfolio, usePortfolioStore } from "@/store/usePortfolio";
 
 type Category = "내 투자" | "관심" | "최근 본" | null;
 
 const Sidebar = ({ token }: { token: JwtToken | null }) => {
   const { isOpen, toggle, open } = useSidebarStore();
   const { setScraps } = useScrapStore();
+  const { setPortfolio } = usePortfolioStore();
   const [category, setCategory] = useState<Category>(null);
 
   useEffect(() => {
@@ -39,6 +43,27 @@ const Sidebar = ({ token }: { token: JwtToken | null }) => {
         );
       };
       fetchScrapNews();
+    }
+  }, [token]);
+
+  useEffect(() => {
+    if (token) {
+      const fetchPortfolio = async () => {
+        const res = await fetch(`/api/v1/portfolios/${token.memberId}`);
+
+        if (!res.ok) {
+          toast.error("내 투자 데이터 로드 실패");
+          setPortfolio([]);
+          return;
+        }
+
+        const json: { data: { portfolioStocks: Portfolio[] } } =
+          await res.json();
+
+        console.log("내포폴임", json.data.portfolioStocks);
+        setPortfolio(json.data.portfolioStocks);
+      };
+      fetchPortfolio();
     }
   }, [token]);
 
@@ -66,6 +91,7 @@ const Sidebar = ({ token }: { token: JwtToken | null }) => {
           isOpen ? "w-[300px] pl-[20px]" : "w-0 opacity-0 px-0"
         )}
       >
+        {category === "내 투자" && <MyPortfolio />}
         {category === "최근 본" && <RecentView />}
         {category === "관심" && <Interest token={token} />}
       </div>
