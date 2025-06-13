@@ -2,8 +2,8 @@ import MainNews from "@/components/router/(main)/news/MainNews";
 import CustomNews from "@/components/router/(main)/news/CustomNews";
 import AllNews from "@/components/router/(main)/news/AllNews";
 import { getJwtToken } from "@/utils/auth";
-import RealTimeNews from "@/components/router/(main)/news/RealTimeNews";
 import { News } from "@/type/news";
+import RealTime from "./RealTime";
 
 const HomePage = async () => {
   const token = await getJwtToken();
@@ -15,16 +15,14 @@ const HomePage = async () => {
   const news: News[] = json.data;
 
   return (
-    <div className="grid gap-main max-w-[1000px] mx-auto relative">
+    <div className="grid gap-main max-w-[1000px] mx-auto">
       <div className="p-main">
         <MainNews news={news} />
       </div>
 
-      {/* <div className="row-span-3 relative p-main">
-        <div className="row-span-2 flex flex-col gap-main sticky top-0">
-          <RealTimeNews />
-        </div>
-      </div> */}
+      <div className="absolute top-0 left-0 max-w-[300px] max-h-[50vh] overflow-y-scroll">
+        <RealTime />
+      </div>
 
       <div className="p-main">
         <CustomNews token={token} />

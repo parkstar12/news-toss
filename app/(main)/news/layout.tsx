@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 const HomeLayout = ({ children }: { children: React.ReactNode }) => {
   return (
-    <div className="flex flex-col gap-[40px] mx-auto">
+    <div className="flex flex-col gap-[40px] mx-auto relative">
       {children}
       <Footer />
     </div>
