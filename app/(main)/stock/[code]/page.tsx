@@ -8,6 +8,7 @@ import {
   HistogramSeries,
   IChartApi,
   ISeriesApi,
+  LineSeries,
 } from "lightweight-charts";
 import * as Sentry from "@sentry/nextjs";
 import UpPrice from "@/components/ui/shared/UpPrice";
@@ -160,6 +161,21 @@ const StockDetailPage = () => {
       scaleMargins: { top: 0.1, bottom: 0.3 },
     });
     candlestickRef.current = candlestickSeries;
+
+    const lineSeries = chart.addSeries(LineSeries, {
+      priceScaleId: "right",
+    });
+
+    lineSeries.setData([{ time: "2025-06-10", value: 235600 }]);
+
+    lineSeries.createPriceLine({
+      price: 235600,
+      color: "orange",
+      lineWidth: 2,
+      lineStyle: 2, // Dashed line
+      axisLabelVisible: true,
+      title: "평균 매입가",
+    });
 
     const volumeSeries = chart.addSeries(HistogramSeries, {
       priceFormat: { type: "volume" },
