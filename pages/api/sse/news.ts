@@ -12,9 +12,10 @@ export default async function handler(
   res: NextApiResponse
 ) {
   res.writeHead(200, {
-    "Content-Type": "text/event-stream",
-    "Cache-Control": "no-cache",
     Connection: "keep-alive",
+    "Content-Encoding": "none",
+    "Cache-Control": "no-cache",
+    "Content-Type": "text/event-stream",
   });
 
   try {
