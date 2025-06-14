@@ -31,7 +31,7 @@ const MyPortfolioPage = async () => {
             <h2 className="text-2xl font-bold bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent w-fit">
               날짜별 손익
             </h2>
-            <ProfitLossCalendar />
+            <ProfitLossCalendar token={token} />
           </div>
         </div>
       </div>

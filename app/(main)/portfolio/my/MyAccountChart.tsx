@@ -31,8 +31,8 @@ ChartJS.register(
 
 const chartTypes = [
   { label: "1일", state: "D" },
-  // { label: "1주", state: "W" },
-  { label: "1달", state: "M" },
+  { label: "1개월", state: "M" },
+  { label: "3개월", state: "3M" },
   { label: "1년", state: "Y" },
 ];
 
@@ -42,6 +42,8 @@ interface Asset {
   todayAsset: number;
   todayPnl: number;
   pnlHistory: {
+    createdDate: string | null;
+    lastModifiedDate: string;
     id: number;
     memberId: string;
     date: string;
@@ -94,6 +96,10 @@ const MyAccountChart = ({ token }: { token: JwtToken | null }) => {
   const [chartType, setChartType] = useState<ChartType>("D");
   const [asset, setAsset] = useState<Asset | null>(null);
   const [dummyData, setDummyData] = useState<ChartData<"line"> | null>(null);
+
+  const [todayPnl, setTodayPnl] = useState<number | null>(null);
+  const [periodPnl, setPeriodPnl] = useState<number | null>(null);
+  const [totalPnl, setTotalPnl] = useState<number | null>(null);
 
   useEffect(() => {
     const labels = Array.from({ length: 50 }, (_, i) => `${i}일`);
@@ -154,6 +160,48 @@ const MyAccountChart = ({ token }: { token: JwtToken | null }) => {
 
     fetchAsset();
   }, [token, chartType]);
+
+  useEffect(() => {
+    const fetchPnl = async () => {
+      if (!token) return null;
+
+      const todayRes = await fetch(
+        `/api/v1/portfolios/asset/pnl/${token.memberId}?period=Today`,
+        {
+          credentials: "include",
+        }
+      );
+
+      const monthRes = await fetch(
+        `/api/v1/portfolios/asset/pnl/${token.memberId}?period=M`,
+        {
+          credentials: "include",
+        }
+      );
+
+      const totalRes = await fetch(
+        `/api/v1/portfolios/asset/pnl/${token.memberId}?period=Total`,
+        {
+          credentials: "include",
+        }
+      );
+
+      if (!todayRes.ok || !monthRes.ok || !totalRes.ok) {
+        console.error("Failed to get pnl", todayRes, monthRes, totalRes);
+        return null;
+      }
+
+      const todayJson = await todayRes.json();
+      const monthJson = await monthRes.json();
+      const totalJson = await totalRes.json();
+
+      setTodayPnl(todayJson.data.pnl);
+      setPeriodPnl(monthJson.data.pnl);
+      setTotalPnl(totalJson.data.pnl);
+    };
+
+    fetchPnl();
+  }, [token]);
 
   if (!asset)
     return (
@@ -259,12 +307,13 @@ const MyAccountChart = ({ token }: { token: JwtToken | null }) => {
             </span>
             <span
               className={clsx(
-                "text-sm",
+                "text-xs font-semibold",
                 asset.pnlPercent > 0 ? "text-main-red" : "text-main-blue"
               )}
             >
               {chartType === "D" && "어제보다"}
               {chartType === "M" && "지난달보다"}
+              {chartType === "3M" && "지난 3개월보다"}
               {chartType === "Y" && "작년보다"}{" "}
               {asset.pnlPercent > 0 ? "+" : ""}
               {asset.pnlPercent.toFixed(2)}%
@@ -292,12 +341,15 @@ const MyAccountChart = ({ token }: { token: JwtToken | null }) => {
         <div className="h-full bg-main-dark-gray/10" />
 
         <div className="flex gap-main">
-          <MyProfit title="당일 손익" profit={asset.todayPnl} />
+          {/* <MyProfit title="당일 손익" profit={asset.todayPnl} />
           <MyProfit title="월 누적 손익" profit={asset.periodPnl} />
           <MyProfit
             title="총 누적 손익"
             profit={asset.pnlHistory.reduce((acc, curr) => acc + curr.pnl, 0)}
-          />
+          /> */}
+          <MyProfit title="당일 손익" profit={todayPnl} />
+          <MyProfit title="월 누적 손익" profit={periodPnl} />
+          <MyProfit title="총 누적 손익" profit={totalPnl} />
         </div>
       </div>
 
