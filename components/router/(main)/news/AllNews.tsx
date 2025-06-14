@@ -12,8 +12,8 @@ import clsx from "clsx";
 
 const AllNews = ({ token }: { token: JwtToken | null }) => {
   const [newsList, setNewsList] = useState<News[]>([]);
-  const [rows, setRows] = useState(2);
-  const [cols, setCols] = useState(3);
+  const [rows, setRows] = useState(3);
+  const [cols, setCols] = useState(4);
   const [skip, setSkip] = useState(0);
   const [hasMore, setHasMore] = useState(true);
 
@@ -46,7 +46,7 @@ const AllNews = ({ token }: { token: JwtToken | null }) => {
   const visibleNews = newsList.slice(0, visibleCount);
 
   const handleMoreNews = async () => {
-    const nextRows = rows + 2;
+    const nextRows = rows + 3;
     const nextVisibleCount = nextRows * cols;
 
     if (newsList.length < nextVisibleCount && hasMore) {

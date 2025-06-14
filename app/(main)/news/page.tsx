@@ -2,17 +2,20 @@ import MainNews from "@/components/router/(main)/news/MainNews";
 import CustomNews from "@/components/router/(main)/news/CustomNews";
 import AllNews from "@/components/router/(main)/news/AllNews";
 import { getJwtToken } from "@/utils/auth";
-import { News } from "@/type/news";
-import RealTime from "./RealTime";
+import { HighlightNews, News } from "@/type/news";
+import RealTime from "@/components/router/(main)/news/RealTime";
 
 const HomePage = async () => {
   const token = await getJwtToken();
 
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/news/v2/top10`, {
-    next: { revalidate: 60 }, // ISR 적용
-  });
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_BASE_URL}/news/v2/highlight/redis`,
+    {
+      next: { revalidate: 60 }, // ISR 적용
+    }
+  );
   const json = await res.json();
-  const news: News[] = json.data;
+  const news: HighlightNews[] = json.data;
 
   return (
     <div className="grid gap-main max-w-[1000px] mx-auto">
@@ -24,9 +27,9 @@ const HomePage = async () => {
         <RealTime />
       </div>
 
-      <div className="p-main">
+      {/* <div className="p-main">
         <CustomNews token={token} />
-      </div>
+      </div> */}
 
       <div className="p-main">
         <AllNews token={token} />

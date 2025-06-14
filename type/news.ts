@@ -10,3 +10,25 @@ export interface News {
   similarity?: number; // 유사도
   date?: string; // 작성일
 }
+
+export interface HighlightNews {
+  news: {
+    wdate: string; //"2025-05-13T09:16:00",
+    title: string;
+    image: string;
+    press: string;
+    summary: string;
+    news_id: string; //"20250513_0094";
+    impact_score: number;
+  };
+  related: {
+    newsId: string; //"20241015_0007";
+    wdate: string; //"2024-10-15T18:18:00";
+    title: string; //"형제·동업자 싸움나면 그 틈 파고드는 PEF";
+    article: string; //"한국경제";
+    url: string;
+    press: string;
+    image: string;
+    similarity: number;
+  }[];
+}

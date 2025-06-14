@@ -5,60 +5,56 @@ import React, { useEffect, useState, useRef } from "react";
 import clsx from "clsx";
 import invertedStyle from "./inverted.module.css";
 import Image from "next/image";
-import { News } from "@/type/news";
+import { HighlightNews, News } from "@/type/news";
 import Link from "next/link";
 import { formatDate } from "@/utils/formatDate";
 
-const NEWS_PER_PAGE = 5;
-
-const MainNews = ({ news }: { news: News[] }) => {
+const MainNews = ({ news }: { news: HighlightNews[] }) => {
   const [currentPage, setCurrentPage] = useState(0);
-
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
-
-  // useEffect(() => {
-  //   const fetchNews = async () => {
-  //     const res = await fetch("/proxy/news/v2/top10", {
-  //       credentials: "include",
-  //     });
-
-  //     // const res = await fetch("/proxy/news/v2/highlight/redistest", {
-  //     //   credentials: "include",
-  //     // });
-  //     const data = await res.json();
-  //     setNews(data.data);
-  //   };
-  //   fetchNews();
-  // }, []);
+  const mainNewsCardRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    intervalRef.current = setInterval(() => {
-      setCurrentPage((prev) => (prev + 1) % 2);
-    }, 5000);
+    const startInterval = () => {
+      intervalRef.current = setInterval(() => {
+        setCurrentPage((prev) => (prev + 1) % news.length);
+      }, 5000);
+    };
+
+    const stopInterval = () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+    };
+
+    startInterval();
+
+    const card = mainNewsCardRef.current;
+    if (card) {
+      card.addEventListener("mouseenter", stopInterval);
+      card.addEventListener("mouseleave", startInterval);
+    }
 
     return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
+      stopInterval();
+      if (card) {
+        card.removeEventListener("mouseenter", stopInterval);
+        card.removeEventListener("mouseleave", startInterval);
+      }
     };
-  }, []);
-
-  // 현재 페이지의 뉴스 5개
-  const pageNews = news.slice(
-    currentPage * NEWS_PER_PAGE,
-    (currentPage + 1) * NEWS_PER_PAGE
-  );
-
-  const gridNews = pageNews.slice(1, 5);
+  }, [news.length]);
 
   const handlePrevPage = () => {
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
       intervalRef.current = null;
     }
-    setCurrentPage((prev) => (prev - 1 + 2) % 2);
+    setCurrentPage((prev) => (prev - 1 + news.length) % news.length);
 
     // interval 재설정
     intervalRef.current = setInterval(() => {
-      setCurrentPage((prev) => (prev + 1) % 2);
+      setCurrentPage((prev) => (prev + 1) % news.length);
     }, 5000);
   };
 
@@ -67,15 +63,16 @@ const MainNews = ({ news }: { news: News[] }) => {
       clearInterval(intervalRef.current);
       intervalRef.current = null;
     }
-    setCurrentPage((prev) => (prev + 1) % 2);
+    setCurrentPage((prev) => (prev + 1) % news.length);
 
     // interval 재설정
     intervalRef.current = setInterval(() => {
-      setCurrentPage((prev) => (prev + 1) % 2);
+      setCurrentPage((prev) => (prev + 1) % news.length);
     }, 5000);
   };
 
-  const mainNews = pageNews[0];
+  const mainNews = news[currentPage].news;
+  const gridNews = news[currentPage].related;
 
   return (
     <div className="grid grid-cols-3 w-full gap-[20px]">
@@ -89,35 +86,49 @@ const MainNews = ({ news }: { news: News[] }) => {
         <div className="col-span-2 relative">
           {mainNews && (
             <Link
-              href={`/news/${mainNews.newsId}`}
+              href={`/news/${mainNews.news_id}`}
               rel="noopener noreferrer"
-              className="block w-full h-full relative filter-[drop-shadow(0_2px_4px_rgba(0,0,0,0.5))]"
+              className="block w-full h-full relative filter-[drop-shadow(2px_2px_3px_rgba(0,0,0,0.5))] group"
             >
               <div
                 className={clsx(
                   "relative size-full overflow-hidden border-main-light-gray",
                   invertedStyle["inverted-radius"]
                 )}
+                ref={mainNewsCardRef}
               >
                 <Image
                   src={mainNews.image || "https://placehold.co/600x400"}
                   alt={`${mainNews.title}-image`}
                   fill
+                  sizes="100%"
                   className={clsx(
                     invertedStyle["inverted-radius"],
                     "object-cover h-full hover:scale-103 duration-300 ease-in-out"
                   )}
                 />
-                <div className="absolute w-full h-full bottom-0 left-0 bg-gradient-to-t from-black/60 to-transparent pointer-events-none flex items-end">
+
+                <div className="absolute w-full h-full bottom-0 left-0 bg-gradient-to-t from-black/70 to-transparent hover:to-black/70 pointer-events-none flex items-end transition-all duration-300 ease-in-out">
                   <div
                     className={clsx(
                       "relative flex flex-col justify-around gap-main px-[20px] py-[20px] z-10",
                       invertedStyle["inverted-radius"]
                     )}
                   >
-                    <p className="text-2xl font-bold line-clamp-1 text-white drop-shadow w-2/3">
-                      {mainNews.title}
-                    </p>
+                    <div className="group relative transition-all duration-300 max-h-[60px] group-hover:max-h-[400px]">
+                      <div className="flex flex-col gap-1 transition-transform duration-300 group-hover:-translate-y-2">
+                        <p className="bg-main-blue/50 w-fit rounded-full text-white text-sm font-semibold px-main">
+                          🚀 이슈{" "}
+                          {Number(mainNews.impact_score * 100).toFixed(2)}%
+                        </p>
+                        <p className="text-2xl font-bold line-clamp-1 text-white drop-shadow w-2/3 group-hover:w-full transition-all duration-300">
+                          {mainNews.title}
+                        </p>
+                        <p className="text-white text-sm opacity-0 group-hover:opacity-100 pb-[20px] transition-opacity duration-300">
+                          {mainNews.summary}
+                        </p>
+                      </div>
+                    </div>
                     <div className="flex items-center text-xs text-gray-200">
                       <Clock className="h-3 w-3 mr-1" />
                       <span>
@@ -135,7 +146,9 @@ const MainNews = ({ news }: { news: News[] }) => {
               className="bg-main-light-gray/50 rounded-full p-1 box-content hover:bg-main-light-gray"
               onClick={handlePrevPage}
             />
-            <span className="text-main-dark-gray">{currentPage + 1} / 2</span>
+            <span className="text-main-dark-gray">
+              {currentPage + 1} / {news.length}
+            </span>
             <ChevronRight
               className="bg-main-light-gray/50 rounded-full p-1 box-content hover:bg-main-light-gray"
               onClick={handleNextPage}
@@ -143,37 +156,48 @@ const MainNews = ({ news }: { news: News[] }) => {
           </div>
         </div>
 
-        <div
-          className={clsx(
-            "grid grid-rows-4 transition-opacity duration-200 ease-in-out"
-          )}
-        >
-          {gridNews.map((item, idx) => (
-            <Link
-              href={`/news/${item.newsId}`}
-              className="flex gap-main hover:bg-main-blue/5 rounded-main p-main group"
-              key={`main-news-${item.newsId}`}
-            >
-              <div className="size-[90px] rounded-main shrink-0 relative">
-                <Image
-                  src={item.image || "https://placehold.co/90x90"}
-                  alt={`${item.title}-image`}
-                  fill
-                  className="object-cover rounded-main group-hover:scale-102 duration-300 ease-in-out"
-                />
-              </div>
-              <div className="w-full flex flex-col justify-around">
-                <p className="line-clamp-2 font-semibold">{item.title}</p>
-                <div className="flex items-center text-main-dark-gray text-xs">
-                  <Clock className="h-3 w-3 mr-1 text-main-dark-gray" />
-                  <span className="text-main-dark-gray">
-                    {item.wdate && new Date(item.wdate).toLocaleDateString()} ·{" "}
-                    {item.press}
-                  </span>
+        <div className="col-span-1">
+          <h2 className="font-bold text-lg bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent px-main">
+            관련 뉴스
+          </h2>
+          <div
+            className={clsx(
+              "grid grid-rows-4 transition-opacity duration-200 ease-in-out"
+            )}
+          >
+            {gridNews.map((item, idx) => (
+              <Link
+                href={`/news/${item.newsId}`}
+                className="flex items-center gap-main hover:bg-main-blue/10 transition-colors duration-300 ease-in-out rounded-main p-main group"
+                key={`main-news-${item.newsId}`}
+              >
+                <div className="w-[90px] h-[70px] rounded-main shrink-0 relative">
+                  <Image
+                    src={item.press || "https://placehold.co/90x90"}
+                    alt={`${item.title}-image`}
+                    fill
+                    sizes="70px"
+                    className="object-cover rounded-main group-hover:scale-102 duration-300 ease-in-out"
+                  />
                 </div>
-              </div>
-            </Link>
-          ))}
+                <div className="w-full flex flex-col justify-around">
+                  <span className="text-xs text-main-blue bg-main-blue/20 rounded-full px-2 w-fit">
+                    {Number(item.similarity * 100).toFixed(2)}% 관련
+                  </span>
+                  <p className="line-clamp-2 font-semibold text-sm">
+                    {item.title}
+                  </p>
+                  <div className="flex items-center text-main-dark-gray text-xs">
+                    <Clock className="h-3 w-3 mr-1 text-main-dark-gray" />
+                    <span className="text-main-dark-gray">
+                      {item.wdate && new Date(item.wdate).toLocaleDateString()}{" "}
+                      · {item.article}
+                    </span>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
         </div>
       </div>
     </div>
