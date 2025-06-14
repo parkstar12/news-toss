@@ -10,8 +10,8 @@ import Image from "next/image";
 import Dropdown from "@/components/ui/shared/Dropdown";
 import clsx from "clsx";
 
-const AllNews = ({ token }: { token: JwtToken | null }) => {
-  const [newsList, setNewsList] = useState<News[]>([]);
+const AllNews = ({ initialNews }: { initialNews: News[] }) => {
+  const [newsList, setNewsList] = useState<News[]>(initialNews);
   const [rows, setRows] = useState(3);
   const [cols, setCols] = useState(4);
   const [skip, setSkip] = useState(0);
@@ -38,9 +38,9 @@ const AllNews = ({ token }: { token: JwtToken | null }) => {
     }
   };
 
-  useEffect(() => {
-    fetchMoreNews(0);
-  }, []);
+  // useEffect(() => {
+  //   fetchMoreNews(0);
+  // }, []);
 
   const visibleCount = rows * cols;
   const visibleNews = newsList.slice(0, visibleCount);

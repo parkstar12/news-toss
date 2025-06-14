@@ -6,21 +6,28 @@ import { HighlightNews, News } from "@/type/news";
 import RealTime from "@/components/router/(main)/news/RealTime";
 
 const HomePage = async () => {
-  const token = await getJwtToken();
-
-  const res = await fetch(
+  const highlightRes = await fetch(
     `${process.env.NEXT_PUBLIC_BASE_URL}/news/v2/highlight/redis`,
     {
       next: { revalidate: 60 }, // ISR 적용
     }
   );
-  const json = await res.json();
-  const news: HighlightNews[] = json.data;
+  const highlightJson = await highlightRes.json();
+  const highlightNews: HighlightNews[] = highlightJson.data;
+
+  const allNewsRes = await fetch(
+    `${process.env.NEXT_PUBLIC_BASE_URL}/news/v2/all?skip=0&limit=30`,
+    {
+      next: { revalidate: 60 }, // ISR 적용
+    }
+  );
+  const allInitialNewsJson = await allNewsRes.json();
+  const allInitialNews: News[] = allInitialNewsJson.data;
 
   return (
     <div className="grid gap-main max-w-[1000px] mx-auto">
       <div className="p-main">
-        <MainNews news={news} />
+        <MainNews news={highlightNews} />
       </div>
 
       <div className="absolute top-0 left-0 max-w-[300px] max-h-[50vh] overflow-y-scroll">
@@ -32,7 +39,7 @@ const HomePage = async () => {
       </div> */}
 
       <div className="p-main">
-        <AllNews token={token} />
+        <AllNews initialNews={allInitialNews} />
       </div>
     </div>
   );
