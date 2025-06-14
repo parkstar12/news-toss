@@ -9,6 +9,7 @@ interface ModalProps {
   hasBackdropBlur?: boolean;
   hasCloseButton?: boolean;
   isClickOutsideClose?: boolean;
+  isEscapeClose?: boolean;
 }
 
 const Modal = ({
@@ -18,9 +19,24 @@ const Modal = ({
   hasBackdropBlur = true,
   hasCloseButton = true,
   isClickOutsideClose = true,
+  isEscapeClose = false,
 }: ModalProps) => {
   const [visible, setVisible] = useState(false);
   const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    if (isEscapeClose) {
+      const handleEscapeClose = (event: KeyboardEvent) => {
+        if (event.key === "Escape") {
+          onClose();
+        }
+      };
+      window.addEventListener("keydown", handleEscapeClose);
+      return () => {
+        window.removeEventListener("keydown", handleEscapeClose);
+      };
+    }
+  }, [isEscapeClose]);
 
   useEffect(() => {
     setMounted(true);
