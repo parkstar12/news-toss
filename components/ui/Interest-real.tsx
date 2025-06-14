@@ -73,7 +73,7 @@ const InterestStock = ({ token }: { token: JwtToken | null }) => {
       // 관심종목 그룹 조회
       const fetchInterestGroups = async () => {
         try {
-          const res = await fetch(`/api/favorite/${token.memberId}`);
+          const res = await fetch(`/proxy/favorite/${token.memberId}`);
           const result = await res.json();
 
           if (res.ok) {
@@ -182,7 +182,7 @@ const InterestStock = ({ token }: { token: JwtToken | null }) => {
     };
 
     try {
-      const response = await fetch(`/api/favorite/${token.memberId}`, {
+      const response = await fetch(`/proxy/favorite/${token.memberId}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

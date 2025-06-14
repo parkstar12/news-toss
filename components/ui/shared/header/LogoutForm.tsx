@@ -8,7 +8,7 @@ const LogoutForm = ({ action }: { action: (formData: FormData) => void }) => {
 
   const handleLogout = async (formData: FormData) => {
     action(formData);
-    const response = await fetch("/api/auth/logout", {
+    const response = await fetch("/proxy/auth/logout", {
       method: "POST",
       credentials: "include",
     });

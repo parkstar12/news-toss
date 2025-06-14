@@ -11,29 +11,51 @@ const RealTime = () => {
   const [newNewsId, setNewNewsId] = useState<string | null>(null);
 
   useEffect(() => {
-    const sse = new EventSource("http://43.200.17.139:8080/api/news/stream");
+    // const sse = new EventSource("http://43.200.17.139:8080/api/news/stream");
+    const sse = new EventSource("/api/sse/news");
 
-    // 연결 이벤트
-    sse.addEventListener("connect", (event) => {
-      console.log("✅ 서버 연결됨:", event.data);
-    });
+    sse.onopen = () => {
+      console.log("✅ 서버 연결됨");
+    };
 
-    // 뉴스 이벤트 수신
-    sse.addEventListener("news", (event) => {
+    sse.onmessage = (event) => {
+      console.log("🔥 뉴스 이벤트 수신:", event.data);
       try {
         const data = JSON.parse(event.data);
         setNews((prev) => {
-          setNewNewsId(data.newsId); // 새로 추가된 뉴스의 ID 저장
+          setNewNewsId(data.newsId);
           return [...prev, data];
         });
       } catch (err) {
         console.error("❌ JSON 파싱 에러:", err);
       }
-    });
+    };
 
-    sse.addEventListener("error", (event) => {
+    sse.onerror = (event) => {
       console.error("❌ SSE 에러 발생:", event);
-    });
+    };
+
+    // // 연결 이벤트
+    // sse.addEventListener("connect", (event) => {
+    //   console.log("✅ 서버 연결됨:", event.data);
+    // });
+
+    // // 뉴스 이벤트 수신
+    // sse.addEventListener("news", (event) => {
+    // try {
+    //     const data = JSON.parse(event.data);
+    //     setNews((prev) => {
+    //       setNewNewsId(data.newsId); // 새로 추가된 뉴스의 ID 저장
+    //       return [...prev, data];
+    //     });
+    //   } catch (err) {
+    //     console.error("❌ JSON 파싱 에러:", err);
+    //   }
+    // });
+
+    // sse.addEventListener("error", (event) => {
+    //   console.error("❌ SSE 에러 발생:", event);
+    // });
 
     return () => {
       sse.close();

@@ -92,7 +92,7 @@ const Holidings = ({ token }: { token: JwtToken | null }) => {
     console.log("구매인가요", selectedHoldings.changeType === "buy");
 
     const res = await fetch(
-      `/api/v1/portfolios/${token.memberId}/${selectedHoldings.stockCode}`,
+      `/proxy/v1/portfolios/${token.memberId}/${selectedHoldings.stockCode}`,
       {
         method: "POST",
         headers: {
@@ -155,7 +155,7 @@ const Holidings = ({ token }: { token: JwtToken | null }) => {
     if (!token) return;
     if (!searchStockResult) return;
 
-    const res = await fetch(`/api/v1/portfolios/${token.memberId}`, {
+    const res = await fetch(`/proxy/v1/portfolios/${token.memberId}`, {
       method: "POST",
       credentials: "include",
       headers: {

@@ -11,7 +11,7 @@ const nextConfig: NextConfig = {
       },
 
       {
-        source: "/api/:path*",
+        source: "/proxy/:path*",
         destination: "http://43.200.17.139:8080/api/:path*",
       },
     ];

@@ -68,7 +68,7 @@ const CategoryStock = ({ token }: { token: JwtToken | null }) => {
   useEffect(() => {
     const fetchCategoryData = async () => {
       try {
-        const res = await fetch(`/api/v1/stocks/categories?page=1`);
+        const res = await fetch(`/proxy/v1/stocks/categories?page=1`);
         if (!res.ok) throw new Error(res.statusText);
         const json = await res.json();
         setCategoryData(
@@ -92,7 +92,7 @@ const CategoryStock = ({ token }: { token: JwtToken | null }) => {
       const fetchStocks = async () => {
         try {
           const response = await fetch(
-            `/api/v1/stocks/categories/${selectedCategory}?page=${page}`
+            `/proxy/v1/stocks/categories/${selectedCategory}?page=${page}`
           );
           const data = await response.json();
           setCategoryStocks(data.data);

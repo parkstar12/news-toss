@@ -23,7 +23,7 @@ const RelatedStocks = ({ stockNames }: { stockNames: string[] }) => {
       const results = await Promise.all(
         stockNames.map(async (stockName) => {
           const response = await fetch(
-            `/api/v1/stocks/search?keyword=${stockName}`,
+            `/proxy/v1/stocks/search?keyword=${stockName}`,
             {
               method: "GET",
               headers: {

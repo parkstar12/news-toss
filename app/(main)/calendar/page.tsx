@@ -60,7 +60,7 @@ const CalendarPage = () => {
     if (!year || !month) return;
 
     const fetchIRData = async () => {
-      const res = await fetch(`/api/calen?year=${year}&month=${month}`);
+      const res = await fetch(`/proxy/calen?year=${year}&month=${month}`);
       const json = await res.json();
 
       if (res.ok) {

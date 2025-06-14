@@ -141,7 +141,7 @@ const MyAccountChart = ({ token }: { token: JwtToken | null }) => {
       if (!token) return null;
 
       const res = await fetch(
-        `/api/v1/portfolios/asset/${token.memberId}?period=${chartType}`,
+        `/proxy/v1/portfolios/asset/${token.memberId}?period=${chartType}`,
         {
           credentials: "include",
         }
@@ -166,21 +166,21 @@ const MyAccountChart = ({ token }: { token: JwtToken | null }) => {
       if (!token) return null;
 
       const todayRes = await fetch(
-        `/api/v1/portfolios/asset/pnl/${token.memberId}?period=Today`,
+        `/proxy/v1/portfolios/asset/pnl/${token.memberId}?period=Today`,
         {
           credentials: "include",
         }
       );
 
       const monthRes = await fetch(
-        `/api/v1/portfolios/asset/pnl/${token.memberId}?period=M`,
+        `/proxy/v1/portfolios/asset/pnl/${token.memberId}?period=M`,
         {
           credentials: "include",
         }
       );
 
       const totalRes = await fetch(
-        `/api/v1/portfolios/asset/pnl/${token.memberId}?period=Total`,
+        `/proxy/v1/portfolios/asset/pnl/${token.memberId}?period=Total`,
         {
           credentials: "include",
         }

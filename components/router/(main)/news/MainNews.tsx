@@ -18,11 +18,11 @@ const MainNews = ({ news }: { news: News[] }) => {
 
   // useEffect(() => {
   //   const fetchNews = async () => {
-  //     const res = await fetch("/api/news/v2/top10", {
+  //     const res = await fetch("/proxy/news/v2/top10", {
   //       credentials: "include",
   //     });
 
-  //     // const res = await fetch("/api/news/v2/highlight/redistest", {
+  //     // const res = await fetch("/proxy/news/v2/highlight/redistest", {
   //     //   credentials: "include",
   //     // });
   //     const data = await res.json();

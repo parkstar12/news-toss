@@ -18,7 +18,7 @@ const CustomNews = ({ token }: { token: JwtToken | null }) => {
 
   useEffect(() => {
     const fetchCustomNews = async () => {
-      const res = await fetch("/api/news/v2/all?skip=23000&limit=4", {
+      const res = await fetch("/proxy/news/v2/all?skip=23000&limit=4", {
         credentials: "include",
         headers: {
           "Content-Type": "application/json",
@@ -41,7 +41,7 @@ const CustomNews = ({ token }: { token: JwtToken | null }) => {
     const fetchRelatedNews = async () => {
       for (const news of customNews) {
         const res = await fetch(
-          `/api/news/v2/related/news?newsId=${news.mainNews.newsId}`,
+          `/proxy/news/v2/related/news?newsId=${news.mainNews.newsId}`,
           {
             credentials: "include",
             headers: {

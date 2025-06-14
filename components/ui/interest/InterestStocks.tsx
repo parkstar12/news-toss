@@ -82,7 +82,7 @@ const InterestStocks = ({ token }: { token: JwtToken | null }) => {
     if (!token) return;
 
     const fetchGroups = async () => {
-      const res = await fetch(`/api/favorite/${token.memberId}`);
+      const res = await fetch(`/proxy/favorite/${token.memberId}`);
       const json: { data: InterestGroup[] } = await res.json();
       console.log(json.data);
       setInterestGroups(json.data);
@@ -108,7 +108,7 @@ const InterestStocks = ({ token }: { token: JwtToken | null }) => {
 
     const fetchStocks = async () => {
       const res = await fetch(
-        `/api/favorite/${token.memberId}/${selectedGroup}`
+        `/proxy/favorite/${token.memberId}/${selectedGroup}`
       );
       const data: InterestStock[] = await res.json();
 
@@ -154,7 +154,7 @@ const InterestStocks = ({ token }: { token: JwtToken | null }) => {
   const handleEditGroupNameBlur = async (groupId: string) => {
     if (!token) return;
     try {
-      const res = await fetch(`/api/favorite/${token.memberId}/${groupId}`, {
+      const res = await fetch(`/proxy/favorite/${token.memberId}/${groupId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -187,14 +187,14 @@ const InterestStocks = ({ token }: { token: JwtToken | null }) => {
     if (!selectedGroup) return;
 
     const fetchStocksRes = await fetch(
-      `/api/favorite/${token.memberId}/${selectedGroup}`
+      `/proxy/favorite/${token.memberId}/${selectedGroup}`
     );
     const stocks: InterestStock[] = await fetchStocksRes.json();
 
     if (stocks.length > 0) {
       for (const stock of stocks) {
         await fetch(
-          `/api/favorite/${token.memberId}/${selectedGroup}/stock?stockCode=${stock.stockInfo.stockCode}`,
+          `/proxy/favorite/${token.memberId}/${selectedGroup}/stock?stockCode=${stock.stockInfo.stockCode}`,
           {
             method: "DELETE",
           }
@@ -209,7 +209,7 @@ const InterestStocks = ({ token }: { token: JwtToken | null }) => {
     }
 
     const deleteGroupRes = await fetch(
-      `/api/favorite/${token.memberId}/${groupId}`,
+      `/proxy/favorite/${token.memberId}/${groupId}`,
       {
         method: "DELETE",
       }
@@ -238,7 +238,7 @@ const InterestStocks = ({ token }: { token: JwtToken | null }) => {
     if (!token) return;
     const randomId = Math.random().toString(36).substring(2, 10);
 
-    const res = await fetch(`/api/favorite/${token.memberId}`, {
+    const res = await fetch(`/proxy/favorite/${token.memberId}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -268,7 +268,7 @@ const InterestStocks = ({ token }: { token: JwtToken | null }) => {
 
     if (interestGroups.length === 0) {
       const setMainRes = await fetch(
-        `/api/favorite/${json.data.memberId}/${json.data.groupId}/main`,
+        `/proxy/favorite/${json.data.memberId}/${json.data.groupId}/main`,
         {
           method: "PUT",
         }
@@ -292,11 +292,14 @@ const InterestStocks = ({ token }: { token: JwtToken | null }) => {
   const handleSetMainGroup = async (groupId: string) => {
     if (!token) return;
 
-    const res = await fetch(`/api/favorite/${token.memberId}/${groupId}/main`, {
-      method: "PUT",
-    });
+    const res = await fetch(
+      `/proxy/favorite/${token.memberId}/${groupId}/main`,
+      {
+        method: "PUT",
+      }
+    );
 
-    const result = await fetch(`/api/favorite/${token.memberId}`);
+    const result = await fetch(`/proxy/favorite/${token.memberId}`);
     const json: { data: InterestGroup[] } = await result.json();
     setInterestGroups(json.data);
 
@@ -313,7 +316,7 @@ const InterestStocks = ({ token }: { token: JwtToken | null }) => {
     if (!token) return;
 
     const res = await fetch(
-      `/api/favorite/${token.memberId}/${selectedGroup}?stockCode=${stock.stockCode}`,
+      `/proxy/favorite/${token.memberId}/${selectedGroup}?stockCode=${stock.stockCode}`,
       {
         method: "POST",
       }
@@ -335,7 +338,7 @@ const InterestStocks = ({ token }: { token: JwtToken | null }) => {
     if (!token) return;
 
     const res = await fetch(
-      `/api/favorite/${token.memberId}/${groupId}/stock?stockCode=${stockCode}`,
+      `/proxy/favorite/${token.memberId}/${groupId}/stock?stockCode=${stockCode}`,
       {
         method: "DELETE",
       }

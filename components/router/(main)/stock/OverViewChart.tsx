@@ -111,7 +111,7 @@ export default function TestOverView() {
     const fetchData = async () => {
       try {
         const res = await fetch(
-          `/api/v1/stocks/FX?type=${type}&symbol=${newSymbol}`
+          `/proxy/v1/stocks/FX?type=${type}&symbol=${newSymbol}`
         );
         if (!res.ok) throw new Error("데이터 로딩 실패");
         const json = await res.json();
@@ -132,7 +132,7 @@ export default function TestOverView() {
     const fetchData = async () => {
       try {
         const res = await fetch(
-          `/api/v1/stocks/FX?type=${type}&symbol=${symbol}`
+          `/proxy/v1/stocks/FX?type=${type}&symbol=${symbol}`
         );
         if (!res.ok) throw new Error("데이터 로딩 실패");
         const json = await res.json();

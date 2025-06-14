@@ -19,7 +19,7 @@ const WithdrawalForm = ({
 
   const handleWithdrawal = async (formData: FormData) => {
     console.log(token.memberId);
-    const res = await fetch("/api/auth/withdraw", {
+    const res = await fetch("/proxy/auth/withdraw", {
       method: "DELETE",
       credentials: "include",
       headers: {

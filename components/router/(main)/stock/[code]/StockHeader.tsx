@@ -34,7 +34,7 @@ const StockHeader = ({ code }: { code: string }) => {
 
   useEffect(() => {
     const fetchStockData = async () => {
-      const res = await fetch(`/api/v1/stocks/search?keyword=${code}`);
+      const res = await fetch(`/proxy/v1/stocks/search?keyword=${code}`);
       const data: {
         data: {
           changeAmount: string;

@@ -174,7 +174,7 @@ const CandleChartViewer = ({ code }: { code: string }) => {
   //   if (!code) return;
   //   const fetchPrevData = async () => {
   //     const res = await fetch(
-  //       `/api/v1/stocks/${code}?period=${candleInterval}`
+  //       `/proxy/v1/stocks/${code}?period=${candleInterval}`
   //     );
   //     const json: { data: Tick[] } = await res.json();
 
@@ -189,7 +189,7 @@ const CandleChartViewer = ({ code }: { code: string }) => {
   //   if (!isStockDay) return;
   //   const fetchCurrentData = async () => {
   //     const now = new Date();
-  //     const res = await fetch(`/api/v1/stocks/${code}`);
+  //     const res = await fetch(`/proxy/v1/stocks/${code}`);
   //     const data: { data: string } = await res.json();
   //     const yyyy = now.getFullYear().toString();
   //     const mm = (now.getMonth() + 1).toString().padStart(2, "0");

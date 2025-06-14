@@ -25,7 +25,7 @@ const ProfitLossCalendar = ({ token }: { token: JwtToken | null }) => {
       if (!token) return null;
 
       const res = await fetch(
-        `/api/v1/portfolios/asset/${token.memberId}?period=Y`,
+        `/proxy/v1/portfolios/asset/${token.memberId}?period=Y`,
         {
           credentials: "include",
         }

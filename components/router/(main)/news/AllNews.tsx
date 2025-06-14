@@ -24,7 +24,7 @@ const AllNews = ({ token }: { token: JwtToken | null }) => {
   ];
 
   const fetchMoreNews = async (nextSkip: number) => {
-    const res = await fetch(`/api/news/v2/all?skip=${nextSkip}&limit=30`, {
+    const res = await fetch(`/proxy/news/v2/all?skip=${nextSkip}&limit=30`, {
       credentials: "include",
     });
     const json = await res.json();

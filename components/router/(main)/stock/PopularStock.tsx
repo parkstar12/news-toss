@@ -24,7 +24,7 @@ const PopularStock = ({
   // const fetchPopularStocks = async () => {
   //   // 인기 종목
   //   try {
-  //     const res = await fetch(`/api/v1/stocks/popular`);
+  //     const res = await fetch(`/proxy/v1/stocks/popular`);
   //     if (!res.ok) setPopularStocks(null);
   //     const json = await res.json();
   //     setPopularStocks(json.data);

@@ -747,7 +747,7 @@ const ResultForm = ({
     if (!token) return;
     const score = selectedAnswer.reduce((acc, curr) => acc + curr, 0);
     const res = await fetch(
-      `/api/auth/invest?memberId=${token.memberId}&invest_score=${score}`,
+      `/proxy/auth/invest?memberId=${token.memberId}&invest_score=${score}`,
       {
         credentials: "include",
       }

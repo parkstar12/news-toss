@@ -41,7 +41,7 @@ const RelatedPastReports = ({ selectedNews }: { selectedNews: string }) => {
   useEffect(() => {
     const fetchReports = async () => {
       const res = await fetch(
-        `/api/news/related/report?newsId=${selectedNews}`,
+        `/proxy/news/related/report?newsId=${selectedNews}`,
         {
           method: "GET",
           headers: {

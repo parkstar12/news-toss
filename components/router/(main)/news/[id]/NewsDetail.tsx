@@ -32,7 +32,7 @@ const NewsDetail = ({
 
   useEffect(() => {
     const fetchNews = async () => {
-      const res = await fetch(`/api/news/detail?newsId=${newsId}`);
+      const res = await fetch(`/proxy/news/detail?newsId=${newsId}`);
       const data = await res.json();
 
       if (res.ok) {
@@ -52,7 +52,7 @@ const NewsDetail = ({
     }
 
     if (isScrap) {
-      const deleteScrapRes = await fetch(`/api/scrap`, {
+      const deleteScrapRes = await fetch(`/proxy/scrap`, {
         method: "DELETE",
         body: JSON.stringify({
           memberId: token.memberId,
@@ -74,7 +74,7 @@ const NewsDetail = ({
       return;
     }
 
-    const createScrapRes = await fetch(`/api/scrap`, {
+    const createScrapRes = await fetch(`/proxy/scrap`, {
       method: "POST",
       body: JSON.stringify({
         memberId: token.memberId,

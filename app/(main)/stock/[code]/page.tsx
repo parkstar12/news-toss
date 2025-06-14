@@ -228,7 +228,7 @@ const StockDetailPage = () => {
   useEffect(() => {
     if (!code) return;
     const fetchCurrentStockData = async () => {
-      const res = await fetch(`/api/v1/stocks/search?keyword=${code}`);
+      const res = await fetch(`/proxy/v1/stocks/search?keyword=${code}`);
       const json: {
         data: CurrentStock[];
       } = await res.json();
@@ -257,7 +257,7 @@ const StockDetailPage = () => {
     if (!code) return;
     const fetchPrevStockData = async () => {
       for (const interval of Object.keys(prevStockData)) {
-        const res = await fetch(`/api/v1/stocks/${code}?period=${interval}`);
+        const res = await fetch(`/proxy/v1/stocks/${code}?period=${interval}`);
 
         if (!res.ok) {
           console.log(`이전 주식 가격 API 요청 실패: ${res.status}`);
@@ -321,7 +321,7 @@ const StockDetailPage = () => {
 
     const fetchCurrentData = async () => {
       const now = new Date();
-      const res = await fetch(`/api/v1/stocks/${code}`);
+      const res = await fetch(`/proxy/v1/stocks/${code}`);
       const json: { data: string } = await res.json();
       const yyyy = now.getFullYear().toString();
       const mm = (now.getMonth() + 1).toString().padStart(2, "0");

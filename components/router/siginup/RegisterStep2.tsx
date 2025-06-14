@@ -60,7 +60,7 @@ const RegisterStep2 = ({
   }, [userInfo.id]);
 
   const checkUserId = async () => {
-    const res = await fetch(`/api/auth/duplicate`, {
+    const res = await fetch(`/proxy/auth/duplicate`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -101,7 +101,7 @@ const RegisterStep2 = ({
       return;
     }
 
-    const res = await fetch(`/api/auth/register`, {
+    const res = await fetch(`/proxy/auth/register`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -122,7 +122,7 @@ const RegisterStep2 = ({
     });
 
     if (res.ok) {
-      const res = await fetch(`/api/auth/login`, {
+      const res = await fetch(`/proxy/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -44,7 +44,7 @@ const SearchStock = ({ onSelect }: SearchStockProps) => {
 
   const searchStocks = async (query: string) => {
     if (!query) return;
-    const res = await fetch(`/api/v1/stocks/search?keyword=${query}`);
+    const res = await fetch(`/proxy/v1/stocks/search?keyword=${query}`);
     const json = await res.json();
     setSearchResult(json.data);
   };

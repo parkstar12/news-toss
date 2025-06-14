@@ -40,7 +40,7 @@ const SearchStock = () => {
   }, [stockSearch]);
 
   const searchStocks = async (query: string) => {
-    const res = await fetch(`/api/v1/stocks/search?keyword=${query}`);
+    const res = await fetch(`/proxy/v1/stocks/search?keyword=${query}`);
     if (!res.ok) setSearchResult([]);
 
     const json = await res.json();
@@ -50,7 +50,7 @@ const SearchStock = () => {
   const handleClickSearchResult = async (stockCode: string) => {
     // 종목 검색 count 증가
     try {
-      await fetch(`/api/v1/stocks/search`, {
+      await fetch(`/proxy/v1/stocks/search`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
