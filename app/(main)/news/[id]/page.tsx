@@ -1,72 +1,79 @@
 import React from "react";
 import { getJwtToken } from "@/utils/auth";
 import NewsDetail from "@/components/router/(main)/news/[id]/NewsDetail";
-import Related from "@/components/router/(main)/news/[id]/Related";
-import { JwtToken } from "@/type/jwt";
+import RelatedNews from "./RelatedNews";
 import * as Sentry from "@sentry/nextjs";
+import { MetaData, News } from "@/type/news";
+import MetaDataNews from "./MetaDataNews";
+import { StockSearchResult } from "@/type/stocks/StockSearchResult";
 
 const NewsDetailPage = async ({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) => {
-  let id: string = "";
-  let token: JwtToken | null = null;
-  let relativeStocksData: {
-    Success: boolean;
-    message: string;
-    data: [{ stockName: string }];
-  } | null = null;
-  let relatedPastNewsData: any = null;
+  const { id: newsId } = await params;
+  const token = await getJwtToken();
 
-  try {
-    const paramsObj = await params;
-    id = paramsObj.id;
-    token = await getJwtToken();
+  const newsRes = await fetch(
+    `${process.env.NEXT_PUBLIC_BASE_URL}/news/v2/detail?newsId=${newsId}`,
+    {
+      next: { revalidate: 60 },
+    }
+  );
+  const newsJson: { data: News } = await newsRes.json();
 
-    // 관련 종목 fetch
-    const relativeStocks = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/news/related/stocks?newsId=${id}`,
-      {
-        method: "GET",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
-    if (!relativeStocks.ok)
-      throw new Error("관련 종목 정보를 불러오지 못했습니다.");
-    relativeStocksData = await relativeStocks.json();
+  const relatedNewsRes = await fetch(
+    `${process.env.NEXT_PUBLIC_BASE_URL}/news/v2/related/news?newsId=${newsId}`,
+    {
+      next: { revalidate: 60 },
+    }
+  );
+  const relatedNewsJson: { data: News[] } = await relatedNewsRes.json();
 
-    // 관련 뉴스 fetch
-    const relatedPastNews = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/news/related/news?newsId=${id}`,
-      {
-        method: "GET",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
-    if (!relatedPastNews.ok)
-      throw new Error("관련 뉴스를 불러오지 못했습니다.");
-    relatedPastNewsData = await relatedPastNews.json();
-  } catch (e: any) {
-    Sentry.captureException(e);
+  const metaDataRes = await fetch(
+    `${process.env.NEXT_PUBLIC_BASE_URL}/news/v2/meta?newsId=${newsId}`,
+    {
+      next: { revalidate: 60 },
+    }
+  );
+  const metaDataJson: { data: MetaData } = await metaDataRes.json();
+
+  console.log("메타데이터", metaDataJson.data);
+
+  const stockList = [];
+
+  if (metaDataJson.data.stockListView.length !== 0) {
+    for (const stock of metaDataJson.data.stockListView) {
+      const stockListRes = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/v1/stocks/search?keyword=${stock.stock_id}`,
+        {
+          next: { revalidate: 60 },
+        }
+      );
+      const stockListJson: { data: StockSearchResult[] } =
+        await stockListRes.json();
+      stockList.push(stockListJson.data[0]);
+    }
   }
 
   return (
-    <div className="size-full grid grid-cols-[1fr_1px_1fr] gap-[20px]">
-      <NewsDetail newsId={id} token={token} />
+    <div className="size-full grid grid-cols-[1fr_1px_1.5fr] gap-[20px]">
+      <NewsDetail news={newsJson.data} token={token} newsId={newsId} />
 
       <div className="border-l border-main-light-gray h-full" />
 
-      <Related
+      <div className="relative">
+        <div className="flex flex-col gap-[20px] sticky top-0">
+          <MetaDataNews metaData={metaDataJson.data} stockList={stockList} />
+          <RelatedNews relatedNews={relatedNewsJson.data} />
+        </div>
+      </div>
+
+      {/* <Related
         relativeStocksData={relativeStocksData}
         relatedPastNewsData={relatedPastNewsData}
-      />
+      /> */}
     </div>
   );
 };

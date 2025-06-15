@@ -32,3 +32,16 @@ export interface HighlightNews {
     similarity: number;
   }[];
 }
+
+export interface MetaData {
+  newsId: string;
+  summary: string;
+  stockList: { stockName: string; stock_id: string }[];
+  stockListView: { stockName: string; stock_id: string }[];
+  industryList: {
+    stock_id: string;
+    industry_id: string;
+    industry_name: string;
+  }[];
+  impactScore: number;
+}

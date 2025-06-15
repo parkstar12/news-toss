@@ -132,11 +132,11 @@ const Navigation = () => {
           />
 
           <div className="flex items-center gap-1 pointer-events-none">
-            <kbd className="size-[20px] rounded border-[0.5px] border-main-dark-gray/70 text-xs font-mono flex items-center justify-center">
+            <kbd className="px-1.5 py-0.5 rounded border-[0.5px] border-main-dark-gray/70 text-xs font-mono flex items-center justify-center">
               <span className="text-main-dark-gray/70">{modKey}</span>
             </kbd>
             <span className="text-main-dark-gray/70">+</span>
-            <kbd className="size-[20px] rounded border-[0.5px] border-main-dark-gray/70 text-xs font-mono flex items-center justify-center">
+            <kbd className="px-1.5 py-0.5 rounded border-[0.5px] border-main-dark-gray/70 text-xs font-mono flex items-center justify-center">
               <span className="text-main-dark-gray/70">K</span>
             </kbd>
           </div>

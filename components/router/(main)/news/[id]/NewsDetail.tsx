@@ -10,15 +10,17 @@ import Star from "@/components/lottie/star/Star";
 import { toast } from "react-toastify";
 import { JwtToken } from "@/type/jwt";
 import { useScrapStore } from "@/store/useScrapStore";
+import { formatDate } from "@/utils/formatDate";
 
 const NewsDetail = ({
-  newsId,
+  news,
   token,
+  newsId,
 }: {
-  newsId: string;
+  news: News;
   token: JwtToken | null;
+  newsId: string;
 }) => {
-  const [news, setNews] = useState<News | null>(null);
   const [isOpenNewsDetail, setIsOpenNewsDetail] = useState(true);
   const [isScrap, setIsScrap] = useState(false);
   const { scraps, setScraps } = useScrapStore();
@@ -29,19 +31,6 @@ const NewsDetail = ({
       setIsScrap(true);
     }
   }, [scraps, newsId]);
-
-  useEffect(() => {
-    const fetchNews = async () => {
-      const res = await fetch(`/proxy/news/detail?newsId=${newsId}`);
-      const data = await res.json();
-
-      if (res.ok) {
-        setNews(data.data);
-      }
-    };
-
-    fetchNews();
-  }, [newsId]);
 
   const handleScrap = async () => {
     if (!news) return;
@@ -101,7 +90,7 @@ const NewsDetail = ({
   if (!news) return null;
 
   return (
-    <div className="w-full flex flex-col gap-main overflow-x-hidden overflow-y-scroll min-w-[600px]">
+    <div className="w-full flex flex-col gap-main overflow-x-hidden overflow-y-scroll">
       <div className="flex flex-col gap-[5px]">
         <div className="flex items-center gap-2">
           <h2 className="text-2xl font-bold">{news.title}</h2>
@@ -121,7 +110,7 @@ const NewsDetail = ({
           </button>
         </div>
         <p className="text-sm text-main-dark-gray">
-          2025년 05월 10일 09:00 · 이투데이
+          {news.wdate && formatDate(news.wdate)} · {news.press}
         </p>
       </div>
 
@@ -151,9 +140,7 @@ const NewsDetail = ({
         )}
         ref={newsDetailRef}
       >
-        <pre className="whitespace-pre-wrap leading-7 px-main">
-          {news.content}
-        </pre>
+        <p className="whitespace-pre-wrap leading-7 px-main">{news.article}</p>
 
         {/* <div
           className={clsx(

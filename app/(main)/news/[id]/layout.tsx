@@ -22,7 +22,7 @@ export async function generateMetadata({
 }
 
 const NewsDetailLayout = ({ children }: { children: React.ReactNode }) => {
-  return <div className="max-w-[1600px] mx-auto">{children}</div>;
+  return <div className="max-w-[1400px] mx-auto">{children}</div>;
 };
 
 export default NewsDetailLayout;
