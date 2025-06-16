@@ -193,7 +193,12 @@ export default function OverViewChart() {
       {
         fill: true,
         data: forexData.pastInfo.map((item) => item.ovrs_nmix_prpr),
-        borderColor: "#3485fa",
+        borderColor:
+          forexData.changeSign === "1" || forexData.changeSign === "2"
+            ? "#f04251"
+            : forexData.changeSign === "4" || forexData.changeSign === "5"
+            ? "#3485fa"
+            : "#3485fa",
         backgroundColor: (context: ScriptableContext<"line">) => {
           const chart = context.chart;
           const { ctx, chartArea } = chart;
@@ -206,8 +211,17 @@ export default function OverViewChart() {
             0,
             chartArea.bottom
           );
-          gradient.addColorStop(0, "rgba(97, 163, 255, 0.5)");
-          gradient.addColorStop(1, "rgba(97, 163, 255, 0)");
+
+          if (forexData.changeSign === "1" || forexData.changeSign === "2") {
+            gradient.addColorStop(0, "rgba(240, 66, 81, 0.5)");
+            gradient.addColorStop(1, "rgba(240, 66, 81, 0)");
+          } else if (
+            forexData.changeSign === "4" ||
+            forexData.changeSign === "5"
+          ) {
+            gradient.addColorStop(0, "rgba(52, 133, 250, 0.5)");
+            gradient.addColorStop(1, "rgba(52, 133, 250, 0)");
+          }
 
           return gradient;
         },
