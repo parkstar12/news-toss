@@ -3,7 +3,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 
 function useTokenExpire(exp?: number) {
-  const [expireText, setExpireText] = useState("");
+  const [expireText, setExpireText] = useState("00:00");
   const router = useRouter();
 
   useEffect(() => {

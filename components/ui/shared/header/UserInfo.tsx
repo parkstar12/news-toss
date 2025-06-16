@@ -7,6 +7,7 @@ import useTokenExpire from "@/hooks/useTokenExpire";
 import { JwtToken } from "@/type/jwt";
 import clsx from "clsx";
 import { usePathname } from "next/navigation";
+import { Clock } from "lucide-react";
 
 const UserInfo = ({
   token,
@@ -36,7 +37,9 @@ const UserInfo = ({
         >
           <b className="underline">{token.memberName}</b> 님
         </button>
-        <span>세션: {useTokenExpire(token.exp)}</span>
+        <span className="flex items-center gap-1 text-main-dark-gray text-sm">
+          <Clock size={14} /> {useTokenExpire(token.exp)}
+        </span>
       </div>
 
       <div

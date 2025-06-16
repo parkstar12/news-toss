@@ -91,9 +91,9 @@ const Sidebar = ({ token }: { token: JwtToken | null }) => {
           isOpen ? "w-[300px] pl-[20px]" : "w-0 opacity-0 px-0"
         )}
       >
-        {category === "내 투자" && <MyPortfolio />}
-        {category === "최근 본" && <RecentView />}
+        {category === "내 투자" && <MyPortfolio token={token} />}
         {category === "관심" && <Interest token={token} />}
+        {category === "최근 본" && <RecentView />}
       </div>
 
       <div className="flex flex-col gap-[20px] shrink-0 items-center px-[10px]">

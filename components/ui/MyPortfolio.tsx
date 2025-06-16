@@ -1,15 +1,34 @@
 import { usePortfolioStore } from "@/store/usePortfolio";
+import { JwtToken } from "@/type/jwt";
 import clsx from "clsx";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
-const MyPortfolio = () => {
+const MyPortfolio = ({ token }: { token: JwtToken | null }) => {
   const { portfolio } = usePortfolioStore();
+
+  if (!token) {
+    return (
+      <div className="flex flex-col gap-main">
+        <h2 className="text-xl font-bold text-main-dark-gray">내 투자</h2>
+        <div className="flex flex-col gap-main">
+          <div className="w-full h-[200px] flex items-center justify-center">
+            <p className="text-main-dark-gray">로그인 후 이용해주세요.</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="flex flex-col gap-main">
       <h2 className="text-xl font-bold text-main-dark-gray">내 투자</h2>
       <div className="flex flex-col gap-main">
+        {!token && (
+          <div className="w-full h-[200px] flex items-center justify-center">
+            <p className="text-main-dark-gray">로그인 후 이용해주세요.</p>
+          </div>
+        )}
         {portfolio.length === 0 && (
           <div className="w-full h-[200px] flex items-center justify-center">
             <p className="text-main-dark-gray">포트폴리오가 비어있습니다.</p>
