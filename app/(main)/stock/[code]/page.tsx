@@ -5,6 +5,7 @@ import clsx from "clsx";
 import {
   CandlestickSeries,
   createChart,
+  CrosshairMode,
   HistogramSeries,
   IChartApi,
   ISeriesApi,
@@ -16,6 +17,7 @@ import DownPrice from "@/components/ui/shared/DownPrice";
 import { useRecentViewStore } from "@/store/useRecentViewStore";
 import { useParams } from "next/navigation";
 import Image from "next/image";
+import { usePortfolioStore } from "@/store/usePortfolio";
 
 interface StockData {
   acml_tr_pbmn: string;
@@ -114,6 +116,9 @@ function aggregateCandles(ticks: StockData[]): CandleData[] {
 const StockDetailPage = () => {
   const params = useParams<{ code: string }>();
   const code = params!.code;
+  const { portfolio } = usePortfolioStore();
+
+  const isMyStock = portfolio.some((stock) => stock.stockCode === code);
 
   // 종목 검색 count 증가
   // await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/stocks/search`, {
@@ -125,6 +130,7 @@ const StockDetailPage = () => {
   //     stockCode: code,
   //   }),
   // });
+
   const chartContainerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<IChartApi | null>(null);
   const candlestickRef = useRef<ISeriesApi<"Candlestick">>(null);
@@ -139,15 +145,135 @@ const StockDetailPage = () => {
     M: [],
     Y: [],
   });
+  const [priceDiff, setPriceDiff] = useState<{
+    diff: number;
+    diffRate: number;
+    sign: string;
+  } | null>(null);
   const [selectedInterval, setSelectedInterval] = useState<IntervalKey>("D");
   const [marketOpen, setMarketOpen] = useState(false);
   const { recentViewStocks, setRecentViewStocks } = useRecentViewStore();
 
+  console.log("priceDiff", priceDiff);
+
   // 차트 초기화
   useEffect(() => {
     if (!chartContainerRef.current) return;
-    const chart = createChart(chartContainerRef.current);
+    const chart = createChart(chartContainerRef.current, {
+      crosshair: {
+        mode: CrosshairMode.Normal,
+      },
+    });
     chartRef.current = chart;
+
+    const tooltip = document.createElement("div");
+    tooltip.style.position = "absolute";
+    tooltip.style.zIndex = "1000";
+    tooltip.style.background = "white";
+    tooltip.style.border = "1px solid #ccc";
+    tooltip.style.borderRadius = "4px";
+    tooltip.style.padding = "6px 8px";
+    tooltip.style.fontSize = "12px";
+    tooltip.style.display = "none";
+    tooltip.style.pointerEvents = "none";
+    tooltip.style.boxShadow = "0 0 10px rgba(0,0,0,0.1)";
+    chartContainerRef.current!.appendChild(tooltip);
+
+    chart.subscribeCrosshairMove((param) => {
+      if (
+        !param.point ||
+        !param.time ||
+        param.point.x < 0 ||
+        param.point.y < 0 ||
+        !candlestickRef.current
+      ) {
+        tooltip.style.display = "none";
+        return;
+      }
+
+      const data = param.seriesData.get(candlestickRef.current);
+      if (!data) {
+        tooltip.style.display = "none";
+        return;
+      }
+
+      // const hoveredTime = param.time as string;
+
+      // const newCandles = aggregateCandles(prevStockData[selectedInterval]);
+      // const hoveredIndex = newCandles.findIndex((c) => c.time === hoveredTime);
+      // const prevCandle = newCandles[hoveredIndex - 1];
+
+      // if (data && "close" in data && prevCandle) {
+      //   const diff = data.close - prevCandle.close;
+      //   const diffRate = (diff / prevCandle.close) * 100;
+      //   const sign = diff > 0 ? "+" : diff < 0 ? "−" : "";
+
+      //   setPriceDiff({
+      //     diff,
+      //     diffRate,
+      //     sign,
+      //   });
+      // } else {
+      //   setPriceDiff(null);
+      // }
+
+      const container = chartContainerRef.current!;
+      const tooltipWidth = tooltip.offsetWidth;
+      const tooltipHeight = tooltip.offsetHeight;
+      const containerWidth = container.clientWidth;
+
+      // 툴팁 X 위치 (중앙 정렬 + 화면 밖 방지)
+      const x = param.point.x - tooltipWidth / 2;
+      const safeX = Math.max(0, Math.min(x, containerWidth - tooltipWidth));
+
+      // ⛳️ CandlestickSeries는 open/high/low/close만 있음!
+      if (!("open" in data) || !("close" in data)) {
+        tooltip.style.display = "none";
+        return;
+      }
+
+      const averagePrice = (data.open + data.close) / 2;
+      const candleY = candlestickRef.current.priceToCoordinate(averagePrice);
+
+      if (candleY === null) {
+        tooltip.style.display = "none";
+        return;
+      }
+
+      const OFFSET = 20;
+      const shouldPlaceBelow = param.point.y < candleY;
+      const y = shouldPlaceBelow
+        ? param.point.y - tooltipHeight - OFFSET
+        : param.point.y + OFFSET;
+
+      tooltip.style.left = `${safeX}px`;
+      tooltip.style.top = `${y}px`;
+      tooltip.style.display = "block";
+
+      tooltip.innerHTML = `
+        <div><strong>현재:</strong> ${data.close.toLocaleString()}원</div>
+        ${
+          "open" in data
+            ? `<div><strong>시가:</strong> ${data.open.toLocaleString()}원</div>`
+            : ""
+        }
+        ${
+          "high" in data
+            ? `<div className="text-main-blue"><strong>고가:</strong> ${data.high.toLocaleString()}원</div>`
+            : ""
+        }
+        ${
+          "low" in data
+            ? `<div className="text-main-red"><strong>저가:</strong> ${data.low.toLocaleString()}원</div>`
+            : ""
+        }
+        ${
+          "close" in data
+            ? `<div><strong>종가:</strong> ${data.close.toLocaleString()}원</div>`
+            : ""
+        }
+      `;
+    });
 
     const candlestickSeries = chart.addSeries(CandlestickSeries, {
       wickDownColor: "rgb(52, 133, 250)",
@@ -166,16 +292,24 @@ const StockDetailPage = () => {
       priceScaleId: "right",
     });
 
-    lineSeries.setData([{ time: "2025-06-10", value: 235600 }]);
+    if (isMyStock) {
+      lineSeries.setData([
+        {
+          time: new Date().toISOString().split("T")[0],
+          value: portfolio.find((stock) => stock.stockCode === code)!
+            .entryPrice,
+        },
+      ]);
 
-    lineSeries.createPriceLine({
-      price: 235600,
-      color: "orange",
-      lineWidth: 2,
-      lineStyle: 2, // Dashed line
-      axisLabelVisible: true,
-      title: "평균 매입가",
-    });
+      lineSeries.createPriceLine({
+        price: portfolio.find((stock) => stock.stockCode === code)!.entryPrice,
+        color: "orange",
+        lineWidth: 2,
+        lineStyle: 2, // Dashed line
+        axisLabelVisible: true,
+        title: "평균 매입가",
+      });
+    }
 
     const volumeSeries = chart.addSeries(HistogramSeries, {
       priceFormat: { type: "volume" },
@@ -192,7 +326,7 @@ const StockDetailPage = () => {
     return () => {
       chart.remove();
     };
-  }, []);
+  }, [isMyStock]);
 
   // 부모 크기 변경 감지 및 차트 리사이즈
   useEffect(() => {
@@ -450,10 +584,29 @@ const StockDetailPage = () => {
         </div>
       </div>
 
+      {priceDiff && (
+        <p className="text-sm mt-2">
+          전일 대비:{" "}
+          <span
+            className={clsx(
+              priceDiff.diff > 0
+                ? "text-main-red"
+                : priceDiff.diff < 0
+                ? "text-main-blue"
+                : "text-gray-500"
+            )}
+          >
+            {priceDiff.sign}
+            {Math.abs(priceDiff.diff).toLocaleString()}원 ({priceDiff.sign}
+            {Math.abs(priceDiff.diffRate).toFixed(2)}%)
+          </span>
+        </p>
+      )}
+
       <div className="col-span-3 size-full h-[600px]">
         <div
           ref={chartContainerRef}
-          style={{ width: "100%", height: "100%" }}
+          style={{ width: "100%", height: "100%", position: "relative" }}
         />
       </div>
     </div>
