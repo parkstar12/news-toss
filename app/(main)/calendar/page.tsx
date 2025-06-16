@@ -95,14 +95,14 @@ const CalendarPage = () => {
                   setSelectedCompany(company);
                 }
               }}
-              className="py-1 bg-main-blue/10"
+              className="shadow-color py-1"
               textColor="text-main-blue font-semibold"
               maxHeight={300}
             />
           )}
         </div>
 
-        <div className="grid grid-cols-1 gap-main">
+        <div className="grid grid-cols-1 gap-main pb-[100px]">
           {filteredIrDataList.length > 0 ? (
             filteredIrDataList.map((irData) => (
               <div
@@ -153,7 +153,6 @@ const CalendarPage = () => {
 
       <div className="col-span-2 w-full relative">
         <div className="sticky top-0 z-10 p-main bg-main-light-gray rounded-main">
-          {/* <div className="bg-white rounded-main"> */}
           <Calendar
             prev2Label={null}
             next2Label={null}
@@ -195,7 +194,6 @@ const CalendarPage = () => {
             }}
             className="w-full h-full"
           />
-          {/* </div> */}
         </div>
       </div>
     </div>
