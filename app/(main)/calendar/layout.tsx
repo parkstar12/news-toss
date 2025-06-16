@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import React from "react";
-import ChatbotComponent from "./ChatbotComponent";
+import ChatbotComponent from "@/components/router/(main)/calendar/ChatbotComponent";
 
 export const metadata: Metadata = {
   title: "IR일정 캘린더",
@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 const CalendarLayout = ({ children }: { children: React.ReactNode }) => {
   return (
-    <div className="max-w-[1000px] mx-auto">
+    <div className="max-w-[1000px] h-full mx-auto">
       {children}
       <ChatbotComponent />
     </div>

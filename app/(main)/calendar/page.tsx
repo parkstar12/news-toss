@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import Calendar from "react-calendar";
-import "./calendar.css";
+import "@/components/router/(main)/calendar/calendar.css";
 
 import clsx from "clsx";
 import Dropdown from "@/components/ui/shared/Dropdown";

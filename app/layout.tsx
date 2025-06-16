@@ -3,9 +3,7 @@ import localFont from "next/font/local";
 import { ToastContainer } from "react-toastify";
 import SentryProvider from "./SentryProvider";
 import "./globals.css";
-import "react-chatbot-kit/build/main.css";
 import "driver.js/dist/driver.css";
-import "@/components/chatbot/chatbot.css";
 
 const pretendard = localFont({
   src: "../public/fonts/PretendardVariable.woff2",
