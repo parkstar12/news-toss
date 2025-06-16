@@ -29,12 +29,20 @@ ChartJS.register(
   Legend
 );
 
-export const options: ChartOptions<"line"> = {
+const options: ChartOptions<"line"> = {
   responsive: true,
+  maintainAspectRatio: false,
+  interaction: {
+    mode: "x",
+    intersect: false,
+  },
   plugins: {
-    legend: { display: false },
-    title: { display: false },
-    tooltip: { enabled: true },
+    legend: {
+      display: false,
+    },
+    tooltip: {
+      enabled: true,
+    },
   },
   scales: {
     x: {
@@ -44,7 +52,11 @@ export const options: ChartOptions<"line"> = {
       display: true,
     },
   },
-  maintainAspectRatio: false,
+  elements: {
+    line: {
+      borderWidth: 2,
+    },
+  },
 };
 
 const symbolsByType = {
@@ -98,11 +110,35 @@ interface ForexData {
   }[];
 }
 
-export default function TestOverView() {
+export default function OverViewChart() {
   const [type, setType] = useState<TypeKey>("FX");
   const [symbol, setSymbol] = useState<string | null>();
   const [forexData, setForexData] = useState<ForexData | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  const verticalLinePlugin = {
+    id: "verticalLine",
+    afterDraw(chart: ChartJS) {
+      const activeElements = chart.tooltip?.getActiveElements?.();
+      if (activeElements && activeElements.length > 0) {
+        const ctx = chart.ctx;
+        const x = activeElements[0].element.x;
+        const topY = chart.scales.y.top;
+        const bottomY = chart.scales.y.bottom;
+
+        ctx.save();
+        ctx.beginPath();
+        ctx.setLineDash([4, 4]);
+        ctx.moveTo(x, topY);
+        ctx.lineTo(x, bottomY);
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = "rgba(0,0,0,0.3)";
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.restore();
+      }
+    },
+  };
 
   useEffect(() => {
     const newSymbol = symbolsByType[type][0].symbol;
@@ -175,7 +211,7 @@ export default function TestOverView() {
 
           return gradient;
         },
-        tension: 0.2,
+        tension: 0.1,
         pointRadius: 0,
         borderWidth: 1,
         pointHoverRadius: 0,
@@ -200,7 +236,7 @@ export default function TestOverView() {
       </div>
 
       <div>
-        <Line options={options} data={data} />
+        <Line options={options} data={data} plugins={[verticalLinePlugin]} />
       </div>
 
       <div className="flex flex-wrap gap-2">

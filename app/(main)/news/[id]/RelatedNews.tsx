@@ -37,11 +37,17 @@ const RelatedNews = ({ relatedNews }: { relatedNews: News[] }) => {
   const chartOptions: ChartOptions<"line"> = {
     responsive: true,
     maintainAspectRatio: false,
+    interaction: {
+      mode: "index",
+      intersect: false,
+    },
     plugins: {
       legend: {
-        display: true,
+        display: false,
       },
       tooltip: {
+        mode: "index",
+        intersect: false,
         callbacks: {
           label: (context) => {
             const index = context.dataIndex;
@@ -64,6 +70,7 @@ const RelatedNews = ({ relatedNews }: { relatedNews: News[] }) => {
         },
         grid: {
           display: false,
+          drawOnChartArea: true,
         },
       },
       y: {
@@ -84,6 +91,30 @@ const RelatedNews = ({ relatedNews }: { relatedNews: News[] }) => {
           0
         ),
       },
+    },
+  };
+
+  const verticalLinePlugin = {
+    id: "verticalLine",
+    afterDraw(chart: ChartJS) {
+      const activeElements = chart.tooltip?.getActiveElements?.();
+      if (activeElements && activeElements.length > 0) {
+        const ctx = chart.ctx;
+        const x = activeElements[0].element.x;
+        const topY = chart.scales.y.top;
+        const bottomY = chart.scales.y.bottom;
+
+        ctx.save();
+        ctx.beginPath();
+        ctx.setLineDash([4, 4]);
+        ctx.moveTo(x, topY);
+        ctx.lineTo(x, bottomY);
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = "rgba(0,0,0,0.3)";
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.restore();
+      }
     },
   };
 
@@ -113,7 +144,7 @@ const RelatedNews = ({ relatedNews }: { relatedNews: News[] }) => {
         borderColor: "#3485fa",
         backgroundColor: "transparent",
         data: relatedNews.map((item) => item.similarity! * 100), // 퍼센트로
-        tension: 0.3,
+        tension: 0.1,
         pointRadius,
         pointBorderWidth: 1,
         pointBorderColor,
@@ -131,7 +162,7 @@ const RelatedNews = ({ relatedNews }: { relatedNews: News[] }) => {
     const points = chart.getElementsAtEventForMode(
       event.nativeEvent,
       "nearest",
-      { intersect: true },
+      { intersect: false },
       false
     );
 
@@ -153,6 +184,7 @@ const RelatedNews = ({ relatedNews }: { relatedNews: News[] }) => {
           options={chartOptions}
           ref={chartRef}
           onClick={handleChartClick}
+          plugins={[verticalLinePlugin]}
         />
       </div>
 

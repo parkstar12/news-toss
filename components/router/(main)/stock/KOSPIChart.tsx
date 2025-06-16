@@ -11,6 +11,7 @@ import {
   Tooltip,
   Filler,
   ScriptableContext,
+  ChartOptions,
 } from "chart.js";
 import UpPrice from "@/components/ui/shared/UpPrice";
 import DownPrice from "@/components/ui/shared/DownPrice";
@@ -28,15 +29,19 @@ ChartJS.register(
   Filler
 );
 
-const options = {
+const options: ChartOptions<"line"> = {
   responsive: true,
   maintainAspectRatio: false,
+  interaction: {
+    mode: "x",
+    intersect: false,
+  },
   plugins: {
     legend: {
       display: false,
     },
     tooltip: {
-      enabled: false,
+      enabled: true,
     },
   },
   scales: {
@@ -115,9 +120,9 @@ const KOSPIChart = ({
 
           return gradient;
         },
-        tension: 0.2,
+        tension: 0.1,
         pointRadius: 0,
-        borderWidth: 2,
+        borderWidth: 1.5,
         pointHoverRadius: 0,
       },
     ],

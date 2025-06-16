@@ -54,52 +54,122 @@ interface Asset {
   periodPnl: number;
 }
 
-const options: ChartOptions<"line"> = {
-  responsive: true,
-  maintainAspectRatio: false,
-  plugins: {
-    legend: {
-      display: false,
-    },
-    tooltip: {
-      enabled: true,
-      callbacks: {
-        label: (context) => {
-          return `${context.parsed.y.toLocaleString()}원`;
-        },
-      },
-    },
-  },
-  scales: {
-    x: {
-      display: false, // X축 비활성화
-      grid: {
-        color: "rgba(0, 0, 0, 0.02)",
-      },
-    },
-    y: {
-      display: false, // Y축 비활성화
-    },
-  },
-  elements: {
-    line: {
-      borderWidth: 1,
-    },
-    point: {
-      hitRadius: 10,
-      hoverRadius: 10,
-    },
-  },
-};
-
 const MyAccountChart = ({ token }: { token: JwtToken | null }) => {
   const [chartType, setChartType] = useState<ChartType>("D");
   const [asset, setAsset] = useState<Asset | null>(null);
   const [dummyData, setDummyData] = useState<ChartData<"line"> | null>(null);
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
   const [todayPnl, setTodayPnl] = useState<number | null>(null);
   const [periodPnl, setPeriodPnl] = useState<number | null>(null);
   const [totalPnl, setTotalPnl] = useState<number | null>(null);
+
+  const hoverPlugin = {
+    id: "hoverFill",
+    beforeDatasetsDraw(chart: ChartJS<"line">) {
+      if (hoveredIndex === null) return;
+
+      const {
+        ctx,
+        chartArea: { top, bottom },
+        scales: { x },
+      } = chart;
+
+      const xPosition = x.getPixelForValue(hoveredIndex);
+      const width = 1;
+
+      ctx.save();
+      ctx.fillStyle = "rgba(155, 64, 4, 0.1)";
+      ctx.fillRect(xPosition - width * 10, top, width * 20, bottom - top);
+      ctx.restore();
+    },
+  };
+
+  const options: ChartOptions<"line"> = {
+    responsive: true,
+    maintainAspectRatio: false,
+    interaction: {
+      mode: "x",
+      intersect: false,
+    },
+    plugins: {
+      legend: {
+        display: false,
+      },
+      tooltip: {
+        mode: "index",
+        intersect: false,
+        axis: "x",
+        enabled: true,
+        external: (context) => {
+          const tooltip = context.tooltip;
+          if (tooltip?.dataPoints?.[0]) {
+            const index = tooltip.dataPoints[0].dataIndex;
+            setHoveredIndex(index);
+          } else {
+            setHoveredIndex(null);
+          }
+        },
+        callbacks: {
+          label: (context) => {
+            return `${context.parsed.y.toLocaleString()}원`;
+          },
+        },
+      },
+    },
+    onHover: (event, chartElement) => {
+      if (chartElement.length > 0) {
+        setHoveredIndex(chartElement[0].index);
+      } else {
+        setHoveredIndex(null);
+      }
+    },
+    scales: {
+      x: {
+        display: false, // X축 비활성화
+        grid: {
+          color: "rgba(0, 0, 0, 0.02)",
+          drawOnChartArea: true,
+        },
+      },
+      y: {
+        display: false, // Y축 비활성화
+      },
+    },
+    elements: {
+      line: {
+        borderWidth: 1,
+      },
+      point: {
+        hitRadius: 10,
+        hoverRadius: 10,
+      },
+    },
+  };
+
+  const verticalLinePlugin = {
+    id: "verticalLine",
+    afterDraw(chart: ChartJS) {
+      const activeElements = chart.tooltip?.getActiveElements?.();
+      if (activeElements && activeElements.length > 0) {
+        const ctx = chart.ctx;
+        const x = activeElements[0].element.x;
+        const topY = chart.scales.y.top;
+        const bottomY = chart.scales.y.bottom;
+
+        ctx.save();
+        ctx.beginPath();
+        ctx.setLineDash([4, 4]);
+        ctx.moveTo(x, topY);
+        ctx.lineTo(x, bottomY);
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = "rgba(0,0,0,0.3)";
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.restore();
+      }
+    },
+  };
 
   useEffect(() => {
     const labels = Array.from({ length: 50 }, (_, i) => `${i}일`);
@@ -126,10 +196,14 @@ const MyAccountChart = ({ token }: { token: JwtToken | null }) => {
             gradient.addColorStop(1, "rgba(52, 133, 250, 0)");
             return gradient;
           },
-          tension: 0.2,
-          pointRadius: 0,
-          borderWidth: 2,
-          pointHoverRadius: 0,
+          tension: 0.1,
+          borderWidth: 1,
+          pointRadius: (context: ScriptableContext<"line">) => {
+            return context.dataIndex === hoveredIndex ? 5 : 2;
+          },
+          pointHoverRadius: (context: ScriptableContext<"line">) => {
+            return context.dataIndex === hoveredIndex ? 5 : 2;
+          },
         },
       ],
     };
@@ -257,6 +331,7 @@ const MyAccountChart = ({ token }: { token: JwtToken | null }) => {
                 }
               }
               options={options}
+              plugins={[hoverPlugin]}
             />
           </div>
         </div>
@@ -290,9 +365,13 @@ const MyAccountChart = ({ token }: { token: JwtToken | null }) => {
           return gradient;
         },
         tension: 0.05,
-        pointRadius: 0,
+        pointRadius: (context: ScriptableContext<"line">) => {
+          return context.dataIndex === hoveredIndex ? 3 : 0;
+        },
+        pointHoverRadius: (context: ScriptableContext<"line">) => {
+          return context.dataIndex === hoveredIndex ? 3 : 0;
+        },
         borderWidth: 2,
-        pointHoverRadius: 0,
       },
     ],
   };
@@ -354,7 +433,11 @@ const MyAccountChart = ({ token }: { token: JwtToken | null }) => {
       </div>
 
       <div className="flex-1 size-full">
-        <Line data={data} options={options} />
+        <Line
+          data={data}
+          options={options}
+          plugins={[hoverPlugin, verticalLinePlugin]}
+        />
       </div>
     </div>
   );

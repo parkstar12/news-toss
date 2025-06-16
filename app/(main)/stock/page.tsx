@@ -8,7 +8,7 @@ import { getJwtToken } from "@/utils/auth";
 import { KOSPI } from "@/type/stocks/KOSPI";
 import { KOSDAQ } from "@/type/stocks/KOSDAQ";
 import Popular from "@/type/stocks/Popular";
-import TestOverView from "@/components/router/(main)/stock/OverViewChart";
+import OverViewChart from "@/components/router/(main)/stock/OverViewChart";
 
 const StockPage = async () => {
   const token = await getJwtToken();
@@ -45,8 +45,7 @@ const StockPage = async () => {
       <div className="row-span-8 relative">
         <div className="flex flex-col gap-main p-main sticky top-0">
           <SearchStock />
-          {/* <OverViewChart /> */}
-          <TestOverView />
+          <OverViewChart />
         </div>
       </div>
 
