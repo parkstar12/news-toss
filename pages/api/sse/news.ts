@@ -36,6 +36,9 @@ export default async function handler(
         const { done, value } = await reader.read();
         if (done) break;
         const chunk = decoder.decode(value);
+
+        console.log(chunk);
+
         res.write(chunk + "\n");
         // res.flush?.(); // Vercel에선 필요 없을 수도 있지만 있으면 좋음
       }

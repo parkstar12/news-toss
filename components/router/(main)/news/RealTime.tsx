@@ -35,6 +35,10 @@ const RealTime = () => {
       console.error("❌ SSE 에러 발생:", event);
     };
 
+    // sse.addEventListener("open", () => {
+    //   console.log("✅ 서버 연결됨");
+    // });
+
     // // 연결 이벤트
     // sse.addEventListener("connect", (event) => {
     //   console.log("✅ 서버 연결됨:", event.data);
@@ -42,7 +46,7 @@ const RealTime = () => {
 
     // // 뉴스 이벤트 수신
     // sse.addEventListener("news", (event) => {
-    // try {
+    //   try {
     //     const data = JSON.parse(event.data);
     //     setNews((prev) => {
     //       setNewNewsId(data.newsId); // 새로 추가된 뉴스의 ID 저장
