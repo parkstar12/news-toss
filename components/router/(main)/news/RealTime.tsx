@@ -11,14 +11,16 @@ const RealTime = () => {
   const [newNewsId, setNewNewsId] = useState<string | null>(null);
 
   useEffect(() => {
-    const sse = new EventSource("/sse/news");
+    // const sse = new EventSource("/sse/news");
+    const sse = new EventSource("/api/sse/news");
 
     sse.onopen = () => {
       console.log("✅ 서버 연결됨");
     };
 
-    sse.onmessage = (event) => {
-      console.log("🔥 여기에서 뉴스 이벤트 수신:", event.data);
+    // ✨ 커스텀 이벤트 수신!
+    sse.addEventListener("news", (event) => {
+      console.log("🔥 뉴스 이벤트 수신:", event.data);
       try {
         const data = JSON.parse(event.data);
         setNews((prev) => {
@@ -28,33 +30,11 @@ const RealTime = () => {
       } catch (err) {
         console.error("❌ JSON 파싱 에러:", err);
       }
-    };
+    });
 
     sse.onerror = (event) => {
       console.error("❌ SSE 에러 발생:", event);
     };
-
-    // sse.addEventListener("open", () => {
-    //   console.log("✅ 서버 연결됨");
-    // });
-
-    // // 뉴스 이벤트 수신
-    // sse.addEventListener("news", (event) => {
-    //   try {
-    //     console.log("🔥 뉴스 이벤트 수신:", event.data);
-    //     const data = JSON.parse(event.data);
-    //     setNews((prev) => {
-    //       setNewNewsId(data.newsId);
-    //       return [...prev, data];
-    //     });
-    //   } catch (err) {
-    //     console.error("❌ JSON 파싱 에러:", err);
-    //   }
-    // });
-
-    // sse.addEventListener("error", (event) => {
-    //   console.error("❌ SSE 에러 발생:", event);
-    // });
 
     return () => {
       sse.close();

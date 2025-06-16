@@ -60,7 +60,6 @@ const Sidebar = ({ token }: { token: JwtToken | null }) => {
         const json: { data: { portfolioStocks: Portfolio[] } } =
           await res.json();
 
-        console.log("내포폴임", json.data.portfolioStocks);
         setPortfolio(json.data.portfolioStocks);
       };
       fetchPortfolio();

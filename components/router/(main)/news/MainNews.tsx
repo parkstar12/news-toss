@@ -83,10 +83,11 @@ const MainNews = ({ news }: { news: HighlightNews[] }) => {
             <span className="bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent">
               주요뉴스
             </span>
-            <span> & </span>
+            {/* <span> & </span>
+            <span>과거 </span>
             <span className="bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent">
-              과거 유사뉴스
-            </span>
+              유사뉴스
+            </span> */}
           </div>
           <span className="text-main-dark-gray/80 text-sm">
             AI 모델을 통해 예측된 주요 뉴스기사와 과거 유사뉴스입니다.

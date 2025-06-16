@@ -91,6 +91,7 @@ const CustomNews = ({ token }: { token: JwtToken | null }) => {
                   src={news.mainNews.image || "https://placehold.co/250x150"}
                   alt={`${news.mainNews.title}-image`}
                   fill
+                  sizes="100%"
                   className="object-cover rounded-main"
                 />
               </div>
@@ -132,7 +133,7 @@ const CustomNews = ({ token }: { token: JwtToken | null }) => {
                           }
                           alt={`${relatedNews.title}-image`}
                           fill
-                          sizes="70px"
+                          sizes="100%"
                           className="object-cover rounded-main"
                         />
                       </div>
@@ -158,9 +159,11 @@ const CustomNews = ({ token }: { token: JwtToken | null }) => {
                   );
                 })}
               </div>
-              <p className="text-main-dark-gray text-xs text-center">
-                {news.relatedNews.length - 2} more...
-              </p>
+              {news.relatedNews.length > 2 && (
+                <p className="text-main-dark-gray text-xs text-center">
+                  {news.relatedNews.length - 2} more...
+                </p>
+              )}
             </Link>
           );
         })}

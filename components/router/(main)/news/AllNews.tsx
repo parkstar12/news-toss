@@ -107,6 +107,7 @@ const AllNews = ({ initialNews }: { initialNews: News[] }) => {
                   src={news.image || "https://placehold.co/250x150"}
                   alt={`${news.title}-image`}
                   fill
+                  sizes="100%"
                   className="object-cover rounded-main"
                 />
               </div>
