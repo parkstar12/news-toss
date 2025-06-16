@@ -11,15 +11,14 @@ const RealTime = () => {
   const [newNewsId, setNewNewsId] = useState<string | null>(null);
 
   useEffect(() => {
-    // const sse = new EventSource("http://43.200.17.139:8080/api/news/stream");
-    const sse = new EventSource("/api/sse/news");
+    const sse = new EventSource("/sse/news");
 
     sse.onopen = () => {
       console.log("✅ 서버 연결됨");
     };
 
     sse.onmessage = (event) => {
-      console.log("🔥 뉴스 이벤트 수신:", event.data);
+      console.log("🔥 여기에서 뉴스 이벤트 수신:", event.data);
       try {
         const data = JSON.parse(event.data);
         setNews((prev) => {
@@ -39,17 +38,13 @@ const RealTime = () => {
     //   console.log("✅ 서버 연결됨");
     // });
 
-    // // 연결 이벤트
-    // sse.addEventListener("connect", (event) => {
-    //   console.log("✅ 서버 연결됨:", event.data);
-    // });
-
     // // 뉴스 이벤트 수신
     // sse.addEventListener("news", (event) => {
     //   try {
+    //     console.log("🔥 뉴스 이벤트 수신:", event.data);
     //     const data = JSON.parse(event.data);
     //     setNews((prev) => {
-    //       setNewNewsId(data.newsId); // 새로 추가된 뉴스의 ID 저장
+    //       setNewNewsId(data.newsId);
     //       return [...prev, data];
     //     });
     //   } catch (err) {
@@ -68,49 +63,65 @@ const RealTime = () => {
   }, []);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setNews((prev) => prev.slice(1));
-    }, 5000);
+    if (news.length > 0) {
+      const interval = setInterval(() => {
+        setNews((prev) => prev.slice(1));
+      }, 5000);
 
-    return () => clearInterval(interval);
-  }, []);
+      return () => clearInterval(interval);
+    }
+  }, [news.length]);
 
   return (
-    <div className="flex flex-col gap-main">
-      {news.map((newsItem, idx) => (
-        <Link
-          href={`/news/${newsItem.newsId}`}
-          className={`flex gap-main hover:bg-main-blue/5 rounded-main p-main group ${
-            newsItem.newsId === newNewsId ? "slide-in" : ""
-          }`}
-          key={`realtime-news-${newsItem.newsId}-${new Date().getTime()}`}
-        >
-          <div className="size-[60px] rounded-main shrink-0 relative">
-            <Image
-              src={
-                newsItem.image === "..."
-                  ? "https://placehold.co/90x90"
-                  : newsItem.image || "https://placehold.co/90x90"
-              }
-              alt={`realtime-${newsItem.title}-image`}
-              fill
-              sizes="60px"
-              className="object-cover rounded-main group-hover:scale-102 duration-300 ease-in-out"
-            />
-          </div>
-          <div className="w-full flex flex-col justify-around">
-            <p className="line-clamp-2 font-semibold">{newsItem.title}</p>
-            <div className="flex items-center text-main-dark-gray text-xs">
-              <Clock className="h-3 w-3 mr-1 text-main-dark-gray" />
-              <span className="text-main-dark-gray">
-                {newsItem.wdate &&
-                  new Date(newsItem.wdate).toLocaleDateString()}{" "}
-                · {newsItem.press}
-              </span>
-            </div>
-          </div>
-        </Link>
-      ))}
+    <div className="grid grid-cols-2 gap-main">
+      <div className="flex flex-col gap-1">
+        <span className="text-3xl font-bold bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent">
+          실시간 수집 뉴스
+        </span>
+        <span className="text-main-dark-gray/80 text-sm">
+          네이버 증권 뉴스에서 실시간으로 수집됩니다.
+        </span>
+      </div>
+
+      <div className="grid grid-cols-[1fr_auto] h-fit gap-x-main justify-end text-end font-semibold text-sm">
+        <p>오늘 수집된 뉴스:</p>{" "}
+        <span>
+          <b className="text-main-blue">{3}</b>개
+        </span>
+        <p>전체 수집된 뉴스:</p>{" "}
+        <span>
+          <b className="text-main-blue">{13}</b>개
+        </span>
+      </div>
+
+      <div className="col-span-2 grid grid-cols-[auto_1fr_auto_auto] gap-main">
+        <span className="text-center font-semibold">관련 종목</span>
+        <span className="text-center font-semibold">요약</span>
+        <span className="text-center font-semibold">뉴스 중요도</span>
+        <span className="text-center font-semibold">시간</span>
+
+        <div className="h-px bg-main-dark-gray/10 col-span-full" />
+
+        {Array.from({ length: 3 }).map((_, idx) => {
+          return (
+            <React.Fragment
+              key={`realtime-news-${idx}`}
+              // className="col-span-full grid grid-cols-[auto_1fr_auto_auto] gap-main"
+              // style={{ animationDelay: `${idx * 0.1}s` }}
+            >
+              <p className="text-center">삼성전자</p>
+              <p className="slide-in">삼성전자 주가가 상승했습니다.</p>
+              <p className="text-center font-semibold text-main-blue">
+                {Number(0.28 * 100).toFixed(2)}%
+              </p>
+              <p className="text-center flex items-center gap-1 text-sm">
+                <Clock className="text-main-dark-gray" size={12} />
+                10분전
+              </p>
+            </React.Fragment>
+          );
+        })}
+      </div>
     </div>
   );
 };

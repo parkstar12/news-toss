@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { TextDecoder } from "util"; // ✅ 여기 TextDecoder로 변경
+import { TextDecoder } from "util";
 
 export const config = {
   api: {
@@ -29,7 +29,7 @@ export default async function handler(
       return;
     }
 
-    const decoder = new TextDecoder(); // ✅ 여기서 디코더 사용
+    const decoder = new TextDecoder();
 
     const sendChunk = async () => {
       while (true) {
@@ -40,7 +40,7 @@ export default async function handler(
         console.log(chunk);
 
         res.write(chunk + "\n");
-        // res.flush?.(); // Vercel에선 필요 없을 수도 있지만 있으면 좋음
+        // res.flush?.();
       }
     };
 

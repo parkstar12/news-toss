@@ -6,6 +6,8 @@ import { HighlightNews, News } from "@/type/news";
 import RealTime from "@/components/router/(main)/news/RealTime";
 
 const HomePage = async () => {
+  const token = await getJwtToken();
+
   const highlightRes = await fetch(
     `${process.env.NEXT_PUBLIC_BASE_URL}/news/v2/highlight/redis`,
     {
@@ -27,16 +29,16 @@ const HomePage = async () => {
   return (
     <div className="grid gap-main max-w-[1000px] mx-auto">
       <div className="p-main">
-        <MainNews news={highlightNews} />
-      </div>
-
-      <div className="absolute top-0 left-0 max-w-[300px] max-h-[50vh] overflow-y-scroll">
         <RealTime />
       </div>
 
-      {/* <div className="p-main">
+      <div className="p-main">
+        <MainNews news={highlightNews} />
+      </div>
+
+      <div className="p-main">
         <CustomNews token={token} />
-      </div> */}
+      </div>
 
       <div className="p-main">
         <AllNews initialNews={allInitialNews} />

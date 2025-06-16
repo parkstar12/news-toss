@@ -77,12 +77,22 @@ const MainNews = ({ news }: { news: HighlightNews[] }) => {
   return (
     <div className="grid grid-cols-3 w-full gap-[20px]">
       <div className="col-span-3 grid grid-cols-3 gap-main w-full relative">
-        <div className="text-3xl font-bold col-span-3">
-          <span>오늘의 </span>
-          <span className="bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent">
-            주요 뉴스
+        <div className="col-span-3 flex flex-col gap-1">
+          <div className="text-3xl font-bold">
+            <span>오늘의 </span>
+            <span className="bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent">
+              주요뉴스
+            </span>
+            <span> & </span>
+            <span className="bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent">
+              과거 유사뉴스
+            </span>
+          </div>
+          <span className="text-main-dark-gray/80 text-sm">
+            AI 모델을 통해 예측된 주요 뉴스기사와 과거 유사뉴스입니다.
           </span>
         </div>
+
         <div className="col-span-2 relative">
           {mainNews && (
             <Link
@@ -117,8 +127,8 @@ const MainNews = ({ news }: { news: HighlightNews[] }) => {
                   >
                     <div className="group relative transition-all duration-300 max-h-[60px] group-hover:max-h-[400px]">
                       <div className="flex flex-col gap-1 transition-transform duration-300 group-hover:-translate-y-2">
-                        <p className="bg-main-blue/50 w-fit rounded-full text-white text-sm font-semibold px-main">
-                          🚀 이슈{" "}
+                        <p className="bg-main-blue/50 w-fit rounded-full text-white text-sm font-semibold px-main py-0.5">
+                          🚀 뉴스 중요도:{" "}
                           {Number(mainNews.impact_score * 100).toFixed(2)}%
                         </p>
                         <p className="text-2xl font-bold line-clamp-1 text-white drop-shadow w-2/3 group-hover:w-full transition-all duration-300">
@@ -157,8 +167,8 @@ const MainNews = ({ news }: { news: HighlightNews[] }) => {
         </div>
 
         <div className="col-span-1">
-          <h2 className="font-bold text-lg bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent px-main">
-            관련 뉴스
+          <h2 className="font-bold text-lg bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent px-main w-fit">
+            과거 유사뉴스
           </h2>
           <div
             className={clsx(
@@ -182,7 +192,7 @@ const MainNews = ({ news }: { news: HighlightNews[] }) => {
                 </div>
                 <div className="w-full flex flex-col justify-around">
                   <span className="text-xs text-main-blue bg-main-blue/20 rounded-full px-2 w-fit">
-                    {Number(item.similarity * 100).toFixed(2)}% 관련
+                    유사도: {Number(item.similarity * 100).toFixed(2)}%
                   </span>
                   <p className="line-clamp-2 font-semibold text-sm">
                     {item.title}

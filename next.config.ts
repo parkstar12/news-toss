@@ -6,10 +6,9 @@ const nextConfig: NextConfig = {
   async rewrites() {
     return [
       {
-        source: "/api/news/stream",
+        source: "/sse/news",
         destination: "http://43.200.17.139:8080/api/news/stream",
       },
-
       {
         source: "/proxy/:path*",
         destination: "http://43.200.17.139:8080/api/:path*",
