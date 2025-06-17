@@ -1,7 +1,8 @@
 "use client";
 
+import Tooltip from "@/components/ui/Tooltip";
 import { News } from "@/type/news";
-import { Clock } from "lucide-react";
+import { CircleHelp, Clock } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
@@ -54,13 +55,15 @@ const RealTime = () => {
 
   return (
     <div className="grid grid-cols-2 gap-main">
-      <div className="flex flex-col gap-1">
+      <div className="flex items-center gap-main">
         <span className="text-3xl font-bold bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent">
           실시간 수집 뉴스
         </span>
-        <span className="text-main-dark-gray/80 text-sm">
-          네이버 증권 뉴스에서 실시간으로 수집됩니다.
-        </span>
+        <Tooltip
+          position="right"
+          message="네이버 증권 뉴스에서 실시간으로 수집됩니다."
+          icon={<CircleHelp size={16} />}
+        />
       </div>
 
       <div className="grid grid-cols-[1fr_auto] h-fit gap-x-main justify-end text-end font-semibold text-sm">

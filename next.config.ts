@@ -7,11 +7,11 @@ const nextConfig: NextConfig = {
     return [
       {
         source: "/sse/news",
-        destination: "http://43.200.17.139:8080/api/news/stream",
+        destination: "https://news-toss.click/api/news/stream",
       },
       {
         source: "/proxy/:path*",
-        destination: "http://43.200.17.139:8080/api/:path*",
+        destination: "https://news-toss.click/api/:path*",
       },
     ];
   },

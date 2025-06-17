@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronLeft, ChevronRight, Clock } from "lucide-react";
+import { ChevronLeft, ChevronRight, CircleHelp, Clock } from "lucide-react";
 import React, { useEffect, useState, useRef } from "react";
 import clsx from "clsx";
 import invertedStyle from "./inverted.module.css";
@@ -8,6 +8,7 @@ import Image from "next/image";
 import { HighlightNews, News } from "@/type/news";
 import Link from "next/link";
 import { formatDate } from "@/utils/formatDate";
+import Tooltip from "@/components/ui/Tooltip";
 
 const MainNews = ({ news }: { news: HighlightNews[] }) => {
   const [currentPage, setCurrentPage] = useState(0);
@@ -77,21 +78,19 @@ const MainNews = ({ news }: { news: HighlightNews[] }) => {
   return (
     <div className="grid grid-cols-3 w-full gap-[20px]">
       <div className="col-span-3 grid grid-cols-3 gap-main w-full relative">
-        <div className="col-span-3 flex flex-col gap-1">
+        <div className="col-span-3 flex items-center gap-main">
           <div className="text-3xl font-bold">
             <span>오늘의 </span>
             <span className="bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent">
               주요뉴스
             </span>
-            {/* <span> & </span>
-            <span>과거 </span>
-            <span className="bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent">
-              유사뉴스
-            </span> */}
           </div>
-          <span className="text-main-dark-gray/80 text-sm">
-            AI 모델을 통해 예측된 주요 뉴스기사와 과거 유사뉴스입니다.
-          </span>
+
+          <Tooltip
+            position="right"
+            message="AI 모델을 통해 예측된 주요 뉴스기사와 과거 유사뉴스입니다."
+            icon={<CircleHelp size={16} />}
+          />
         </div>
 
         <div className="col-span-2 relative">
@@ -173,10 +172,10 @@ const MainNews = ({ news }: { news: HighlightNews[] }) => {
           </h2>
           <div
             className={clsx(
-              "grid grid-rows-4 transition-opacity duration-200 ease-in-out"
+              "grid grid-rows-5 transition-opacity duration-200 ease-in-out"
             )}
           >
-            {gridNews.map((item, idx) => (
+            {gridNews.slice(0, 5).map((item, idx) => (
               <Link
                 href={`/news/${item.newsId}`}
                 className="flex items-center gap-main hover:bg-main-blue/10 transition-colors duration-300 ease-in-out rounded-main p-main group"
