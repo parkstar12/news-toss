@@ -44,7 +44,6 @@ const StockPage = async () => {
 
       <div className="row-span-8 relative">
         <div className="flex flex-col gap-main p-main sticky top-0">
-          <SearchStock />
           <OverViewChart />
         </div>
       </div>
