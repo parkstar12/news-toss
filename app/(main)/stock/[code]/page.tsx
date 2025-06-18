@@ -18,6 +18,9 @@ import { useRecentViewStore } from "@/store/useRecentViewStore";
 import { useParams } from "next/navigation";
 import Image from "next/image";
 import { usePortfolioStore } from "@/store/usePortfolio";
+import { News } from "@/type/news";
+import { Clock } from "lucide-react";
+import Link from "next/link";
 
 interface StockData {
   acml_tr_pbmn: string;
@@ -153,6 +156,9 @@ const StockDetailPage = () => {
   const [selectedInterval, setSelectedInterval] = useState<IntervalKey>("D");
   const [marketOpen, setMarketOpen] = useState(false);
   const { recentViewStocks, setRecentViewStocks } = useRecentViewStore();
+  const [relatedNews, setRelatedNews] = useState<News[]>([]);
+  const [skip, setSkip] = useState(0);
+  const [limit, setLimit] = useState(10);
 
   console.log("priceDiff", priceDiff);
 
@@ -499,6 +505,27 @@ const StockDetailPage = () => {
     prevStockData.Y.length,
   ]);
 
+  useEffect(() => {
+    const fetchRelatedNews = async () => {
+      const res = await fetch(
+        `/proxy/news/v2/stocknews?skip=${skip}&limit=${limit}&stockCode=${code}`
+      );
+      const json: { data: News[] } = await res.json();
+      setRelatedNews(json.data);
+    };
+    fetchRelatedNews();
+  }, [code]);
+
+  const handleMoreNews = async () => {
+    const nextSkip = skip + limit;
+    const res = await fetch(
+      `/proxy/news/v2/stocknews?skip=${nextSkip}&limit=${limit}&stockCode=${code}`
+    );
+    const json: { data: News[] } = await res.json();
+    setRelatedNews((prev) => [...prev, ...json.data]);
+    setSkip(nextSkip);
+  };
+
   return (
     <div className="grid grid-cols-3 gap-[20px]">
       {stock && (
@@ -603,11 +630,59 @@ const StockDetailPage = () => {
         </p>
       )}
 
-      <div className="col-span-3 size-full h-[600px]">
-        <div
-          ref={chartContainerRef}
-          style={{ width: "100%", height: "100%", position: "relative" }}
-        />
+      <div className="col-span-3 flex flex-col size-full gap-main">
+        <div className="col-span-2 h-[320px]">
+          <div
+            ref={chartContainerRef}
+            style={{ width: "100%", height: "100%", position: "relative" }}
+          />
+        </div>
+        <div className="col-span-1 flex flex-col gap-main pb-[100px]">
+          <h2 className="text-2xl font-bold bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent w-fit">
+            {stock?.stockName} 관련 뉴스
+          </h2>
+
+          <div className="grid grid-cols-5 grid-rows-2 gap-main">
+            {relatedNews.map((news) => (
+              <Link
+                href={`/news/${news.newsId}`}
+                key={news.newsId}
+                className="flex flex-col gap-main hover:scale-102 transition-all duration-300"
+              >
+                <div className="bg-black w-full aspect-[1.8/1] rounded-main shrink-0 relative">
+                  <div className="absolute size-full bg-black/5 z-10 rounded-main inset-shadow-2xs" />
+                  <Image
+                    src={news.image || "https://placehold.co/250x150"}
+                    alt={`${news.title}-image`}
+                    fill
+                    sizes="100%"
+                    className="object-cover rounded-main"
+                  />
+                  <div className="absolute inset-0 bg-black/40 z-10 rounded-main inset-shadow-2xs" />
+                  <div className="absolute inset-0 flex items-end justify-center p-main">
+                    <p className="text-white text-sm font-semibold line-clamp-2 z-10">
+                      {news.title}
+                    </p>
+                  </div>
+                  <div className="flex items-center text-main-dark-gray text-xs">
+                    <Clock className="h-3 w-3 mr-1 text-main-dark-gray" />
+                    <span className="text-main-dark-gray">
+                      {news.wdate && new Date(news.wdate).toLocaleDateString()}{" "}
+                    </span>
+                  </div>
+                </div>
+              </Link>
+            ))}
+            <div className="flex justify-center border-t border-gray-200 pt-main col-span-5">
+              <button
+                className="text-main-dark-gray text-sm hover:bg-main-light-gray w-full rounded-main py-main transition-all duration-300 ease-in-out"
+                onClick={handleMoreNews}
+              >
+                더보기
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
