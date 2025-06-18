@@ -2,7 +2,7 @@
 
 import useOutsideClick from "@/hooks/useOutsideClick";
 import clsx from "clsx";
-import { X } from "lucide-react";
+import { X, Move3D, Scaling } from "lucide-react";
 import Image from "next/image";
 import React, { useRef, useState, useCallback } from "react";
 import Chatbot from "./Chatbot";
@@ -80,11 +80,13 @@ const ChatbotComponent = () => {
       >
         {/* 대각선 Resize Handle (좌상단) */}
         <div
-          className="absolute top-0 left-0 w-4 h-4 bg-transparent hover:bg-blue-200/30 transition-colors"
+          className="absolute top-0 left-0 w-6 h-6 bg-transparent flex items-center justify-center group"
           style={{ cursor: "nw-resize" }}
           onMouseDown={handleDiagonalResize}
           title="드래그하여 크기 조절"
-        />
+        >
+          <Scaling size={12} className="text-gray-400 scale-x-[-1]" />
+        </div>
 
         <Chatbot isOpen={isOpen} />
         <X

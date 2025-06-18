@@ -126,7 +126,7 @@ const TestChatbot = ({
       ref={ref}
       className="size-full bg-white flex flex-col gap-main p-main rounded-main"
     >
-      <div className="flex items-center gap-main">
+      <div className="flex items-center gap-main ml-[10px]">
         <div className="relative size-[30px]">
           <Image
             src={`/news-toss-logo.png`}
