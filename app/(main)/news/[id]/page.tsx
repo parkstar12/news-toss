@@ -19,6 +19,7 @@ const NewsDetailPage = async ({
   const newsRes = await fetch(
     `${process.env.NEXT_PUBLIC_BASE_URL}/news/v2/detail?newsId=${newsId}`,
     {
+      credentials: "include",
       next: { revalidate: 60 },
     }
   );
