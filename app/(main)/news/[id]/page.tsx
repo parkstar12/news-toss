@@ -20,7 +20,6 @@ const NewsDetailPage = async ({
     `${process.env.NEXT_PUBLIC_BASE_URL}/news/v2/detail?newsId=${newsId}`,
     {
       credentials: "include",
-      next: { revalidate: 60 },
     }
   );
   const newsJson: { data: News } = await newsRes.json();
