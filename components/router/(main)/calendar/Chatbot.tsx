@@ -4,6 +4,7 @@ import clsx from "clsx";
 import { Loader2, Send } from "lucide-react";
 import Image from "next/image";
 import React, { useRef, useState, useEffect } from "react";
+import MarkdownRenderer from "./MarkdownRenderer";
 
 interface Message {
   role: "user" | "bot";
@@ -150,9 +151,7 @@ const TestChatbot = ({
                 key={`${msg.role}-${idx}`}
                 className="w-full flex justify-start items-start"
               >
-                <p className="max-w-[80%] px-3 py-2 rounded-main text-left bg-gray-100 break-keep">
-                  {msg.content}
-                </p>
+                <MarkdownRenderer markdown={msg.content} />
               </div>
             );
           }
