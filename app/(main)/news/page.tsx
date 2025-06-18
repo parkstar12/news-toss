@@ -16,6 +16,8 @@ const HomePage = async () => {
   );
   const highlightJson = await highlightRes.json();
   const highlightNews: HighlightNews[] = highlightJson.data;
+  console.log("highlightNews", highlightNews);
+  const highlightNewsError = highlightRes.ok ? false : true;
 
   const allNewsRes = await fetch(
     `${process.env.NEXT_PUBLIC_BASE_URL}/news/v2/all?skip=0&limit=30`,
@@ -25,6 +27,7 @@ const HomePage = async () => {
   );
   const allInitialNewsJson = await allNewsRes.json();
   const allInitialNews: News[] = allInitialNewsJson.data;
+  const allInitialNewsError = allNewsRes.ok ? false : true;
 
   return (
     <div className="grid gap-main max-w-[1000px] mx-auto">
@@ -33,7 +36,7 @@ const HomePage = async () => {
       </div>
 
       <div className="p-main">
-        <MainNews news={highlightNews} />
+        <MainNews news={highlightNews} error={highlightNewsError} />
       </div>
 
       <div className="p-main">
@@ -41,7 +44,7 @@ const HomePage = async () => {
       </div>
 
       <div className="p-main">
-        <AllNews initialNews={allInitialNews} />
+        <AllNews initialNews={allInitialNews} error={allInitialNewsError} />
       </div>
     </div>
   );

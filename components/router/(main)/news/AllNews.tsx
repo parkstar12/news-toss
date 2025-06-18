@@ -10,7 +10,13 @@ import Image from "next/image";
 import Dropdown from "@/components/ui/shared/Dropdown";
 import clsx from "clsx";
 
-const AllNews = ({ initialNews }: { initialNews: News[] }) => {
+const AllNews = ({
+  initialNews,
+  error,
+}: {
+  initialNews: News[];
+  error: boolean;
+}) => {
   const [newsList, setNewsList] = useState<News[]>(initialNews);
   const [rows, setRows] = useState(3);
   const [cols, setCols] = useState(4);
@@ -63,6 +69,21 @@ const AllNews = ({ initialNews }: { initialNews: News[] }) => {
     }
     setCols(newCols);
   };
+
+  if (error) {
+    return (
+      <div className="grid grid-cols-3 w-full gap-[20px]">
+        <div className="col-span-3 grid grid-cols-3 gap-main w-full relative">
+          <div className="col-span-3 flex items-center gap-main">
+            <div className="text-3xl font-bold">모든 뉴스</div>
+          </div>
+          <p className="text-red-500">
+            모든 뉴스 데이터를 불러오는데 실패했습니다.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-main">

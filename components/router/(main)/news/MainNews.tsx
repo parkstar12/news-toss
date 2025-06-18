@@ -10,10 +10,64 @@ import Link from "next/link";
 import { formatDate } from "@/utils/formatDate";
 import Tooltip from "@/components/ui/Tooltip";
 
-const MainNews = ({ news }: { news: HighlightNews[] }) => {
+const MainNews = ({
+  news,
+  error,
+}: {
+  news: HighlightNews[];
+  error: boolean;
+}) => {
   const [currentPage, setCurrentPage] = useState(0);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const mainNewsCardRef = useRef<HTMLDivElement | null>(null);
+
+  if (error) {
+    return (
+      <div className="grid grid-cols-3 w-full gap-[20px]">
+        <div className="col-span-3 grid grid-cols-3 gap-main w-full relative">
+          <div className="col-span-3 flex items-center gap-main">
+            <div className="text-3xl font-bold">
+              <span>오늘의 </span>
+              <span className="bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent">
+                주요뉴스
+              </span>
+            </div>
+            <Tooltip
+              position="right"
+              message="AI 모델을 통해 예측된 주요 뉴스기사와 과거 유사뉴스입니다."
+              icon={<CircleHelp size={16} />}
+            />
+          </div>
+          <p className="text-red-500">
+            주요뉴스 데이터를 불러오는데 실패했습니다.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (news.length === 0) {
+    return (
+      <div className="grid grid-cols-3 w-full gap-[20px]">
+        <div className="col-span-3 grid grid-cols-3 gap-main w-full relative">
+          <div className="col-span-3 flex items-center gap-main">
+            <div className="text-3xl font-bold">
+              <span>오늘의 </span>
+              <span className="bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent">
+                주요뉴스
+              </span>
+            </div>
+            <Tooltip
+              position="right"
+              message="AI 모델을 통해 예측된 주요 뉴스기사와 과거 유사뉴스입니다."
+              icon={<CircleHelp size={16} />}
+            />
+          </div>
+          <p className="text-red-500">주요뉴스가 없습니다.</p>
+        </div>
+      </div>
+    );
+  }
 
   useEffect(() => {
     const startInterval = () => {
