@@ -6,10 +6,6 @@ const nextConfig: NextConfig = {
   async rewrites() {
     return [
       {
-        source: "/sse/news",
-        destination: "https://news-toss.click/api/news/stream",
-      },
-      {
         source: "/proxy/:path*",
         destination: "https://news-toss.click/api/:path*",
       },

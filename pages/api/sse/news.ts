@@ -19,7 +19,7 @@ export default async function handler(
   });
 
   try {
-    const upstream = await fetch("http://43.200.17.139:8080/api/news/stream");
+    const upstream = await fetch("https://news-toss.click/api/news/realtime");
 
     const reader = upstream.body?.getReader();
 
