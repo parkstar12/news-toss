@@ -6,6 +6,7 @@ import * as Sentry from "@sentry/nextjs";
 import { MetaData, News } from "@/type/news";
 import MetaDataNews from "./MetaDataNews";
 import { StockSearchResult } from "@/type/stocks/StockSearchResult";
+import { StockData } from "@/type/stocks/stockData";
 
 const NewsDetailPage = async ({
   params,
@@ -30,6 +31,7 @@ const NewsDetailPage = async ({
     }
   );
   const relatedNewsJson: { data: News[] } = await relatedNewsRes.json();
+  console.log("relatedNewsJson", relatedNewsJson.data);
 
   const metaDataRes = await fetch(
     `${process.env.NEXT_PUBLIC_BASE_URL}/news/v2/meta?newsId=${newsId}`,
@@ -39,16 +41,16 @@ const NewsDetailPage = async ({
   );
   const metaDataJson: { data: MetaData } = await metaDataRes.json();
 
-  console.log("메타데이터", metaDataJson.data);
+  // console.log("메타데이터", metaDataJson.data);
 
-  const stockList = [];
+  const stockList: StockSearchResult[] = [];
 
   if (metaDataJson.data.stockListView.length !== 0) {
     for (const stock of metaDataJson.data.stockListView) {
       const stockListRes = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/v1/stocks/search?keyword=${stock.stock_id}`,
+        `${process.env.NEXT_PUBLIC_BASE_URL}/v1/stocks/search?keyword=${stock.stockName}`,
         {
-          next: { revalidate: 60 },
+          next: { revalidate: 60 * 60 * 24 },
         }
       );
       const stockListJson: { data: StockSearchResult[] } =
@@ -57,17 +59,51 @@ const NewsDetailPage = async ({
     }
   }
 
+  const mainStockCodeList = metaDataJson.data.stockList.map((stock) =>
+    stock.stockName.toString()
+  );
+
+  const mainStockList = stockList.filter((stock) =>
+    mainStockCodeList.includes(stock.stockCode.toString())
+  );
+
+  const stockChartList: { stockCode: string; data: StockData[] }[] = [];
+  for (const stock of mainStockList) {
+    const stockListRes = await fetch(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/v1/stocks/${stock.stockCode}?period=Y`,
+      {
+        next: { revalidate: 60 * 60 * 24 * 2 },
+      }
+    );
+    const stockListJson: { data: StockData[] } = await stockListRes.json();
+    stockChartList.push({
+      stockCode: stock.stockCode,
+      data: stockListJson.data,
+    });
+  }
+
   return (
     <div className="size-full grid grid-cols-[1fr_1px_1.5fr] gap-[20px]">
-      <NewsDetail news={newsJson.data} token={token} newsId={newsId} />
+      <NewsDetail
+        news={newsJson.data}
+        token={token}
+        newsId={newsId}
+        mainStockList={mainStockList}
+        impactScore={metaDataJson.data.impactScore}
+        summary={metaDataJson.data.summary}
+      />
 
       <div className="border-l border-main-light-gray h-full" />
 
-      <div className="relative">
-        <div className="flex flex-col gap-[20px] sticky top-0">
-          <MetaDataNews metaData={metaDataJson.data} stockList={stockList} />
-          <RelatedNews relatedNews={relatedNewsJson.data} />
-        </div>
+      <div className="flex flex-col gap-[20px]">
+        {/* <MetaDataNews
+          // metaData={metaDataJson.data}
+          stockList={stockList}
+          mainStockList={mainStockList}
+          mainStockChartList={stockChartList}
+          relatedNews={relatedNewsJson.data}
+        /> */}
+        <RelatedNews relatedNews={relatedNewsJson.data} />
       </div>
 
       {/* <Related

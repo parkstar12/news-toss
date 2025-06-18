@@ -2,7 +2,13 @@
 
 import { News } from "@/type/news";
 import clsx from "clsx";
-import { ChevronDown, LinkIcon, Bookmark, StarIcon } from "lucide-react";
+import {
+  ChevronDown,
+  LinkIcon,
+  Bookmark,
+  StarIcon,
+  BarChart2,
+} from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import React, { useEffect, useRef, useState } from "react";
@@ -11,17 +17,26 @@ import { toast } from "react-toastify";
 import { JwtToken } from "@/type/jwt";
 import { useScrapStore } from "@/store/useScrapStore";
 import { formatDate } from "@/utils/formatDate";
+import { StockSearchResult } from "@/type/stocks/StockSearchResult";
+import UpPrice from "@/components/ui/shared/UpPrice";
+import DownPrice from "@/components/ui/shared/DownPrice";
 
 const NewsDetail = ({
   news,
   token,
   newsId,
+  mainStockList,
+  impactScore,
+  summary,
 }: {
   news: News;
   token: JwtToken | null;
   newsId: string;
+  mainStockList: StockSearchResult[];
+  impactScore: number;
+  summary: string;
 }) => {
-  const [isOpenNewsDetail, setIsOpenNewsDetail] = useState(true);
+  const [isOpenNewsDetail, setIsOpenNewsDetail] = useState(false);
   const [isScrap, setIsScrap] = useState(false);
   const { scraps, setScraps } = useScrapStore();
   const newsDetailRef = useRef<HTMLDivElement>(null);
@@ -114,12 +129,75 @@ const NewsDetail = ({
         </p>
       </div>
 
+      <div className="grid grid-cols-[1fr_auto] gap-main">
+        {mainStockList && (
+          <div className="flex items-center gap-main flex-wrap">
+            {mainStockList.map((stock) => (
+              <Link
+                href={`/stocks/${stock.stockCode}`}
+                key={stock.stockCode}
+                className="text-main-blue px-2 py-1 text-xs font-semibold rounded-main flex items-center gap-2 hover:bg-main-blue/10 transition-all duration-200 ease-in-out"
+              >
+                <div className="relative flex items-center justify-center size-[30px] shrink-0">
+                  {stock.stockImage ? (
+                    <Image
+                      src={stock.stockImage}
+                      alt={stock.stockName}
+                      fill
+                      className="rounded-full"
+                      sizes="30px"
+                    />
+                  ) : (
+                    <div className="bg-main-blue/10 rounded-full size-[30px] shrink-0 flex items-center justify-center">
+                      <span className="text-main-blue font-semibold">
+                        {stock.stockName[0]}
+                      </span>
+                    </div>
+                  )}
+                </div>
+
+                <p className="text-sm text-main-dark-gray flex items-baseline gap-1">
+                  <span className="font-semibold">{stock.stockName}</span>
+                  <span className="text-xs">{stock.stockCode}</span>
+                </p>
+              </Link>
+            ))}
+          </div>
+        )}
+
+        <div>
+          {impactScore && (
+            <div className="flex items-baseline gap-main">
+              <span className="text-sm font-bold bg-gradient-to-r from-main-blue to-purple-500 bg-clip-text text-transparent w-fit">
+                뉴스 중요도
+              </span>
+
+              <p className="flex-1 flex text-2xl font-bold items-center justify-center">
+                <span className="bg-gradient-to-r from-main-blue to-purple-500 bg-clip-text text-transparent">
+                  {(impactScore * 100).toFixed(1)}%
+                </span>
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
+
       <div className="w-full h-[300px] relative">
         <Image
           src={news.image || "https://placehold.co/600x400"}
           alt={`${news.title}-image`}
+          className="object-contain"
           fill
         />
+      </div>
+
+      <div className="p-main">
+        <div className="flex flex-col gap-main shadow-color p-main rounded-main">
+          <span className="text-lg font-bold bg-gradient-to-r from-main-blue to-purple-500 bg-clip-text text-transparent w-fit">
+            뉴스 요약
+          </span>
+          <p className="whitespace-pre-wrap leading-7">{summary}</p>
+        </div>
       </div>
 
       <Link
@@ -133,7 +211,7 @@ const NewsDetail = ({
 
       <div
         className={clsx(
-          "transition-all duration-300 ease-in-out overflow-hidden relative pb-10",
+          "transition-all duration-300 ease-in-out overflow-hidden relative pb-20",
           isOpenNewsDetail
             ? "max-h-[2000px] opacity-100"
             : "max-h-[70px] opacity-100"
@@ -142,9 +220,9 @@ const NewsDetail = ({
       >
         <p className="whitespace-pre-wrap leading-7 px-main">{news.article}</p>
 
-        {/* <div
+        <div
           className={clsx(
-            "absolute bottom-0 left-0 w-full flex justify-center z-10 py-main",
+            "absolute -bottom-[10px] left-0 w-full flex justify-center z-10 py-main",
             isOpenNewsDetail ? "" : "backdrop-blur-sm"
           )}
         >
@@ -152,11 +230,11 @@ const NewsDetail = ({
             className="w-fit bg-main-blue text-white rounded-main py-main pl-5 pr-4 flex items-center justify-center gap-2"
             onClick={() => {
               setIsOpenNewsDetail(!isOpenNewsDetail);
-              !isOpenNewsDetail &&
-                newsDetailRef.current?.scrollIntoView({
-                  behavior: "smooth",
-                  block: "start",
-                });
+              // !isOpenNewsDetail &&
+              //   newsDetailRef.current?.scrollIntoView({
+              //     behavior: "smooth",
+              //     block: "start",
+              //   });
             }}
           >
             <span className="font-semibold">
@@ -167,7 +245,7 @@ const NewsDetail = ({
               className={isOpenNewsDetail ? "rotate-180" : ""}
             />
           </button>
-        </div> */}
+        </div>
       </div>
     </div>
   );

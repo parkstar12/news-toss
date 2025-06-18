@@ -37,7 +37,7 @@ export default async function handler(
         if (done) break;
         const chunk = decoder.decode(value);
 
-        console.log(chunk);
+        // console.log(chunk);
 
         res.write(chunk + "\n");
         // res.flush?.();
