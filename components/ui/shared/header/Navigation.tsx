@@ -174,7 +174,8 @@ const Navigation = () => {
               : "text-sub"
           )}
         >
-          캘린더
+          <span>캘린더 </span>
+          <span className="text-main-dark-gray/70 text-xs">with 챗봇</span>
         </Link>
         <Link
           href="/portfolio/my"
