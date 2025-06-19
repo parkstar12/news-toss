@@ -132,7 +132,7 @@ const Chatbot = ({
   return (
     <div
       ref={ref}
-      className="w-full h-full bg-white flex flex-col gap-main p-main rounded-main"
+      className="w-full h-full bg-white flex flex-col gap-main p-main rounded-main shadow-sm"
     >
       <div className="flex items-center gap-main ml-[10px]">
         <div className="relative size-[30px]">

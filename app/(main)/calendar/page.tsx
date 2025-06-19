@@ -77,7 +77,7 @@ const CalendarPage = () => {
 
   return (
     <div className="grid grid-cols-2 gap-[40px]">
-      <div className="w-full flex flex-col gap-main">
+      <div className="w-full flex flex-col gap-main h-[calc(100vh-140px)]">
         <div className="flex items-start justify-between">
           <div className="flex flex-col gap-[5px]">
             <h2 className="font-semibold text-2xl bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent w-fit">{`${year}년 ${month}월 ${day}일 IR 일정`}</h2>
@@ -103,51 +103,53 @@ const CalendarPage = () => {
           )}
         </div>
 
-        <div className="p-main bg-main-light-gray rounded-main">
-          <Calendar
-            prev2Label={null}
-            next2Label={null}
-            value={selectedDate}
-            onChange={(date) => {
-              if (date instanceof Date) {
-                setSelectedDate(date);
-              }
-            }}
-            maxDate={new Date(Date.now() + 100 * 24 * 60 * 60 * 1000)}
-            calendarType="gregory"
-            view="month"
-            navigationLabel={({ date }) => {
-              const year = date.getFullYear();
-              const month = String(date.getMonth() + 1).padStart(2, "0");
-              return `${year}년 ${month}월`;
-            }}
-            formatDay={(locale, date) => String(date.getDate())}
-            tileContent={({ date }) => {
-              const dateString = `${date.getFullYear()}-${String(
-                date.getMonth() + 1
-              ).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+        <div className="flex justify-center px-main">
+          <div className="border border-main-light-gray bg-main-light-gray p-main pt-0 rounded-main">
+            <Calendar
+              prev2Label={null}
+              next2Label={null}
+              value={selectedDate}
+              onChange={(date) => {
+                if (date instanceof Date) {
+                  setSelectedDate(date);
+                }
+              }}
+              maxDate={new Date(Date.now() + 100 * 24 * 60 * 60 * 1000)}
+              calendarType="gregory"
+              view="month"
+              navigationLabel={({ date }) => {
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, "0");
+                return `${year}년 ${month}월`;
+              }}
+              formatDay={(locale, date) => String(date.getDate())}
+              tileContent={({ date }) => {
+                const dateString = `${date.getFullYear()}-${String(
+                  date.getMonth() + 1
+                ).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
 
-              if (datesWithIrData.has(dateString)) {
-                return (
-                  <div className="absolute top-main left-[10px] w-full flex justify-center">
-                    <div className="size-[5px] rounded-full bg-main-blue animate-pulse" />
-                  </div>
-                );
-              } else {
-                return null;
-              }
-            }}
-            showNeighboringMonth={false}
-            onActiveStartDateChange={({ activeStartDate }) => {
-              if (activeStartDate) {
-                setSelectedDate(new Date(activeStartDate));
-              }
-            }}
-            className="w-full h-full"
-          />
+                if (datesWithIrData.has(dateString)) {
+                  return (
+                    <div className="absolute top-main left-[10px] w-full flex justify-center">
+                      <div className="size-[5px] rounded-full bg-main-blue animate-pulse" />
+                    </div>
+                  );
+                } else {
+                  return null;
+                }
+              }}
+              showNeighboringMonth={false}
+              onActiveStartDateChange={({ activeStartDate }) => {
+                if (activeStartDate) {
+                  setSelectedDate(new Date(activeStartDate));
+                }
+              }}
+              className="w-full h-full"
+            />
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-main pb-[100px]">
+        <div className="grid grid-cols-1 gap-main overflow-y-auto px-main pb-main">
           {filteredIrDataList.length > 0 ? (
             filteredIrDataList.map((irData) => (
               <div

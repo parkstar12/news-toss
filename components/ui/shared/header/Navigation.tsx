@@ -169,13 +169,14 @@ const Navigation = () => {
         <Link
           href="/calendar"
           className={clsx(
+            "cursor-pointer",
             pathname.startsWith("/calendar")
               ? "text-black font-semibold"
               : "text-sub"
           )}
         >
           <span>캘린더 </span>
-          <span className="text-main-dark-gray/70 text-xs">with 챗봇</span>
+          <span className="text-xs">with 챗봇</span>
         </Link>
         <Link
           href="/portfolio/my"
