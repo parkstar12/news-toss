@@ -6,6 +6,7 @@ import "@/components/router/(main)/calendar/calendar.css";
 
 import clsx from "clsx";
 import Dropdown from "@/components/ui/shared/Dropdown";
+import Chatbot from "@/components/router/(main)/calendar/Chatbot";
 
 interface IRData {
   companyName: string;
@@ -75,11 +76,11 @@ const CalendarPage = () => {
   }, [day]);
 
   return (
-    <div className="grid grid-cols-5 gap-[40px]">
-      <div className="col-span-3 w-full flex flex-col gap-main">
+    <div className="grid grid-cols-2 gap-[40px]">
+      <div className="w-full flex flex-col gap-main">
         <div className="flex items-start justify-between">
           <div className="flex flex-col gap-[5px]">
-            <h2 className="font-semibold text-xl bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent w-fit">{`${year}년 ${month}월 ${day}일 IR 일정`}</h2>
+            <h2 className="font-semibold text-2xl bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent w-fit">{`${year}년 ${month}월 ${day}일 IR 일정`}</h2>
             <p className="text-main-dark-gray/70">
               총 {filteredIrDataList.length}건의 일정
             </p>
@@ -100,6 +101,50 @@ const CalendarPage = () => {
               maxHeight={300}
             />
           )}
+        </div>
+
+        <div className="p-main bg-main-light-gray rounded-main">
+          <Calendar
+            prev2Label={null}
+            next2Label={null}
+            value={selectedDate}
+            onChange={(date) => {
+              if (date instanceof Date) {
+                setSelectedDate(date);
+              }
+            }}
+            maxDate={new Date(Date.now() + 100 * 24 * 60 * 60 * 1000)}
+            calendarType="gregory"
+            view="month"
+            navigationLabel={({ date }) => {
+              const year = date.getFullYear();
+              const month = String(date.getMonth() + 1).padStart(2, "0");
+              return `${year}년 ${month}월`;
+            }}
+            formatDay={(locale, date) => String(date.getDate())}
+            tileContent={({ date }) => {
+              const dateString = `${date.getFullYear()}-${String(
+                date.getMonth() + 1
+              ).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+
+              if (datesWithIrData.has(dateString)) {
+                return (
+                  <div className="absolute top-main left-[10px] w-full flex justify-center">
+                    <div className="size-[5px] rounded-full bg-main-blue animate-pulse" />
+                  </div>
+                );
+              } else {
+                return null;
+              }
+            }}
+            showNeighboringMonth={false}
+            onActiveStartDateChange={({ activeStartDate }) => {
+              if (activeStartDate) {
+                setSelectedDate(new Date(activeStartDate));
+              }
+            }}
+            className="w-full h-full"
+          />
         </div>
 
         <div className="grid grid-cols-1 gap-main pb-[100px]">
@@ -151,49 +196,9 @@ const CalendarPage = () => {
         </div>
       </div>
 
-      <div className="col-span-2 w-full relative">
-        <div className="sticky top-0 z-10 p-main bg-main-light-gray rounded-main">
-          <Calendar
-            prev2Label={null}
-            next2Label={null}
-            value={selectedDate}
-            onChange={(date) => {
-              if (date instanceof Date) {
-                setSelectedDate(date);
-              }
-            }}
-            maxDate={new Date()}
-            calendarType="gregory"
-            view="month"
-            navigationLabel={({ date }) => {
-              const year = date.getFullYear();
-              const month = String(date.getMonth() + 1).padStart(2, "0");
-              return `${year}년 ${month}월`;
-            }}
-            formatDay={(locale, date) => String(date.getDate())}
-            tileContent={({ date }) => {
-              const dateString = `${date.getFullYear()}-${String(
-                date.getMonth() + 1
-              ).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
-
-              if (datesWithIrData.has(dateString)) {
-                return (
-                  <div className="absolute top-main left-[10px] w-full flex justify-center">
-                    <div className="size-[5px] rounded-full bg-main-blue animate-pulse" />
-                  </div>
-                );
-              } else {
-                return null;
-              }
-            }}
-            showNeighboringMonth={false}
-            onActiveStartDateChange={({ activeStartDate }) => {
-              if (activeStartDate) {
-                setSelectedDate(new Date(activeStartDate));
-              }
-            }}
-            className="w-full h-full"
-          />
+      <div className="w-full relative">
+        <div className="sticky top-0 right-0 h-[calc(100vh-140px)]">
+          <Chatbot isOpen={true} />
         </div>
       </div>
     </div>

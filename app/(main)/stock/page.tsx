@@ -9,6 +9,7 @@ import { KOSPI } from "@/type/stocks/KOSPI";
 import { KOSDAQ } from "@/type/stocks/KOSDAQ";
 import Popular from "@/type/stocks/Popular";
 import OverViewChart from "@/components/router/(main)/stock/OverViewChart";
+import Test from "./Test";
 
 const StockPage = async () => {
   const token = await getJwtToken();
@@ -55,6 +56,8 @@ const StockPage = async () => {
       <div className="col-span-2 row-span-2">
         <CategoryStock token={token} />
       </div>
+
+      <Test />
     </div>
   );
 };
