@@ -165,7 +165,7 @@ const MainNews = ({
               <Link
                 href={`/news/${mainNews.news_id}`}
                 rel="noopener noreferrer"
-                className="block w-full h-full relative filter-[drop-shadow(2px_2px_3px_rgba(0,0,0,0.5))] group"
+                className="block w-full h-full relative filter-[drop-shadow(2px_2px_3px_rgba(0,0,0,0.5))] group min-h-[400px]"
               >
                 <div
                   className={clsx(
@@ -245,6 +245,11 @@ const MainNews = ({
           <h2 className="font-bold text-lg bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent px-main w-fit">
             과거 유사뉴스
           </h2>
+          {gridNews.length === 0 && (
+            <div className="w-full h-full flex items-center justify-center">
+              <p className="text-main-dark-gray">과거 유사뉴스가 없습니다.</p>
+            </div>
+          )}
           <div
             className={clsx(
               "grid grid-rows-2 transition-opacity duration-200 ease-in-out"
