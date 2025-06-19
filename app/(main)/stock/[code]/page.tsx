@@ -257,10 +257,9 @@ const StockDetailPage = () => {
       tooltip.style.display = "block";
 
       tooltip.innerHTML = `
-        <div><strong>현재:</strong> ${data.close.toLocaleString()}원</div>
         ${
           "open" in data
-            ? `<div><strong>시가:</strong> ${data.open.toLocaleString()}원</div>`
+            ? `<div><strong>시가:</strong>${data} ${data.open.toLocaleString()}원</div>`
             : ""
         }
         ${
