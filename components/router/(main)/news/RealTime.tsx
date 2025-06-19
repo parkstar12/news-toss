@@ -93,7 +93,7 @@ const RealTime = () => {
               // style={{ animationDelay: `${idx * 0.1}s` }}
             >
               <p className="text-center">삼성전자</p>
-              <p className="slide-in">삼성전자 주가가 상승했습니다.</p>
+              <p className="">삼성전자 주가가 상승했습니다.</p>
               <p className="text-center font-semibold text-main-blue">
                 {Number(0.28 * 100).toFixed(2)}%
               </p>
